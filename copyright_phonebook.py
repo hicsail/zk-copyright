@@ -44,7 +44,8 @@ def main():
     }
 
     X = make_X(bg, honey_entries)
-
+    print('Original X', X)
+    
     prod_y = producer_func(X)
     print("prod_y", prod_y)
     
