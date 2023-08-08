@@ -1,4 +1,3 @@
-# from picozk import *
 
 def make_X(bg, honey_entries):
     res = bg.copy()
@@ -51,12 +50,6 @@ def main():
     
     repro_y = reproducer_func(bg, honey_entries)
     print("repro_y", repro_y)
-
-    
-    # p = 11
-    # n = 2
-    # with PicoZKCompiler('irs/picozk_test', field=[p,n]):
-    return 
 
 if __name__ == "__main__":
     main()

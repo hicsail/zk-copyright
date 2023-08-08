@@ -1,5 +1,3 @@
-# from picozk import *
-import random
 
 def make_X(madlibs, nouns, S):
     X = madlibs.split()
@@ -72,9 +70,6 @@ def main():
     reprod_Y = reproducer_func(madlibs, nouns)
     print('reprod_Y: ', reprod_Y)
     print('')
-    # p = 11
-    # n = 2
-    # with PicoZKCompiler('irs/picozk_test', field=[p,n]):
 
 if __name__ == "__main__":
     main()
