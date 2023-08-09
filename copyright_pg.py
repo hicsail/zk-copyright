@@ -9,7 +9,7 @@ def make_X(madlibs, nouns, S):
             i+=1
             if i == len(S):
                 break
-    _X = ' '.join(X) # This is the madlibs text with only words in S are filled
+    partial_X = ' '.join(X) # This is the madlibs text with only words in S are filled
     
     for k in range(j, len(X)):
         if X[k] == '_':
@@ -18,20 +18,20 @@ def make_X(madlibs, nouns, S):
 
     X = ' '.join(X) # This is the madlibs text with all blanks are filled
 
-    return _X, X
+    return partial_X, X
 
 
 def fill_blank(text, fill):
     return ' '.join([word if word != '_' else fill.pop(0) for word in text.split()])
 
 
-def producer_func(nouns, _X):
+def producer_func(nouns, partial_X):
     first = nouns[3]
     second = nouns[4]
 
     fill = [first, second]
 
-    return fill_blank(_X, fill)
+    return fill_blank(partial_X, fill)
 
 
 def reproducer_func(madlibs, nouns):
@@ -57,13 +57,13 @@ def main():
     print('S', S)
     print('')
 
-    _X, X = make_X(madlibs, nouns, S)
+    partial_X, X = make_X(madlibs, nouns, S)
     print('X: ', X)
     print('')
-    print("_X: ", _X)
+    print("partial_X: ", partial_X)
     print('')
 
-    prod_Y = producer_func(nouns, _X)
+    prod_Y = producer_func(nouns, partial_X)
     print('prod_Y: ', prod_Y)
     print('')
 
