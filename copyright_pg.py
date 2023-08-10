@@ -1,31 +1,28 @@
 
-def make_X(madlibs, nouns, S):
+def make_X(madlibs, nouns):
     X = madlibs.split()
     i = 0
 
-    for j, s in enumerate(X):
-        if s =='_':
-            X[j] = S[i]
-            i+=1
-            if i == len(S):
-                break
-    partial_X = ' '.join(X) # This is the madlibs text with only words in S are filled
-    
-    for k in range(j, len(X)):
+    for k in range(len(X)):
         if X[k] == '_':
             X[k] = nouns[i]
             i+=1
 
     X = ' '.join(X) # This is the madlibs text with all blanks are filled
 
-    return partial_X, X
+    return X
 
 
 def fill_blank(text, fill):
     return ' '.join([word if word != '_' else fill.pop(0) for word in text.split()])
 
 
-def producer_func(nouns, partial_X):
+def producer_func(nouns, madlibs, X):
+    madlibs_words = madlibs.split()
+    X_words = X.split()
+
+    partial_X = ' '.join([X_words[i] if madlibs_words[i] == "_" and i< 10 else madlibs_words[i] for i in range(len(madlibs_words))])
+
     first = nouns[3]
     second = nouns[4]
 
@@ -35,11 +32,11 @@ def producer_func(nouns, partial_X):
 
 
 def reproducer_func(madlibs, nouns):
-    first = nouns[3]
-    second = nouns[4]
-    third = nouns[5]
-    fourth = nouns[6]
-    fifth = nouns[7]
+    first = nouns[0]
+    second = nouns[1]
+    third = nouns[2]
+    fourth = nouns[3]
+    fifth = nouns[4]
 
     fill = [first, second, third, fourth, fifth]
 
@@ -53,17 +50,11 @@ def main():
     # The list of potential fill-ins
     nouns = ['dog', 'cat', 'day', 'her', 'park', 'ball', 'cat', 'school', 'like', 'hour', 'tree', 'car', 'house', 'week', 'shoe', 'beach']
 
-    S = nouns[0:3]
-    print('S', S)
-    print('')
-
-    partial_X, X = make_X(madlibs, nouns, S)
+    X = make_X(madlibs, nouns)
     print('X: ', X)
     print('')
-    print("partial_X: ", partial_X)
-    print('')
-
-    prod_Y = producer_func(nouns, partial_X)
+    
+    prod_Y = producer_func(nouns, madlibs, X)
     print('prod_Y: ', prod_Y)
     print('')
 
