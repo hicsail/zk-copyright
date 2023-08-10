@@ -48,10 +48,10 @@ def reproducer_func(madlibs, nouns):
 
 def main():
     # The Mad Libs template
-    madlibs = "I have a _ which I really _ and every _ I walk _ to the _"
+    madlibs = "I have a _ and _ , and every _ I walk _ to the _"
 
     # The list of potential fill-ins
-    nouns = ['dog', 'love', 'day', 'her', 'park', 'ball', 'cat', 'school', 'like', 'hour', 'tree', 'car', 'house', 'week', 'shoe', 'beach']
+    nouns = ['dog', 'cat', 'day', 'her', 'park', 'ball', 'cat', 'school', 'like', 'hour', 'tree', 'car', 'house', 'week', 'shoe', 'beach']
 
     S = nouns[0:3]
     print('S', S)
