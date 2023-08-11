@@ -18,11 +18,11 @@ def reproducer_func(bg):
 def main():
 
     bg = {
-    'John Keller': '111-111-1111',
-    'Jane Doe': '222-222-2222',
-    'Alice Smith': '333-333-3333',
-    'Bob Brown': '444-444-4444',
-    'Charlie Clark': '555-555-5555'
+        'John Keller': '111-111-1111',
+        'Jane Doe': '222-222-2222',
+        'Alice Smith': '333-333-3333',
+        'Bob Brown': '444-444-4444',
+        'Charlie Clark': '555-555-5555'
     }
 
     honey_entries = {

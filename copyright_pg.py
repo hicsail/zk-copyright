@@ -14,14 +14,14 @@ def make_X(madlibs, nouns):
 
 
 def fill_blank(text, fill):
-    return ' '.join([word if word != '_' else fill.pop(0) for word in text.split()])
+    return " ".join([word if word != "_" else fill.pop(0) for word in text.split()])
 
 
 def producer_func(nouns, madlibs, X):
     madlibs_words = madlibs.split()
     X_words = X.split()
 
-    partial_X = ' '.join([X_words[i] if madlibs_words[i] == "_" and i< 10 else madlibs_words[i] for i in range(len(madlibs_words))])
+    partial_X = " ".join([X_words[i] if madlibs_words[i] == "_" and i< 10 else madlibs_words[i] for i in range(len(madlibs_words))])
 
     first = nouns[3]
     second = nouns[4]
