@@ -15,7 +15,7 @@ def make_X(madlibs, nouns):
 
 def producer_func(nouns, madlibs, X):
     
-    ''' Split madlibs into a list of strings, madlibs_words
+    ''' 3. Split madlibs into a list of strings, madlibs_words
         Requirements:
             - memory 
             - mov(copy/value assignment)
@@ -38,7 +38,7 @@ def producer_func(nouns, madlibs, X):
         madlibs_words.append(madlibs[k:])
 
 
-    ''' Split X into a list of strings, X_words
+    ''' 4. Split X into a list of strings, X_words
         Requirements:
             - memory
             - mov(copy/value assignment)
@@ -61,7 +61,7 @@ def producer_func(nouns, madlibs, X):
         X_words.append(X[k:])
     
 
-    ''' Take the first three nouns from X and hard-code the rest from the nouns list
+    ''' 5. Take the first three nouns from X and hard-code the rest from the nouns list
         Requirements:
             - memory 
             - mov(copy/value assignment)
@@ -88,7 +88,7 @@ def producer_func(nouns, madlibs, X):
             assembled_list.append(madlibs_words[i])
         i += 1
 
-    # Stringify the list
+    # 6. Stringify the list - No need to be secret anymore?
     if not assembled_list:
         return ""
     
@@ -104,7 +104,7 @@ def producer_func(nouns, madlibs, X):
 
 def reproducer_func(madlibs, nouns):
         
-    # Split madlibs into a list of strings, madlibs_words
+    # 3. Split madlibs into a list of strings, madlibs_words
     madlibs_words = []
     k =0
     i = 0
@@ -120,7 +120,7 @@ def reproducer_func(madlibs, nouns):
         madlibs_words.append(madlibs[k:])
 
     
-    # Hard-Code all blanks from the nouns list
+    # 7. Hard-Code all blanks from the nouns list
     first = nouns[0]
     second = nouns[1]
     third = nouns[2]
@@ -139,7 +139,7 @@ def reproducer_func(madlibs, nouns):
             assembled_list.append(word)
 
 
-    # Stringify the list
+    # 6. Stringify the list
     if not assembled_list:
         return ""
     
