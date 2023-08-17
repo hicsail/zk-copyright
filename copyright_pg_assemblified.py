@@ -1,3 +1,22 @@
+from typing import List
+
+# Class to hold a single instruction TODO: @dataclass
+class Instr:
+    def __init__(self, opcode: int, src1: int, src2: int, dest: int):
+        self.opcode = opcode
+        self.src1 = src1
+        self.src2 = src2
+        self.dest = dest
+
+
+# Class to hold a program as multiple lists of instructions TODO: @dataclass
+class Program:
+    def __init__(self, opcode: List[int], src1: List[int], src2: List[int], dest: List[int]):
+        self.opcode: List[int] = opcode
+        self.src1: List[int] = src1
+        self.src2: List[int] = src2
+        self.dest: List[int] = dest
+
 
 def make_X(madlibs, nouns):
     X = madlibs.split()
@@ -13,10 +32,11 @@ def make_X(madlibs, nouns):
     return X
 
 # Simulate naively -TODO to be modified with prog and mem etc.
-def step(instr, nouns, madlibs, X, mem):
-
+def step(prog: Program, pc: int, nouns, madlibs, X, mem):
+    
+    instr = fetch(prog, pc)
     # 3. Split madlibs into a list of strings, madlibs_words
-    if instr == 3:
+    if instr.opcode == 3:
         # madlibs_words = []: replaced with mem[0]
         # k = 0: replaced with mem[5]
         # i = 0: replaced with mem[4]
@@ -35,7 +55,7 @@ def step(instr, nouns, madlibs, X, mem):
 
 
     # 4. Split X into a list of strings, X_words
-    elif instr == 4:
+    elif instr.opcode == 4:
         # X_words = []: replaced with mem[1]
         # k = 0: replaced with m[5]
         # i = 0: replaced with m[4]
@@ -54,7 +74,7 @@ def step(instr, nouns, madlibs, X, mem):
         mem[5] = 0
 
     # 5. Take the first three nouns from X and hard-code the rest from the nouns list
-    elif instr == 5:
+    elif instr.opcode == 5:
         first = nouns[3]
         second = nouns[4]
         fill = [first, second]
@@ -77,7 +97,7 @@ def step(instr, nouns, madlibs, X, mem):
         mem[4] = 0
 
     # 6. Stringify the list - No need to be secret anymore?
-    elif instr == 6:
+    elif instr.opcode == 6:
         if not mem[2]:
             return ""
 
@@ -92,7 +112,7 @@ def step(instr, nouns, madlibs, X, mem):
         mem[5] = 0
 
     # 7. Hard-Code all blanks from the nouns list
-    elif instr == 7:
+    elif instr.opcode == 7:
         first = nouns[0]
         second = nouns[1]
         third = nouns[2]
@@ -110,6 +130,29 @@ def step(instr, nouns, madlibs, X, mem):
             else:
                 mem[2].append(word)
 
+
+def make_program(prog): #TODO: Modify
+    length = len(prog)
+    opcode = [0 for _ in range(length)]
+    src1 = [0 for _ in range(length)]
+    src2 = [0 for _ in range(length)]
+    dest = [0 for _ in range(length)]
+
+    for i, instr in enumerate(prog):
+        opcode[i] = instr.opcode
+        src1[i] = instr.src1
+        src2[i] = instr.src2
+        dest[i] = instr.dest
+
+    return Program(opcode, src1, src2, dest)
+
+
+# Fetch an instruction from a program
+def fetch(prog: Program, pc: int): #TODO: change int to SecretInt
+    return Instr(prog.opcode[pc],
+                 prog.src1[pc],
+                 prog.src2[pc],
+                 prog.dest[pc])
 
 def main():
     # The Mad Libs template
@@ -139,11 +182,20 @@ def main():
     i = 0
     k = 0
     mem = [madlibs_words, X_words, assembled_list, result, i, k]
+    program = [Instr(3, 0, 0, 0),
+                Instr(4, 0, 0, 0),
+                Instr(5, 0, 0, 0),
+                Instr(6, 0, 0, 0),
+              ]
+    pro_prog = make_program(program)
 
-    step(3, nouns, madlibs, X, mem)
-    step(4, nouns, madlibs, X, mem)
-    step(5, nouns, madlibs, X, mem)
-    step(6, nouns, madlibs, X, mem)
+    for i in range(len(program)):
+        step(pro_prog, i, nouns, madlibs, X, mem)
+
+    # step(3, nouns, madlibs, X, mem)
+    # step(4, nouns, madlibs, X, mem)
+    # step(5, nouns, madlibs, X, mem)
+    # step(6, nouns, madlibs, X, mem)
     prod_Y = mem[3]
     print('prod_Y: ', prod_Y)
     print('')
@@ -155,12 +207,20 @@ def main():
     result = ""
     i = 0
     k = 0
-    mem = [madlibs_words, X_words, assembled_list, result, i, k]
+    repro_mem = [madlibs_words, X_words, assembled_list, result, i, k]
+    program = [Instr(3, 0, 0, 0),
+                Instr(7, 0, 0, 0),
+                Instr(6, 0, 0, 0),
+              ]
+    repro_prog = make_program(program)
 
-    step(3, nouns, madlibs, X, mem)
-    step(7, nouns, madlibs, X, mem)
-    step(6, nouns, madlibs, X, mem)
-    reprod_Y = mem[3]
+    for i in range(len(program)):
+        step(repro_prog, i, nouns, madlibs, X, repro_mem)
+
+    # step(3, nouns, madlibs, X, mem)
+    # step(7, nouns, madlibs, X, mem)
+    # step(6, nouns, madlibs, X, mem)
+    reprod_Y = repro_mem[3]
     print('reprod_Y: ', reprod_Y)
     print('')
     assert("I have a dog and cat , and every day I walk her to the park" == reprod_Y)
