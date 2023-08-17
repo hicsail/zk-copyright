@@ -18,35 +18,40 @@ def step(instr, nouns, madlibs, X, mem):
     # 3. Split madlibs into a list of strings, madlibs_words
     if instr == 3:
         # madlibs_words = []: replaced with mem[0]
-        k =0
-        i = 0
+        # k = 0: replaced with mem[5]
+        # i = 0: replaced with mem[4]
         madlibs_len = len(madlibs)
-
-        while i < madlibs_len:
-            if madlibs[i] == " ":
-                mem[0].append(madlibs[k:i])
-                k = i + 1
-            i += 1
+        while mem[4] < madlibs_len:
+            if madlibs[mem[4]] == " ":
+                mem[0].append(madlibs[mem[5]:mem[4]])
+                mem[5] = mem[4] + 1
+            mem[4] += 1
 
         if madlibs[-1] != " ":
-            mem[0].append(madlibs[k:])
+            mem[0].append(madlibs[mem[5]:])
+        
+        mem[4] = 0
+        mem[5] = 0
 
 
     # 4. Split X into a list of strings, X_words
     elif instr == 4:
         # X_words = []: replaced with mem[1]
-        k = 0
-        i = 0
+        # k = 0: replaced with m[5]
+        # i = 0: replaced with m[4]
         X_len = len(X)
 
-        while i < X_len:
-            if X[i] == " ":
-                mem[1].append(X[k:i])
-                k = i + 1
-            i += 1
+        while mem[4] < X_len:
+            if X[mem[4]] == " ":
+                mem[1].append(X[mem[5]:mem[4]])
+                mem[5] = mem[4] + 1
+            mem[4] += 1
 
         if X[-1] != " ":
-            mem[1].append(X[k:])
+            mem[1].append(X[mem[5]:])
+
+        mem[4] = 0
+        mem[5] = 0
 
     # 5. Take the first three nouns from X and hard-code the rest from the nouns list
     elif instr == 5:
@@ -58,16 +63,18 @@ def step(instr, nouns, madlibs, X, mem):
         fill_index = 0
         madlibs_words_len = len(mem[0])
 
-        i = 0
-        while i < madlibs_words_len:
-            if mem[0][i] == "_" and i < 10:
-                mem[2].append(mem[1][i])
-            elif mem[0][i] == "_":
+        # i = 0: replaced with m[4]
+        while mem[4] < madlibs_words_len:
+            if mem[0][mem[4]] == "_" and mem[4] < 10:
+                mem[2].append(mem[1][mem[4]])
+            elif mem[0][mem[4]] == "_":
                 mem[2].append(fill[fill_index])
                 fill_index += 1
             else:
-                mem[2].append(mem[0][i])
-            i += 1
+                mem[2].append(mem[0][mem[4]])
+            mem[4] += 1
+
+        mem[4] = 0
 
     # 6. Stringify the list - No need to be secret anymore?
     elif instr == 6:
@@ -76,11 +83,14 @@ def step(instr, nouns, madlibs, X, mem):
 
         mem[3] = mem[2][0]
         result_len = len(mem[2])
-        i = 1
-        while i < result_len:
-            mem[3] += " " + mem[2][i]
-            i += 1
+        mem[4] = 1
+        while mem[4] < result_len:
+            mem[3] += " " + mem[2][mem[4]]
+            mem[4] += 1
     
+        mem[4] = 0
+        mem[5] = 0
+
     # 7. Hard-Code all blanks from the nouns list
     elif instr == 7:
         first = nouns[0]
@@ -118,13 +128,17 @@ def main():
             1: X_words
             2: assembled_list
             3: result
+            4: i (index for for-loop)
+            5: k (index for inner for-loop)
     '''
 
     madlibs_words = []
     X_words = []
     assembled_list = []
     result = ""
-    mem = [madlibs_words, X_words, assembled_list, result]
+    i = 0
+    k = 0
+    mem = [madlibs_words, X_words, assembled_list, result, i, k]
 
     step(3, nouns, madlibs, X, mem)
     step(4, nouns, madlibs, X, mem)
@@ -139,7 +153,9 @@ def main():
     X_words = []
     assembled_list = []
     result = ""
-    mem = [madlibs_words, X_words, assembled_list, result]
+    i = 0
+    k = 0
+    mem = [madlibs_words, X_words, assembled_list, result, i, k]
 
     step(3, nouns, madlibs, X, mem)
     step(7, nouns, madlibs, X, mem)
