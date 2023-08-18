@@ -54,10 +54,7 @@ def step(prog: Program, pc: int, nouns, madlibs, X, mem):
 
     # 3. Split madlibs into a list of strings, madlibs_words
     if instr.opcode == 3:
-        # madlibs_words = []: replaced with mem[0]
-        # k = 0: replaced with mem[5]
-        # i = 0: replaced with mem[4]
-        # madlibs_len = len(madlibs): replaced with mem[6]
+
         while a2 < a4:
             if madlibs[a2] == a5:
                 mem[des].append(madlibs[a3:a2])
@@ -76,11 +73,7 @@ def step(prog: Program, pc: int, nouns, madlibs, X, mem):
 
     # 4. Split X into a list of strings, X_words
     elif instr.opcode == 4:
-        # X_words = []: replaced with mem[1]
-        # k = 0: replaced with m[5]
-        # i = 0: replaced with m[4]
 
-        # X_len = len(X): replaced with a4
         while a2 < a4:
             if X[a2] == a5:
                 mem[des].append(X[a3:a2])
@@ -100,17 +93,9 @@ def step(prog: Program, pc: int, nouns, madlibs, X, mem):
 
     # 5. Take the first three nouns from X and hard-code the rest from the nouns list
     elif instr.opcode == 5:
-        #fill: replaced with mem[12]
-        
-        # These are done in opcode=8
-            # mem[12].append(nouns[mem[7]])
-            # mem[12].append(nouns[mem[8]])
 
-        # assembled_list = []: replaced with mem[2]
-        # fill_index = 0: replaced with mem[5]
         madlibs_words_len = len(a1)
 
-        # i = 0: replaced with m[4]
         while a3 < madlibs_words_len:
             if a1[a3] == a6 and a3 < 10:
                 mem[des].append(a2[a3])
@@ -120,8 +105,6 @@ def step(prog: Program, pc: int, nouns, madlibs, X, mem):
             else:
                 mem[des].append(a1[a3])
             a3 += 1
-
-        a3 = 0
         '''
             des:2
             a1:mem[0]
@@ -144,8 +127,6 @@ def step(prog: Program, pc: int, nouns, madlibs, X, mem):
             mem[des] += " " + a1[a2]
             a2 += 1
     
-        a2 = 0
-        
         '''
             des:3
             a1:mem[2]
@@ -155,16 +136,6 @@ def step(prog: Program, pc: int, nouns, madlibs, X, mem):
     # 7. Hard-Code all blanks from the nouns list
     elif instr.opcode == 7:
 
-        #fill: replaced with mem[12]
-        # These are done in opcode=8
-            # mem[12].append(nouns[mem[7]])
-            # mem[12].append(nouns[mem[8]])
-            # mem[12].append(nouns[mem[9]])
-            # mem[12].append(nouns[mem[10]])
-            # mem[12].append(nouns[mem[11]])
-
-        # assembled_list = []: replaced with mem[2]
-        # fill_index = 0: replaced with mem[5]
         assembled_size = len(mem[0])
         while mem[4] < assembled_size:
             if mem[0][mem[4]] == "_":
@@ -174,9 +145,6 @@ def step(prog: Program, pc: int, nouns, madlibs, X, mem):
                 mem[2].append(mem[0][mem[4]])
             mem[4] += 1
         
-        mem[4] = 0
-        mem[5] = 0
-
     # 8. Append Value, nouns[a1] to dest
     elif instr.opcode == 8:
         mem[des].append(nouns[a1])
@@ -261,6 +229,7 @@ def main():
     '''
     #TODO: uncomment with PicoZKCompiler('picozk_test', options=['ram']):
 
+    # Producer
     madlibs_words = []
     X_words = []
     assembled_list = []
@@ -282,15 +251,17 @@ def main():
            first, second, third, fourth, fifth, fill, blank, X_len, zero, underscore]
         
     program = [Instr(3, 0, 4, 5, 6, 13, 0, 0),
-               Instr(9, 15, 0, 0, 0, 0, 0, 4),
-               Instr(9, 15, 0, 0, 0, 0, 0, 5),
-                Instr(4, 0, 4, 5, 14, 13, 0, 1),
-                Instr(9, 15, 0, 0, 0, 0, 0, 4),
-               Instr(9, 15, 0, 0, 0, 0, 0, 5),
-                Instr(8, 7, 0, 0, 0, 0, 0, 12),
-                Instr(8, 8, 0, 0, 0, 0, 0, 12),
-                Instr(5, 0, 1, 4, 5, 12, 16, 2),
-                Instr(6, 2, 4, 5, 0, 0, 0, 3),
+               Instr(9, 15, 0, 0, 0, 0, 0, 4), # Setting index i to 0
+               Instr(9, 15, 0, 0, 0, 0, 0, 5), # Setting index k to 0
+               Instr(4, 0, 4, 5, 14, 13, 0, 1),
+               Instr(9, 15, 0, 0, 0, 0, 0, 4), # Setting index i to 0
+               Instr(9, 15, 0, 0, 0, 0, 0, 5), # Setting index k to 0
+               Instr(8, 7, 0, 0, 0, 0, 0, 12),  #Assigning hard-coded noun1/2
+               Instr(8, 8, 0, 0, 0, 0, 0, 12),  #Assigning hard-coded noun2/2
+               Instr(5, 0, 1, 4, 5, 12, 16, 2),
+               Instr(9, 15, 0, 0, 0, 0, 0, 4), # Setting index i to 0
+               Instr(6, 2, 4, 5, 0, 0, 0, 3),
+               Instr(9, 15, 0, 0, 0, 0, 0, 4), # Setting index i to 0
               ]
 
     pro_prog = make_program(program)
@@ -303,6 +274,8 @@ def main():
     print('')
     assert("I have a dog and cat , and every day I walk her to the park" == prod_Y)
 
+
+    # Reproducer
     madlibs_words = []
     X_words = []
     assembled_list = []
@@ -322,14 +295,16 @@ def main():
     repro_mem = [madlibs_words, X_words, assembled_list, result, i, k, madlibs_len,
            first, second, third, fourth, fifth, fill, blank, X_len, zero, underscore]
     program = [Instr(3, 0, 4, 5, 6, 13, 0, 0),
-               Instr(9, 15, 0, 0, 0, 0, 0, 4),
-               Instr(9, 15, 0, 0, 0, 0, 0, 5),
-               Instr(8, 7, 0, 0, 0, 0, 0, 12),
-               Instr(8, 8, 0, 0, 0, 0, 0, 12),
-               Instr(8, 9, 0, 0, 0, 0, 0, 12),
-               Instr(8, 10, 0, 0, 0, 0, 0, 12),
-               Instr(8, 11, 0, 0, 0, 0, 0, 12),
+               Instr(9, 15, 0, 0, 0, 0, 0, 4), # Setting index i to 0
+               Instr(9, 15, 0, 0, 0, 0, 0, 5), # Setting index k to 0
+               Instr(8, 7, 0, 0, 0, 0, 0, 12), #Assigning hard-coded noun1/5
+               Instr(8, 8, 0, 0, 0, 0, 0, 12), #Assigning hard-coded noun2/5
+               Instr(8, 9, 0, 0, 0, 0, 0, 12), #Assigning hard-coded noun3/5
+               Instr(8, 10, 0, 0, 0, 0, 0, 12), #Assigning hard-coded noun4/5
+               Instr(8, 11, 0, 0, 0, 0, 0, 12), #Assigning hard-coded noun5/5
                Instr(7, 0, 0, 0, 0, 0, 0, 0),
+               Instr(9, 15, 0, 0, 0, 0, 0, 4), # Setting index i to 0
+               Instr(9, 15, 0, 0, 0, 0, 0, 5), # Setting index k to 0
                Instr(6, 2, 4, 5, 0, 0, 0, 3),
               ]
     repro_prog = make_program(program)
@@ -341,6 +316,7 @@ def main():
     print('reprod_Y: ', reprod_Y)
     print('')
     assert("I have a dog and cat , and every day I walk her to the park" == reprod_Y)
+
 
 if __name__ == "__main__":
     main()
