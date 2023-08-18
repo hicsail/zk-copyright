@@ -75,8 +75,8 @@ def step(prog: Program, pc: int, nouns, madlibs, X, mem):
 
     # 5. Take the first three nouns from X and hard-code the rest from the nouns list
     elif instr.opcode == 5:
-        first = nouns[3]
-        second = nouns[4]
+        first = nouns[mem[7]]
+        second = nouns[mem[8]]
         fill = [first, second]
 
         # assembled_list = []: replaced with mem[2]
@@ -113,11 +113,11 @@ def step(prog: Program, pc: int, nouns, madlibs, X, mem):
 
     # 7. Hard-Code all blanks from the nouns list
     elif instr.opcode == 7:
-        first = nouns[0]
-        second = nouns[1]
-        third = nouns[2]
-        fourth = nouns[3]
-        fifth = nouns[4]
+        first = nouns[mem[7]]
+        second = nouns[mem[8]]
+        third = nouns[mem[9]]
+        fourth = nouns[mem[10]]
+        fifth = nouns[mem[11]]
 
         fill = [first, second, third, fourth, fifth]
 
@@ -178,6 +178,11 @@ def main():
             4: i (index for for-loop)
             5: k (index for inner for-loop)
             6: madlibs_len (length of string by char)
+            7: first
+            8: second
+            9: third
+            10: fourth
+            11: fifth
     '''
     #TODO: uncomment with PicoZKCompiler('picozk_test', options=['ram']):
 
@@ -188,7 +193,10 @@ def main():
     i = 0
     k = 0
     madlibs_len = len(madlibs)
-    mem = [madlibs_words, X_words, assembled_list, result, i, k, madlibs_len]
+    first = 3
+    second = 4
+    mem = [madlibs_words, X_words, assembled_list, result, i, k, madlibs_len,
+           first, second]
     program = [Instr(3, 0, 0, 0),
                 Instr(4, 0, 0, 0),
                 Instr(5, 0, 0, 0),
@@ -211,7 +219,13 @@ def main():
     i = 0
     k = 0
     madlibs_len = len(madlibs)
-    repro_mem = [madlibs_words, X_words, assembled_list, result, i, k, madlibs_len]
+    first = 0
+    second = 1
+    third = 2
+    fourth = 3
+    fifth = 4
+    repro_mem = [madlibs_words, X_words, assembled_list, result, i, k, madlibs_len,
+           first, second, third, fourth, fifth]
     program = [Instr(3, 0, 0, 0),
                 Instr(7, 0, 0, 0),
                 Instr(6, 0, 0, 0),
