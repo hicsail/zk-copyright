@@ -121,15 +121,19 @@ def step(prog: Program, pc: int, nouns, madlibs, X, mem):
 
         fill = [first, second, third, fourth, fifth]
 
-        # assembled_list = [] 
-        fill_index = 0
-        for word in mem[0]:
-            if word == "_":
-                mem[2].append(fill[fill_index])
-                fill_index += 1
+        # assembled_list = []: replaced with mem[2]
+        # fill_index = 0: replaced with mem[5]
+        assembled_size = len(mem[0])
+        while mem[4] < assembled_size:
+            if mem[0][mem[4]] == "_":
+                mem[2].append(fill[mem[5]])
+                mem[5] += 1
             else:
-                mem[2].append(word)
-
+                mem[2].append(mem[0][mem[4]])
+            mem[4] += 1
+        
+        mem[4] = 0
+        mem[5] = 0
 
 def make_program(prog): #TODO: ZKListify
     length = len(prog)
