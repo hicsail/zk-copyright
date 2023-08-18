@@ -40,8 +40,8 @@ def step(prog: Program, pc: int, nouns, madlibs, X, mem):
         # madlibs_words = []: replaced with mem[0]
         # k = 0: replaced with mem[5]
         # i = 0: replaced with mem[4]
-        madlibs_len = len(madlibs)
-        while mem[4] < madlibs_len:
+        # madlibs_len = len(madlibs): replaced with mem[6]
+        while mem[4] < mem[6]:
             if madlibs[mem[4]] == " ":
                 mem[0].append(madlibs[mem[5]:mem[4]])
                 mem[5] = mem[4] + 1
@@ -131,7 +131,7 @@ def step(prog: Program, pc: int, nouns, madlibs, X, mem):
                 mem[2].append(word)
 
 
-def make_program(prog): #TODO: Modify
+def make_program(prog): #TODO: ZKListify
     length = len(prog)
     opcode = [0 for _ in range(length)]
     src1 = [0 for _ in range(length)]
@@ -173,7 +173,9 @@ def main():
             3: result
             4: i (index for for-loop)
             5: k (index for inner for-loop)
+            6: madlibs_len (length of string by char)
     '''
+    #TODO: uncomment with PicoZKCompiler('picozk_test', options=['ram']):
 
     madlibs_words = []
     X_words = []
@@ -181,7 +183,8 @@ def main():
     result = ""
     i = 0
     k = 0
-    mem = [madlibs_words, X_words, assembled_list, result, i, k]
+    madlibs_len = len(madlibs)
+    mem = [madlibs_words, X_words, assembled_list, result, i, k, madlibs_len]
     program = [Instr(3, 0, 0, 0),
                 Instr(4, 0, 0, 0),
                 Instr(5, 0, 0, 0),
@@ -192,10 +195,6 @@ def main():
     for i in range(len(program)):
         step(pro_prog, i, nouns, madlibs, X, mem)
 
-    # step(3, nouns, madlibs, X, mem)
-    # step(4, nouns, madlibs, X, mem)
-    # step(5, nouns, madlibs, X, mem)
-    # step(6, nouns, madlibs, X, mem)
     prod_Y = mem[3]
     print('prod_Y: ', prod_Y)
     print('')
@@ -207,7 +206,8 @@ def main():
     result = ""
     i = 0
     k = 0
-    repro_mem = [madlibs_words, X_words, assembled_list, result, i, k]
+    madlibs_len = len(madlibs)
+    repro_mem = [madlibs_words, X_words, assembled_list, result, i, k, madlibs_len]
     program = [Instr(3, 0, 0, 0),
                 Instr(7, 0, 0, 0),
                 Instr(6, 0, 0, 0),
@@ -217,9 +217,6 @@ def main():
     for i in range(len(program)):
         step(repro_prog, i, nouns, madlibs, X, repro_mem)
 
-    # step(3, nouns, madlibs, X, mem)
-    # step(7, nouns, madlibs, X, mem)
-    # step(6, nouns, madlibs, X, mem)
     reprod_Y = repro_mem[3]
     print('reprod_Y: ', reprod_Y)
     print('')
