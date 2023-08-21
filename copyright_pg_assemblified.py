@@ -40,7 +40,7 @@ def make_X(madlibs, nouns):
     return X
 
 # Simulate naively -TODO to be modified with prog and mem etc.
-def step(prog: Program, pc: int, X, mem):
+def step(prog: Program, pc: int, mem):
     
     instr = fetch(prog, pc)
     p1 = instr.src1
@@ -85,18 +85,19 @@ def step(prog: Program, pc: int, X, mem):
             p3: 5 index-k
             p4: 14 X_len
             p5: 13 (= " ")
+            p6: 19 X
         '''
 
-        if X[mem[p2]] == mem[p5]:
-            mem[des].append(X[mem[p3]:mem[p2]])
+        if mem[p6][mem[p2]] == mem[p5]:
+            mem[des].append(mem[p6][mem[p3]:mem[p2]])
             mem[p3] = mem[p2] + 1
         mem[p2] += 1
 
         if mem[p2] < mem[p4]:
             return new_pc
         else: 
-            if X[-1] != mem[p5]:
-                mem[des].append(X[mem[p3]:])
+            if mem[p6][-1] != mem[p5]:
+                mem[des].append(mem[p6][mem[p3]:])
             return new_pc + 1 
 
     # 5. Take the first three nouns from X and hard-code the rest from the nouns list
@@ -184,7 +185,7 @@ def step(prog: Program, pc: int, X, mem):
 
         '''
             des:12
-            p1:depends
+            p1: any index
             p2: 18 nouns
         '''
 
@@ -197,7 +198,7 @@ def step(prog: Program, pc: int, X, mem):
 
         '''
             des:depends
-            p1:depends
+            p1:any index
         '''
 
         mem[des] = mem[p1]
@@ -293,14 +294,15 @@ def main():
     underscore ="_" #16
     madlibs = madlibs #17
     nouns = nouns #18 
+    X = X #19 
     mem = [madlibs_words, X_words, assembled_list, result, i, k, madlibs_len,
            first, second, third, fourth, fifth, fill, blank, X_len, zero, underscore, 
-           madlibs, nouns]
+           madlibs, nouns, X]
         
     program = [Instr(3, 0, 4, 5, 6, 13, 17, 0), #  Split madlibs into a list of strings, madlibs_words
                Instr(9, 15, 0, 0, 0, 0, 0, 4),      ## Setting index i to 0
                Instr(9, 15, 0, 0, 0, 0, 0, 5),      ## Setting index k to 0
-               Instr(4, 0, 4, 5, 14, 13, 0, 1), # Split X into a list of strings, X_words
+               Instr(4, 0, 4, 5, 14, 13, 19, 1), # Split X into a list of strings, X_words
                Instr(9, 15, 0, 0, 0, 0, 0, 4),      ## Setting index i to 0
                Instr(9, 15, 0, 0, 0, 0, 0, 5),      ## Setting index k to 0
                Instr(8, 7, 18, 0, 0, 0, 0, 12),      ##Assigning hard-coded noun1/2
@@ -315,7 +317,7 @@ def main():
     pc = 0
 
     for i in range(len(program)+47+58+15+14): #TODO: FIXME un-hard-code (Step 3, 4, 5, 6)
-        pc = step(pro_prog, pc, X, mem)
+        pc = step(pro_prog, pc, mem)
 
     prod_Y = mem[3]
     print('prod_Y: ', prod_Y)
@@ -343,9 +345,10 @@ def main():
     underscore ="_" #16
     madlibs = madlibs #17 
     nouns = nouns #18
+    X = None #19 Not available for reproducer
     repro_mem = [madlibs_words, X_words, assembled_list, result, i, k, madlibs_len,
            first, second, third, fourth, fifth, fill, blank, X_len, zero, underscore, 
-           madlibs, nouns]
+           madlibs, nouns, X]
     program = [Instr(3, 0, 4, 5, 6, 13, 17, 0), #  Split madlibs into a list of strings, madlibs_words
                Instr(9, 15, 0, 0, 0, 0, 0, 4),      ## Setting index i to 0
                Instr(9, 15, 0, 0, 0, 0, 0, 5),      ## Setting index k to 0
@@ -364,7 +367,7 @@ def main():
     pc = 0
 
     for i in range(len(program)+47 + 14 + 15): #TODO: FIXME un-hard-code (Step 3, 6, 7)
-        pc = step(repro_prog, pc, X, repro_mem)
+        pc = step(repro_prog, pc, repro_mem)
 
     reprod_Y = repro_mem[3]
     print('reprod_Y: ', reprod_Y)
