@@ -52,151 +52,8 @@ def step(prog: Program, pc: int, mem):
     des = instr.dest
     new_pc = pc
 
-    
-    # 11. access more than one index in list
-    if instr.opcode == 11:
-
-        '''
-            des:target
-            p1: index of origin
-            p2: beginning index of nested list of origin
-            p3: end index of nested list of origin
-        '''
-        mem[des] = mem[p1][mem[p2]:mem[p3]]
-
-        return new_pc + 1
-
-
-    # 12. access more than one index till end of list
-    if instr.opcode == 12:
-
-        '''
-            des:target
-            p1: index of origin
-            p2: beginning index of nested list of origin
-        '''
-
-        mem[des] = mem[p1][mem[p2]:]
-
-        return new_pc + 1
-
-
-    # 13. compare values in two indexes
-    if instr.opcode == 13:
-
-        '''
-            des: target
-            p1: element 1 to compare
-            p2: element 2 to compare
-            p3: operation (0: equal, 1:not equal, 2: p1 is smaller than p2, 3: p1 is greater than p2)
-        '''
-        
-        if p3 ==0:
-            mem[des] = (mem[p1] == mem[p2])
-        elif p3 ==1:
-            mem[des] = (mem[p1] != mem[p2])
-        elif p3 ==2:
-            mem[des] = (mem[p1] < mem[p2])
-        elif p3 ==3:
-            mem[des] = (mem[p1] > mem[p2])
-        return new_pc + 1
-
-    # 15. add const
-    if instr.opcode == 15:
-
-        '''
-            des: target
-            p1: increment by
-        '''
-        mem[des] += p1
-        
-        return new_pc + 1
-
-
-    # 17. Access nested list by pointer
-    if instr.opcode == 17:
-
-        '''
-            des:target
-            p1: index of list
-            p2: pointer in memory
-        '''
-        mem[des] = mem[p1][mem[p2]]
-
-        return new_pc + 1
-    
-
-    # 18. Access nested list by constant
-    if instr.opcode == 18:
-
-        '''
-            des:target
-            p1: index of list
-            p2: constant/pointer
-        '''
-
-        mem[des] = mem[p1][p2]
-
-        return new_pc + 1
-    
-
-    # 19. cond jump
-    if instr.opcode == 19:
-
-        '''
-            p1: next pc
-        '''
-
-        return new_pc + p1
-
-            
-    # 20. cond jump
-    if instr.opcode == 20:
-
-        '''
-            p1: condition
-            p2: pc shift if True
-            p3: pc shift if False
-        '''
-        
-        if mem[p1]==True:
-            return new_pc + p2
-        else:
-            return new_pc + p3
-            
-    
-    # 21. terminal
-    if instr.opcode == 21:
-
-        return new_pc        
-
-
-    # 4. Split X into a list of strings, X_words
-    elif instr.opcode == 4:
-
-        '''
-            des:1
-            p2: 4 index-i
-            p3: 5 index-k
-            p4: 14 X_len
-            p5: 13 (= " ")
-            p6: 19 X
-        '''
-
-        if mem[p6][mem[p2]] == mem[p5]:
-            mem[des].append(mem[p6][mem[p3]:mem[p2]])
-            mem[p3] = mem[p2] + 1
-        mem[p2] += 1
-
-        if mem[p2] < mem[p4]:
-            return new_pc
-        else: 
-            if mem[p6][-1] != mem[p5]:
-                mem[des].append(mem[p6][mem[p3]:])
-            return new_pc + 1 
-
     # 5. Take the first three nouns from X and hard-code the rest from the nouns list
-    elif instr.opcode == 5:
+    if instr.opcode == 5:
 
         '''
             des:2
@@ -224,6 +81,7 @@ def step(prog: Program, pc: int, mem):
         else:
             return new_pc + 1
 
+
     # 6. Stringify the list
     elif instr.opcode == 6:
 
@@ -247,6 +105,7 @@ def step(prog: Program, pc: int, mem):
             return new_pc
         else:
             return new_pc + 1
+
 
     # 7. Hard-Code all blanks from the nouns list
     elif instr.opcode == 7:
@@ -274,6 +133,7 @@ def step(prog: Program, pc: int, mem):
         else:
             return new_pc + 1
         
+
     # 8. Append Value
     elif instr.opcode == 8:
 
@@ -285,7 +145,8 @@ def step(prog: Program, pc: int, mem):
         mem[des].append(mem[p1])
         return new_pc + 1
 
-    # 9. Assign a value to dest
+
+    # 9. Set a value to dest
     elif instr.opcode == 9:
 
         '''
@@ -296,6 +157,7 @@ def step(prog: Program, pc: int, mem):
         mem[des] = mem[p1]
 
         return new_pc + 1
+
 
     # 10. Assign a const to dest
     elif instr.opcode == 10:
@@ -308,6 +170,160 @@ def step(prog: Program, pc: int, mem):
         mem[des] = p1
 
         return new_pc + 1
+
+
+    # 11. access more than one index in list
+    elif instr.opcode == 11:
+
+        '''
+            des:target
+            p1: index of origin
+            p2: beginning index of nested list of origin
+            p3: end index of nested list of origin
+        '''
+        mem[des] = mem[p1][mem[p2]:mem[p3]]
+
+        return new_pc + 1
+
+
+    # 12. access more than one index till end of list
+    elif instr.opcode == 12:
+
+        '''
+            des:target
+            p1: index of origin
+            p2: beginning index of nested list of origin
+        '''
+
+        mem[des] = mem[p1][mem[p2]:]
+
+        return new_pc + 1
+
+
+    # 13. compare values in two indexes
+    elif instr.opcode == 13:
+
+        '''
+            des: target
+            p1: element 1 to compare
+            p2: element 2 to compare
+            p3: operation (0: equal, 1:not equal, 2: p1 is smaller than p2, 3: p1 is greater than p2)
+        '''
+        
+        if p3 ==0:
+            mem[des] = (mem[p1] == mem[p2])
+        elif p3 ==1:
+            mem[des] = (mem[p1] != mem[p2])
+        elif p3 ==2:
+            mem[des] = (mem[p1] < mem[p2])
+        elif p3 ==3:
+            mem[des] = (mem[p1] > mem[p2])
+        return new_pc + 1
+
+
+    # 14. compare value in one index with const
+    elif instr.opcode == 14:
+
+        '''
+            des: target
+            p1: element 1 to compare
+            p2: const to compare
+            p3: operation (0: equal, 1:not equal, 2: p1 is smaller than p2, 3: p1 is greater than p2)
+        '''
+        
+        if p3 ==0:
+            mem[des] = (mem[p1] == p2)
+        elif p3 ==1:
+            mem[des] = (mem[p1] != p2)
+        elif p3 ==2:
+            mem[des] = (mem[p1] < p2)
+        elif p3 ==3:
+            mem[des] = (mem[p1] > p2)
+        return new_pc + 1
+    
+
+    # 15. add const
+    elif instr.opcode == 15:
+
+        '''
+            des: target
+            p1: increment by
+        '''
+        mem[des] += p1
+        
+        return new_pc + 1
+
+
+    # 16. Set a const to dest
+    elif instr.opcode == 16:
+
+        '''
+            des:depends
+            p1:any const value
+        '''
+
+        mem[des] = p1
+
+        return new_pc + 1
+    
+
+    # 17. Access nested list by pointer
+    elif instr.opcode == 17:
+
+        '''
+            des:target
+            p1: index of list
+            p2: pointer in memory
+        '''
+
+        mem[des] = mem[p1][mem[p2]]
+
+        return new_pc + 1
+    
+
+    # 18. Access nested list by constant
+    elif instr.opcode == 18:
+
+        '''
+            des:target
+            p1: index of list
+            p2: constant/pointer
+        '''
+
+        mem[des] = mem[p1][p2]
+
+        return new_pc + 1
+    
+
+    # 19. jump
+    elif instr.opcode == 19:
+
+        '''
+            p1: next pc
+        '''
+
+        return new_pc + p1
+
+            
+    # 20. cond jump
+    elif instr.opcode == 20:
+
+        '''
+            p1: condition
+            p2: pc shift if True
+            p3: pc shift if False
+        '''
+        
+        if mem[p1]==True:
+            return new_pc + p2
+        else:
+            return new_pc + p3
+            
+    
+    # 21. terminal
+    elif instr.opcode == 21:
+
+        return new_pc        
 
 
 def make_program(prog): #TODO: ZKListify
@@ -399,9 +415,9 @@ def main():
     fourth = None #10
     fifth = None #11
     fill = [] #12
-    blank = " " #13
+    blank = None #13 TODO: Delete 
     X_len = len(X) #14
-    zero = 0 #15
+    zero = 0 #15 TODO: Delete
     underscore ="_" #16
     madlibs = madlibs #17
     nouns = nouns #18 
@@ -418,11 +434,11 @@ def main():
     program = [ 
                #  Split madlibs into a list of strings, madlibs_words
                Instr(17, 17, 4, 0, 0, 0, 0, 20),    ## Step0  #17: Assign idx4 of idx 17 (madlibs) to idx 20(bot1)
-               Instr(13, 20, 13, 0, 0, 0, 0, 21),   ## Step1  #13: Compare idx 20(bot1) and idx 13 and assign result to idx 21(bot2)
+               Instr(14, 20, " ", 0, 0, 0, 0, 21),   ## Step1  #14: Compare idx 20(bot1) and " " and assign result to idx 21(bot2)
                Instr(20, 21, 1, 5, 0, 0, 0, 0),     ## Step2  #20: Cond jump to +1/+5 if true/false
                
-               Instr(11, 17, 5, 4, 0, 0, 0, 22),    ## Step3  #11: Assign idx 5 to 4 of idx 17 to idx 22 (bot 3)
-               Instr(8, 22, 0, 0, 0, 0, 0, 0),      ## Step4  #8: append idx22 to idx 0
+               Instr(11, 17, 5, 4, 0, 0, 0, 22),    ## Step3  #11: Assign idx k/5 to i/4 of idx 17 to idx 22 (bot 3)
+               Instr(8, 22, 0, 0, 0, 0, 0, 0),      ## Step4  #8: append idx22 to idx 0 (madlibs_words)
                Instr(9, 4, 0, 0, 0, 0, 0, 5),       ## Step5  #9: Assign idx 4 (index i) to idx 5 (idx-k)
                Instr(15, 1, 0, 0, 0, 0, 0, 5),      ## Step6  #15: add 1 to idx 5 (idx-k)
                
@@ -432,27 +448,48 @@ def main():
                Instr(20, 20, -9, 1, 0, 0, 0, 0),    ## Step9 #20: jump to next or back to beginning
                
                Instr(18, 17, -1, 0, 0, 0, 0, 21),   ## Step10 #18 take last elem of idx 17(madlibs) into idx 21(bot2)
-               Instr(13, 13, 21, 1, 0, 0, 0, 22),   ## Step11 #13 Compare idx13 (" ") and idx21(bot2) to check non-equality, assign it to idx 22(bot3)
+               Instr(14, 21, " ", 1, 0, 0, 0, 22),  ## Step11 #14 Compare idx13 (" ") and idx21(bot2) to check inequality, assign it to idx 22(bot3)
+               Instr(20, 22, 1, 3, 0, 0, 0, 0),     ## Step12 #19: Cond jump to +1/+3 if true/false
 
                Instr(12, 17, 5, 0, 0, 0, 0, 22),    ## Step13 #12: Assign idx 5 till end of idx 17(madlibs) to idx 22 (bot 4)
                Instr(8, 22, 0, 0, 0, 0, 0, 0),      ## Step14 #8: append idx22 to idx 0
 
-               Instr(9, 15, 0, 0, 0, 0, 0, 4),      ## Step15 #9: Setting index i to 0
-               Instr(9, 15, 0, 0, 0, 0, 0, 5),      ## Step16 #9: Setting index k to 0
+               Instr(16, 0, 0, 0, 0, 0, 0, 4),      ## Step15 #9: Set index i to 0
+               Instr(16, 0, 0, 0, 0, 0, 0, 5),      ## Step16 #9: Set index k to 0
 
-               Instr(4, 0, 4, 5, 14, 13, 19, 1),  # Step17 #4: Split X into a list of strings, X_words
-               Instr(9, 15, 0, 0, 0, 0, 0, 4),      ## Step18 #9: Setting index i to 0
-               Instr(9, 15, 0, 0, 0, 0, 0, 5),      ## Step19 #9: Setting index k to 0
-               
                # Assigning hard-coded nouns 1 and 2
-               Instr(18, 18, 3, 0, 0, 0, 0, 20),  ## Step20 #9: Setting index i to 20 (bot1)
-               Instr(8, 20, 0, 0, 0, 0, 0, 12),   ## Step21 #8: Assigning hard-coded noun1/2
-               Instr(18, 18, 4, 0, 0, 0, 0, 20),  ## Step22 #9: Setting index i to 20 (bot1)
-               Instr(8, 20, 0, 0, 0, 0, 0, 12),   ## Step23 #8: Assigning hard-coded noun2/2
+               Instr(18, 18, 3, 0, 0, 0, 0, 20),  ## Step20 #9: Set index 3 of nouns to idx 20 (bot1)
+               Instr(8, 20, 0, 0, 0, 0, 0, 12),   ## Step21 #8: Append hard-coded noun1/2, idx 20(bot1)
+               Instr(18, 18, 4, 0, 0, 0, 0, 20),  ## Step22 #9: Set index 4 of nouns to idx 20 (bot1)
+               Instr(8, 20, 0, 0, 0, 0, 0, 12),   ## Step23 #8: Append hard-coded noun2/2, idx 20(bot1)
+
+               # Split X into a list of strings, X_words
+               Instr(17, 19, 4, 0, 0, 0, 0, 20), #Step0  #17: Assign idx4 of idx 19 (X) to idx 20(bot1)
+               Instr(14, 20, " ", 0, 0, 0, 0, 21), #Step1  #13: Compare idx 21(bot2) and idx 13 and assign result to idx 21(bot2)
+               Instr(20, 21, 1, 5, 0, 0, 0, 0), #Step2  #20: Cond jump to +1/+5 if true/false
+
+               Instr(11, 19, 5, 4, 0, 0, 0, 22), #Step3  #11: Assign idx k/5 to i/4 of idx 19 (X) to idx 22 (bot 3)
+               Instr(8, 22, 0, 0, 0, 0, 0, 1), #Step4  #8: append idx22 to idx 1 (X_words)
+               Instr(9, 4, 0, 0, 0, 0, 0, 5), #Step5  #9: Assign idx 4 (index i) to idx 5
+               Instr(15, 1, 0, 0, 0, 0, 0, 5), #Step6  #15: add 1 to idx 5
+
+               Instr(15, 1, 0, 0, 0, 0, 0, 4), #Step7  #15: add 1 to idx 4
+
+               Instr(13, 4, 14, 2, 0, 0, 0, 20), #Step8  #13: Compare idx 4 and idx 6 and assign result to idx 20(bot1)
+               Instr(20, 20, -9, 1, 0, 0, 0, 0), #Step9 #20: cond jump to next or start from the beginning of this block (-9)
+               Instr(18, 19, -1, 0, 0, 0, 0, 21),  #Step10 #18 take last elem of idx 19 into idx 21(bot2)
+               Instr(14, 21, " ", 1, 0, 0, 0, 22), #Step11 #14 Compare idx13 (" ") and idx21(bot2) to check inequality, assign it to idx 22(bot3)
+               Instr(20, 22, 1, 3, 0, 0, 0, 0),    #Step12 #20: Cond jump to +1/+3 if true/false
+
+               Instr(12, 19, 5, 0, 0, 0, 0, 22),   #Step13 #12: Assign idx 5 till end of idx 19(X) to idx 22 (bot 4)
+               Instr(8, 22, 0, 0, 0, 0, 0, 1),     #Step14 #8: append idx22 to idx 1 (X_words)
+
+               Instr(16, 0, 0, 0, 0, 0, 0, 4),      ## Step18 #9: Set index i to 0
+               Instr(16, 0, 0, 0, 0, 0, 0, 5),      ## Step19 #9: Set index k to 0
 
                # TODO: Work on following steps
                Instr(5, 0, 1, 4, 5, 12, 16, 2),   ## Step22 #5: Take the first three nouns from X and hard-code the rest from the nouns list
-               Instr(9, 15, 0, 0, 0, 0, 0, 4),    ## Step23 #9: Setting index i to 0
+               Instr(16, 0, 0, 0, 0, 0, 0, 4),    ## Step23 #9: Set index i to 0
                Instr(6, 2, 4, 0, 0, 0, 0, 3),     ## Step23 #6: Stringify the list
                Instr(21, 0, 0, 0, 0, 0, 0, 0),    ## Step24 #21: Terminal
               ]
@@ -484,7 +521,7 @@ def main():
     fourth = 3 #10
     fifth = 4 #11
     fill = [] #12
-    blank = " " #13
+    blank = " " #13 TODO: Delete
     X_len = None #14
     zero = 0 #15
     underscore ="_" #16
@@ -503,7 +540,7 @@ def main():
     program = [
                #  Split madlibs into a list of strings, madlibs_words
                Instr(17, 17, 4, 0, 0, 0, 0, 20),    ## Step0  #17: Assign idx4 of idx 17 (madlibs) to idx 20(bot1)
-               Instr(13, 20, 13, 0, 0, 0, 0, 21),   ## Step1  #13: Compare idx 20(bot1) and idx 13 and assign result to idx 21(bot2)
+               Instr(14, 20, " ", 0, 0, 0, 0, 21),  ## Step1  #14: Compare idx 20(bot1) and idx 13 (=" ") and assign result to idx 21(bot2)
                Instr(20, 21, 1, 5, 0, 0, 0, 0),     ## Step2  #20: Cond jump to +1/+5 if true/false
                
                Instr(11, 17, 5, 4, 0, 0, 0, 22),    ## Step3  #11: Assign idx 5 to 4 of idx 17 to idx 22 (bot 3)
@@ -514,10 +551,10 @@ def main():
                Instr(15, 1, 0, 0, 0, 0, 0, 4),      ## Step7  #15: add 1 to idx 4 (idx-i)
                
                Instr(13, 4, 6, 2, 0, 0, 0, 20),     ## Step8  #13: Check if idx 4 (idx-i) < idx 6 (madlibs_len), and assign result to idx 20(bot1)
-               Instr(20, 20, -9, 1, 0, 0, 0, 0),    ## Step9 #20: jump to next or back to beginning
+               Instr(20, 20, -9, 1, 0, 0, 0, 0),    ## Step9  #20: jump to next or back to beginning
                
                Instr(18, 17, -1, 0, 0, 0, 0, 21),   ## Step10 #18 take last elem of idx 17(madlibs) into idx 21(bot2)
-               Instr(13, 13, 21, 1, 0, 0, 0, 22),   ## Step11 #13 Compare idx13 (" ") and idx21(bot2) to check non-equality, assign it to idx 22(bot3)
+               Instr(14, 21, " ", 1, 0, 0, 0, 22),  ## Step11 #14 Compare idx13 (" ") and idx21(bot2) to check non-equality, assign it to idx 22(bot3)
 
                Instr(12, 17, 5, 0, 0, 0, 0, 22),    ## Step13 #12: Assign idx 5 till end of idx 17(madlibs) to idx 22 (bot 4)
                Instr(8, 22, 0, 0, 0, 0, 0, 0),      ## Step14 #8: append idx22 to idx 0
@@ -539,8 +576,8 @@ def main():
 
                #TODO: Work on following steps
                Instr(7, 4, 5, 0, 12, 16, 0, 2),   ## Step27 #7: Hard-Code all blanks from the nouns list
-               Instr(9, 15, 0, 0, 0, 0, 0, 4),      ## Step28 #9: Setting index i to 0
-               Instr(9, 15, 0, 0, 0, 0, 0, 5),      ## Step29 #9: Setting index k to 0
+               Instr(9, 15, 0, 0, 0, 0, 0, 4),    ## Step28 #9: Setting index i to 0
+               Instr(9, 15, 0, 0, 0, 0, 0, 5),    ## Step29 #9: Setting index k to 0
                Instr(6, 2, 4, 5, 0, 0, 0, 3),     ## Step30 #6: Stringify the list
                Instr(21, 0, 0, 0, 0, 0, 0, 0),    ## Step31 #21: Terminal
               ]
