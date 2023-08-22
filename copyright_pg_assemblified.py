@@ -52,64 +52,6 @@ def step(prog: Program, pc: int, mem):
     des = instr.dest
     new_pc = pc
 
-    # 3. Split madlibs into a list of strings, madlibs_words
-    if instr.opcode == 3:
-
-        '''
-            des:0
-            p2:4 index-i
-            p3:5 index-k
-            p4:6 madlibs_len
-            p5:13 (= " ")
-            p6:17 madlibs
-        '''
-
-#Step0  #17: Assign idx4 of idx 17 (madlibs) to idx 20(bot1)
-        # Instr(17, 17, 4, 0, 0, 0, 0, 20),
-#Step1  #13: Compare idx 21(bot2) and idx 13 and assign result to idx 21(bot2)
-        # Instr(13, 21, 13, 0, 0, 0, 0, 21),
-#Step2  #19: Cond jump to +1/+4 if true/false
-        # Instr(19, 21, 1, 4, 0, 0, 0, 0),
-
-#Step3  #11: Assign idx 5 to 4 of idx 17 to idx 22 (bot 3)
-        # Instr(11, 17, 5, 4, 0, 0, 0, 22),
-#Step4  #8: append idx22 to idx 0
-        # Instr(8, 22, 0, 0, 0, 0, 0, 0),
-#Step5  #9: Assign idx 4 (index i) to idx 5
-        # Instr(9, 4, 0, 0, 0, 0, 0, 5),
-#Step6  #15: add 1 to idx 5
-        # Instr(15, 1, 0, 0, 0, 0, 0, 5),
-#Step7  #15: add 1 to idx 4
-        # Instr(15, 1, 0, 0, 0, 0, 0, 4),
-
-        if mem[p6][mem[p2]] == mem[p5]:
-            mem[des].append(mem[p6][mem[p3]:mem[p2]])
-            mem[p3] = mem[p2] + 1
-        mem[p2] += 1
-
-#Step8  #13: Compare idx 4 and idx 6 and assign result to idx 20(bot1)
-        # Instr(13, 4, 6, 0, 0, 0, 0, 20),
-#Step9 #19: jump to next or start from the beginning of this block (-9)
-        # Instr(19, 20, -9, 1, 0, 0, 0, 0),
-
-        if mem[p2] < mem[p4]:
-            return new_pc
-        else: 
-#Step10 #18 take last elem of idx 17 into idx 21(bot2)
-        # Instr(18, 17, -1, 0, 0, 0, 0, 21),
-#Step11 #13 Compare idx13 and idx21 to check non-equality, assign it to idx 22(bot3)
-        # Instr(13, 13, 21, 1, 0, 0, 0, 22),
-#Step12 #19: Cond jump to +1/+3 if true/false
-        # Instr(19, 22, 1, 3, 0, 0, 0, 0),
-#Step13 #12: Assign idx 5 to 4 of idx 17 to idx 22 (bot 4)
-        # Instr(12, 17, 5, 0, 0, 0, 0, 23),
-#Step14 #8: append idx22 to idx 0
-        # Instr(8, 22, 0, 0, 0, 0, 0, 0),
-            
-            if mem[p6][-1] != mem[p5]:
-                mem[des].append(mem[p6][mem[p3]:])
-            return new_pc + 1 
-
     
     # 11. access more than one index in list
     if instr.opcode == 11:
@@ -135,7 +77,6 @@ def step(prog: Program, pc: int, mem):
         '''
 
         mem[des] = mem[p1][mem[p2]:]
-        print(" 12:", mem[des])
 
         return new_pc + 1
 
