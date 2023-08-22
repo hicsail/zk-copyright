@@ -80,7 +80,7 @@ def step(prog: Program, pc: int, mem):
             mem[p3] = mem[p2] + 1
         mem[p2] += 1
 
-        # Instr(13, 4, 6, 2, 0, 0, 0, 20),     ## Step8  #13: Check if idx 4 (idx-i) < idx 6 (madlibs_len), and assign result to idx 20(bot1)
+        # Instr(14, 4, madlibs_len, 2, 0, 0, 0, 20),     ## Step8  #14: Check if idx 4 (idx-i) < madlibs_len, and assign result to idx 20(bot1)
         # Instr(20, 20, -9, 1, 0, 0, 0, 0),    ## Step9 #20: jump to next or back to beginning
 
         if mem[p2] < mem[p4]:
@@ -535,7 +535,7 @@ def main():
                
                Instr(15, 1, 0, 0, 0, 0, 0, 4),      ## Step7  #15: add 1 to idx 4 (idx-i)
                
-               Instr(13, 4, 6, 2, 0, 0, 0, 20),     ## Step8  #13: Check if idx 4 (idx-i) < idx 6 (madlibs_len), and assign result to idx 20(bot1)
+               Instr(14, 4, madlibs_len, 2, 0, 0, 0, 20),     ## Step8  #14: Check if idx 4 (idx-i) < madlibs_len, and assign result to idx 20(bot1)
                Instr(20, 20, -9, 1, 0, 0, 0, 0),    ## Step9 #20: jump to next or back to beginning
                
                Instr(18, 17, -1, 0, 0, 0, 0, 21),   ## Step10 #18 take last elem of idx 17(madlibs) into idx 21(bot2)
@@ -593,7 +593,6 @@ def main():
 
     for i in range(n_iter):
         pc = step(pro_prog, pc, mem)
-        print(pc,": ", mem[1] )
 
     prod_Y = mem[3]
     print('prod_Y: ', prod_Y)
@@ -644,7 +643,7 @@ def main():
                
                Instr(15, 1, 0, 0, 0, 0, 0, 4),      ## Step7  #15: add 1 to idx 4 (idx-i)
                
-               Instr(13, 4, 6, 2, 0, 0, 0, 20),     ## Step8  #13: Check if idx 4 (idx-i) < idx 6 (madlibs_len), and assign result to idx 20(bot1)
+               Instr(14, 4, madlibs_len, 2, 0, 0, 0, 20),     ## Step8  #14: Check if idx 4 (idx-i) < madlibs_len, and assign result to idx 20(bot1)
                Instr(20, 20, -9, 1, 0, 0, 0, 0),    ## Step9 #20: jump to next or back to beginning
                
                Instr(18, 17, -1, 0, 0, 0, 0, 21),   ## Step10 #18 take last elem of idx 17(madlibs) into idx 21(bot2)

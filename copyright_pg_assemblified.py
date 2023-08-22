@@ -444,7 +444,7 @@ def main():
                
                Instr(15, 1, 0, 0, 0, 0, 0, 4),      ## Step7  #15: add 1 to idx 4 (idx-i)
                
-               Instr(13, 4, 6, 2, 0, 0, 0, 20),     ## Step8  #13: Check if idx 4 (idx-i) < idx 6 (madlibs_len), and assign result to idx 20(bot1)
+               Instr(14, 4, madlibs_len, 2, 0, 0, 0, 20),     ## Step8  #13: Check if idx 4 (idx-i) < idx 6 (madlibs_len), and assign result to idx 20(bot1)
                Instr(20, 20, -9, 1, 0, 0, 0, 0),    ## Step9 #20: jump to next or back to beginning
                
                Instr(18, 17, -1, 0, 0, 0, 0, 21),   ## Step10 #18 take last elem of idx 17(madlibs) into idx 21(bot2)
@@ -517,7 +517,7 @@ def main():
     result = "" #3
     i = 0 #4
     k = 0 #5
-    madlibs_len = len(madlibs) #6
+    madlibs_len = len(madlibs) #6 TODO: Delete
     first = 0 #7
     second = 1 #8
     third = 2 #9
@@ -525,7 +525,7 @@ def main():
     fifth = 4 #11
     fill = [] #12
     blank = None #13 TODO: Delete
-    X_len = None #14
+    X_len = None #14 TODO: Consider replacing with bot
     zero = 0 #15 TODO: Delete
     underscore ="_" #16 TODO: Delete after ops5 modified
     madlibs = madlibs #17 
@@ -553,7 +553,7 @@ def main():
                
                Instr(15, 1, 0, 0, 0, 0, 0, 4),      ## Step7  #15: add 1 to idx 4 (idx-i)
                
-               Instr(13, 4, 6, 2, 0, 0, 0, 20),     ## Step8  #13: Check if idx 4 (idx-i) < idx 6 (madlibs_len), and assign result to idx 20(bot1)
+               Instr(14, 4, madlibs_len, 2, 0, 0, 0, 20),     ## Step8  #13: Check if idx 4 (idx-i) < idx 6 (madlibs_len), and assign result to idx 20(bot1)
                Instr(20, 20, -9, 1, 0, 0, 0, 0),    ## Step9  #20: jump to next or back to beginning
                
                Instr(18, 17, -1, 0, 0, 0, 0, 21),   ## Step10 #18 take last elem of idx 17(madlibs) into idx 21(bot2)
