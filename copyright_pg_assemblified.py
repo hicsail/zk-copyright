@@ -418,7 +418,7 @@ def main():
     blank = None #13 TODO: Delete 
     X_len = len(X) #14
     zero = 0 #15 TODO: Delete
-    underscore ="_" #16
+    underscore ="_" #16 TODO: Delete after ops5 modified
     madlibs = madlibs #17
     nouns = nouns #18 
     X = X #19
@@ -489,8 +489,11 @@ def main():
 
                # TODO: Work on following steps
                Instr(5, 0, 1, 4, 5, 12, 16, 2),   ## Step22 #5: Take the first three nouns from X and hard-code the rest from the nouns list
+
                Instr(16, 0, 0, 0, 0, 0, 0, 4),    ## Step23 #9: Set index i to 0
+
                Instr(6, 2, 4, 0, 0, 0, 0, 3),     ## Step23 #6: Stringify the list
+
                Instr(21, 0, 0, 0, 0, 0, 0, 0),    ## Step24 #21: Terminal
               ]
 
@@ -521,10 +524,10 @@ def main():
     fourth = 3 #10
     fifth = 4 #11
     fill = [] #12
-    blank = " " #13 TODO: Delete
+    blank = None #13 TODO: Delete
     X_len = None #14
-    zero = 0 #15
-    underscore ="_" #16
+    zero = 0 #15 TODO: Delete
+    underscore ="_" #16 TODO: Delete after ops5 modified
     madlibs = madlibs #17 
     nouns = nouns #18
     X = None #19 Not available for reproducer
@@ -576,9 +579,12 @@ def main():
 
                #TODO: Work on following steps
                Instr(7, 4, 5, 0, 12, 16, 0, 2),   ## Step27 #7: Hard-Code all blanks from the nouns list
+
                Instr(9, 15, 0, 0, 0, 0, 0, 4),    ## Step28 #9: Setting index i to 0
                Instr(9, 15, 0, 0, 0, 0, 0, 5),    ## Step29 #9: Setting index k to 0
+               
                Instr(6, 2, 4, 5, 0, 0, 0, 3),     ## Step30 #6: Stringify the list
+               
                Instr(21, 0, 0, 0, 0, 0, 0, 0),    ## Step31 #21: Terminal
               ]
     repro_prog = make_program(program)

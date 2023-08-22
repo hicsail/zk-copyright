@@ -670,9 +670,12 @@ def main():
 
                #TODO: Work on following steps
                Instr(7, 4, 5, 0, 12, 16, 0, 2),   ## Step27 #7: Hard-Code all blanks from the nouns list
+
                Instr(9, 15, 0, 0, 0, 0, 0, 4),    ## Step28 #9: Setting index i to 0
                Instr(9, 15, 0, 0, 0, 0, 0, 5),    ## Step29 #9: Setting index k to 0
+               
                Instr(6, 2, 4, 5, 0, 0, 0, 3),     ## Step30 #6: Stringify the list
+               
                Instr(21, 0, 0, 0, 0, 0, 0, 0),    ## Step31 #21: Terminal
               ]
     repro_prog = make_program(program)
