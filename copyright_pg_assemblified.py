@@ -284,32 +284,6 @@ def main():
     print('')
     n_iter = 1500
 
-    ''' mem: 
-            0: madlibs_words
-            1: X_words
-            2: assembled_list
-            3: result
-            4: i (index for for-loop)
-            5: k (index for inner for-loop)
-            6: madlibs_len (length of string by char)
-            7: first
-            8: second
-            9: third
-            10: fourth
-            11: fifth
-            12: fill
-            13: " "
-            14: X_len
-            15: zero (= 0)
-            16: underscore = "_"
-            17: madlibs
-            18: nouns
-            19: X
-            20: bot1
-            21: bot2
-            22: bot3
-            23: bot4
-    '''
     #TODO: uncomment with PicoZKCompiler('picozk_test', options=['ram']):
 
     # Producer
