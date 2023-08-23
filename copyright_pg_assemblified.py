@@ -52,38 +52,8 @@ def step(prog: Program, pc: int, mem):
     des = instr.dest
     new_pc = pc
 
-    # 5. Take the first three nouns from X and hard-code the rest from the nouns list
-    if instr.opcode == 5:
-
-        '''
-            des:2
-            p1:0 (madlibs_words)
-            p2:1 X_words
-            p3:4 index-i
-            p4:5 index-k
-            p5:12 fill
-            p6:16 underscore
-        '''
-
-        madlibs_words_len = len(mem[p1])
-        
-        if mem[p1][mem[p3]] == mem[p6] and mem[p3] < 10:
-            mem[des].append(mem[p2][mem[p3]])
-        elif mem[p1][mem[p3]] == mem[p6]:
-            mem[des].append(mem[p5][mem[p4]])
-            mem[p4] += 1
-        else:
-            mem[des].append(mem[p1][mem[p3]])
-        mem[p3] += 1
-
-        if mem[p3] < madlibs_words_len:
-            return new_pc
-        else:
-            return new_pc + 1
-
-
     # 6. Stringify the list
-    elif instr.opcode == 6:
+    if instr.opcode == 6:
 
         '''
             des:3
@@ -320,10 +290,22 @@ def step(prog: Program, pc: int, mem):
             return new_pc + p3
             
     
-    # 21. terminal
+    # 21. length of 
     elif instr.opcode == 21:
+        '''
+            des: target index
+            p1: list/string to measure length
+        '''
+        mem[des] = len(mem[p1])
+        
+        return new_pc +1
+
+
+    # 22. terminal
+    elif instr.opcode == 22:
 
         return new_pc        
+
 
 
 def make_program(prog): #TODO: ZKListify
@@ -465,7 +447,7 @@ def main():
 
                # Split X into a list of strings, X_words
                Instr(17, 19, 4, 0, 0, 0, 0, 20), #Step0  #17: Assign idx4 of idx 19 (X) to idx 20(bot1)
-               Instr(14, 20, " ", 0, 0, 0, 0, 21), #Step1  #13: Compare idx 21(bot2) and idx 13 and assign result to idx 21(bot2)
+               Instr(14, 20, " ", 0, 0, 0, 0, 21), #Step1  #14: Compare idx 21(bot2) and ()" ") and assign result to idx 21(bot2)
                Instr(20, 21, 1, 5, 0, 0, 0, 0), #Step2  #20: Cond jump to +1/+5 if true/false
 
                Instr(11, 19, 5, 4, 0, 0, 0, 22), #Step3  #11: Assign idx k/5 to i/4 of idx 19 (X) to idx 22 (bot 3)
@@ -478,7 +460,7 @@ def main():
                Instr(13, 4, 14, 2, 0, 0, 0, 20), #Step8  #13: Compare idx 4 and idx 6 and assign result to idx 20(bot1)
                Instr(20, 20, -9, 1, 0, 0, 0, 0), #Step9 #20: cond jump to next or start from the beginning of this block (-9)
                Instr(18, 19, -1, 0, 0, 0, 0, 21),  #Step10 #18 take last elem of idx 19 into idx 21(bot2)
-               Instr(14, 21, " ", 1, 0, 0, 0, 22), #Step11 #14 Compare idx13 (" ") and idx21(bot2) to check inequality, assign it to idx 22(bot3)
+               Instr(14, 21, " ", 1, 0, 0, 0, 22), #Step11 #14 Compare idx21(bot2) and (" ") to check inequality, assign it to idx 22(bot3)
                Instr(20, 22, 1, 3, 0, 0, 0, 0),    #Step12 #20: Cond jump to +1/+3 if true/false
 
                Instr(12, 19, 5, 0, 0, 0, 0, 22),   #Step13 #12: Assign idx 5 till end of idx 19(X) to idx 22 (bot 4)
@@ -487,14 +469,44 @@ def main():
                Instr(16, 0, 0, 0, 0, 0, 0, 4),      ## Step18 #9: Set index i to 0
                Instr(16, 0, 0, 0, 0, 0, 0, 5),      ## Step19 #9: Set index k to 0
 
-               # TODO: Work on following steps
-               Instr(5, 0, 1, 4, 5, 12, 16, 2),   ## Step22 #5: Take the first three nouns from X and hard-code the rest from the nouns list
+                              # Take the first three nouns from X and hard-code the rest from the nouns list
+               # FIRST IF curr madlibs_words is equal to "_"
+               Instr(17, 0, 4, 0, 0, 0, 0, 20), #Step37  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 20(bot1)
+               Instr(14, 20, "_", 0, 0, 0, 0, 21), #Step38  #14: Compare idx 20(bot1) and "_" and assign result to idx 21(bot2)
+               Instr(20, 21, 1, 8, 0, 0, 0, 0), #Step39  #20: Cond jump to +1/+8 if true/false
+
+               # SECOND IF index of madlibs_words is less than 10 (idx of third fill)
+               Instr(14, 4, 10, 2, 0, 0, 0, 22), #Step40  #14: Compare idx 4(idx-i) < 10 and assign result to idx 22(bot3)
+               Instr(20, 22, 1, 3, 0, 0, 0, 0), #Step41  #20: Cond jump to +1/+3 if true/false
+
+               #IF Both TRUE (Append from X_Words)
+               Instr(17, 1, 4, 0, 0, 0, 0, 23), #Step42  #17: Assign idx4 (idx-i) of idx 1 (X_words) to idx 23(bot4)
+               Instr(19, 5, 0, 0, 0, 0, 0, 0), #Step43  #19: jump to +5
+
+               #IF only the former TRUE (Append from fill/consts)
+               Instr(17, 12, 5, 0, 0, 0, 0, 23), #Step44  #17: Assign idx5 (idx-k) of idx 12 (fill) to idx 23(bot4)
+               Instr(15, 1, 0, 0, 0, 0, 0, 5), #Step45  #15: add 1 to idx 5 (idx-k)
+               Instr(19, 2, 0, 0, 0, 0, 0, 0), #Step46  #19: jump to +2
+
+               #ELSE (Append from madlibs_words)
+               Instr(17, 0, 4, 0, 0, 0, 0, 23), #Step47  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 23(bot4)
+
+               #APPEND and INCREMENT
+               Instr(8, 23, 0, 0, 0, 0, 0, 2), #Step48  #8: append idx23(bot4) to idx 2 (X_words)
+               Instr(15, 1, 0, 0, 0, 0, 0, 4), #Step49  #15: add 1 to idx 4
+                
+               # CHECK IF ITERATE OR NEXT
+               Instr(21, 1, 0, 0, 0, 0, 0, 20), #Step50  #21: Measure a length of index1(X_words) and assign it to idx 20(bot1)
+               Instr(13, 4, 20, 2, 0, 0, 0, 21), #Step51  #14: Compare idx 4(idx-i) < idx 20(bot1) and assign result to idx 21(bot2)
+               Instr(20, 21, -15, 1, 0, 0, 0, 0), #Step52  #20: Cond jump to +1/-15 if true/false
+
+               Instr(16, 0, 0, 0, 0, 0, 0, 4),    ## Step53 #9: Set index i to 0
 
                Instr(16, 0, 0, 0, 0, 0, 0, 4),    ## Step23 #9: Set index i to 0
 
                Instr(6, 2, 4, 0, 0, 0, 0, 3),     ## Step23 #6: Stringify the list
 
-               Instr(21, 0, 0, 0, 0, 0, 0, 0),    ## Step24 #21: Terminal
+               Instr(22, 0, 0, 0, 0, 0, 0, 0),    ## Step24 #22: Terminal
               ]
 
     pro_prog = make_program(program)
@@ -527,7 +539,7 @@ def main():
     blank = None #13 TODO: Delete
     X_len = None #14 TODO: Consider replacing with bot
     zero = 0 #15 TODO: Delete
-    underscore ="_" #16 TODO: Delete after ops5 modified
+    underscore ="_" #16 TODO: Delete
     madlibs = madlibs #17 
     nouns = nouns #18
     X = None #19 Not available for reproducer
@@ -585,7 +597,7 @@ def main():
                
                Instr(6, 2, 4, 5, 0, 0, 0, 3),     ## Step30 #6: Stringify the list
                
-               Instr(21, 0, 0, 0, 0, 0, 0, 0),    ## Step31 #21: Terminal
+               Instr(22, 0, 0, 0, 0, 0, 0, 0),    ## Step31 #22: Terminal
               ]
     repro_prog = make_program(program)
 
