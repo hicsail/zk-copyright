@@ -160,6 +160,7 @@ def step(prog: Program, pc: int, mem):
         else:
             return new_pc + p3
 
+
     # 9. length of 
     elif instr.opcode == 9:
         '''
@@ -422,7 +423,7 @@ def main():
     
     pc = 0
 
-    for i in range(n_iter): #TODO: FIXME un-hard-code (Step 3, 4, 5, 6) +47*8+58+15+14
+    for i in range(n_iter):
         pc = step(pro_prog, pc, mem)
 
     prod_Y = mem[3]
