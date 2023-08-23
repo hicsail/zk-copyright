@@ -125,7 +125,7 @@ def step(prog: Program, pc: int, mem):
             mem[p3] = mem[p2] + 1
         mem[p2] += 1
 
-        # Instr(13, 4, 14, 2, 0, 0, 0, 20), #Step8  #13: Compare idx 4 and idx 6 and assign result to idx 20(bot1)
+        # Instr(13, 4, 14, 2, 0, 0, 0, 20), #Step8  #13: Compare idx 4 and idx 14 and assign result to idx 20(bot1)
         # Instr(20, 20, -9, 1, 0, 0, 0, 0), #Step9 #20: cond jump to next or start from the beginning of this block (-9)
 
         if mem[p2] < mem[p4]:
