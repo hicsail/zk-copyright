@@ -64,11 +64,11 @@ def step(prog: Program, pc: int, mem):
             p6:17 madlibs
         '''
 
-        # Instr(17, 17, 4, 0, 0, 0, 0, 20),    ## Step0  #17: Assign idx4 of idx 17 (madlibs) to idx 20(bot1)
-        # Instr(14, 20, " ", 0, 0, 0, 0, 21),   ## Step1  #14: Compare idx 20(bot1) and " " and assign result to idx 21(bot2)
+        # Instr(17, 17, 4, 0, 0, 0, 0, 20),    ## Step0  #17: Assign idx4 of idx 17 (madlibs) to idx 20(reg1)
+        # Instr(14, 20, " ", 0, 0, 0, 0, 21),   ## Step1  #14: Compare idx 20(reg1) and " " and assign result to idx 21(reg2)
         # Instr(20, 21, 1, 5, 0, 0, 0, 0),     ## Step2  #20: Cond jump to +1/+5 if true/false
         
-        # Instr(11, 17, 5, 4, 0, 0, 0, 22),    ## Step3  #11: Assign idx 5 to 4 of idx 17 to idx 22 (bot 3)
+        # Instr(11, 17, 5, 4, 0, 0, 0, 22),    ## Step3  #11: Assign idx 5 to 4 of idx 17 to idx 22 (reg 3)
         # Instr(8, 22, 0, 0, 0, 0, 0, 0),      ## Step4  #8: append idx22 to idx 0 (madlibs_words)
         # Instr(9, 4, 0, 0, 0, 0, 0, 5),       ## Step5  #9: Assign idx 4 (index i) to idx 5 (idx-k)
         # Instr(15, 1, 0, 0, 0, 0, 0, 5),      ## Step6  #15: add 1 to idx 5 (idx-k)
@@ -80,17 +80,17 @@ def step(prog: Program, pc: int, mem):
             mem[p3] = mem[p2] + 1
         mem[p2] += 1
 
-        # Instr(14, 4, madlibs_len, 2, 0, 0, 0, 20),     ## Step8  #14: Check if idx 4 (idx-i) < madlibs_len, and assign result to idx 20(bot1)
+        # Instr(14, 4, madlibs_len, 2, 0, 0, 0, 20),     ## Step8  #14: Check if idx 4 (idx-i) < madlibs_len, and assign result to idx 20(reg1)
         # Instr(20, 20, -9, 1, 0, 0, 0, 0),    ## Step9 #20: jump to next or back to beginning
 
         if mem[p2] < mem[p4]:
             return new_pc
         else: 
 
-            # Instr(18, 17, -1, 0, 0, 0, 0, 21),   ## Step10 #18 take last elem of idx 17(madlibs) into idx 21(bot2)
-            # Instr(14, 21, " ", 1, 0, 0, 0, 22),  ## Step11 #14 Compare idx13 (" ") and idx21(bot2) to check inequality, assign it to idx 22(bot3)
+            # Instr(18, 17, -1, 0, 0, 0, 0, 21),   ## Step10 #18 take last elem of idx 17(madlibs) into idx 21(reg2)
+            # Instr(14, 21, " ", 1, 0, 0, 0, 22),  ## Step11 #14 Compare idx13 (" ") and idx21(reg2) to check inequality, assign it to idx 22(reg3)
             # Instr(20, 22, 1, 3, 0, 0, 0, 0),     ## Step12 #19: Cond jump to +1/+3 if true/false
-            # Instr(12, 17, 5, 0, 0, 0, 0, 22),    ## Step13 #12: Assign idx 5 till end of idx 17(madlibs) to idx 22 (bot 4)
+            # Instr(12, 17, 5, 0, 0, 0, 0, 22),    ## Step13 #12: Assign idx 5 till end of idx 17(madlibs) to idx 22 (reg 4)
             # Instr(8, 22, 0, 0, 0, 0, 0, 0),      ## Step14 #8: append idx22 to idx 0(madlibs_words)
 
             if mem[p6][-1] != mem[p5]:
@@ -109,11 +109,11 @@ def step(prog: Program, pc: int, mem):
             p5: 13 (= " ")
             p6: 19 X
         '''
-        # Instr(17, 19, 4, 0, 0, 0, 0, 20), #Step0  #17: Assign idx4 of idx 19 (X) to idx 20(bot1)
-        # Instr(14, 20, " ", 0, 0, 0, 0, 21), #Step1  #14: Compare idx 21(bot2) and " "and assign result to idx 21(bot2)
+        # Instr(17, 19, 4, 0, 0, 0, 0, 20), #Step0  #17: Assign idx4 of idx 19 (X) to idx 20(reg1)
+        # Instr(14, 20, " ", 0, 0, 0, 0, 21), #Step1  #14: Compare idx 21(reg2) and " "and assign result to idx 21(reg2)
         # Instr(20, 21, 1, 5, 0, 0, 0, 0), #Step2  #20: Cond jump to +1/+5 if true/false
 
-        # Instr(11, 19, 5, 4, 0, 0, 0, 22), #Step3  #11: Assign idx k/5 to i/4 of idx 17 (X) to idx 22 (bot 3)
+        # Instr(11, 19, 5, 4, 0, 0, 0, 22), #Step3  #11: Assign idx k/5 to i/4 of idx 17 (X) to idx 22 (reg 3)
         # Instr(8, 22, 0, 0, 0, 0, 0, 1), #Step4  #8: append idx22 to idx 1 (X_words)
         # Instr(9, 4, 0, 0, 0, 0, 0, 5), #Step5  #9: Assign idx 4 (index i) to idx 5
         # Instr(15, 1, 0, 0, 0, 0, 0, 5), #Step6  #15: add 1 to idx 5
@@ -125,17 +125,17 @@ def step(prog: Program, pc: int, mem):
             mem[p3] = mem[p2] + 1
         mem[p2] += 1
 
-        # Instr(13, 4, 14, 2, 0, 0, 0, 20), #Step8  #13: Compare idx 4 and idx 14 and assign result to idx 20(bot1)
+        # Instr(13, 4, 14, 2, 0, 0, 0, 20), #Step8  #13: Compare idx 4 and idx 14 and assign result to idx 20(reg1)
         # Instr(20, 20, -9, 1, 0, 0, 0, 0), #Step9 #20: cond jump to next or start from the beginning of this block (-9)
 
         if mem[p2] < mem[p4]:
             return new_pc
 
-        # Instr(18, 19, -1, 0, 0, 0, 0, 21),  #Step10 #18 take last elem of idx 19 into idx 21(bot2)
-        # Instr(14, 21, " ", 1, 0, 0, 0, 22), #Step11 #14 Compare idx13 (" ") and idx21(bot2) to check inequality, assign it to idx 22(bot3)
+        # Instr(18, 19, -1, 0, 0, 0, 0, 21),  #Step10 #18 take last elem of idx 19 into idx 21(reg2)
+        # Instr(14, 21, " ", 1, 0, 0, 0, 22), #Step11 #14 Compare idx13 (" ") and idx21(reg2) to check inequality, assign it to idx 22(reg3)
         # Instr(20, 22, 1, 3, 0, 0, 0, 0),    #Step12 #20: Cond jump to +1/+3 if true/false
 
-        # Instr(12, 19, 5, 0, 0, 0, 0, 22),   #Step13 #12: Assign idx 5 till end of idx 19(X) to idx 22 (bot 4)
+        # Instr(12, 19, 5, 0, 0, 0, 0, 22),   #Step13 #12: Assign idx 5 till end of idx 19(X) to idx 22 (reg 4)
         # Instr(8, 22, 0, 0, 0, 0, 0, 1),     #Step14 #8: append idx22 to idx 1 (X_words)
 
         else: 
@@ -157,28 +157,28 @@ def step(prog: Program, pc: int, mem):
         '''
         
         # FIRST IF curr madlibs_words is equal to "_"
-        Instr(17, 0, 4, 0, 0, 0, 0, 20), #Step0  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 20(bot1)
-        Instr(14, 20, "_", 0, 0, 0, 0, 21), #Step1  #14: Compare idx 20(bot1) and "_" and assign result to idx 21(bot2)
+        Instr(17, 0, 4, 0, 0, 0, 0, 20), #Step0  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 20(reg1)
+        Instr(14, 20, "_", 0, 0, 0, 0, 21), #Step1  #14: Compare idx 20(reg1) and "_" and assign result to idx 21(reg2)
         Instr(20, 21, 1, 8, 0, 0, 0, 0), #Step2  #20: Cond jump to +1/+8 if true/false
 
         # SECOND IF index of madlibs_words is less than 10 (idx of third fill)
-        Instr(14, 4, 10, 2, 0, 0, 0, 22), #Step3  #14: Compare idx 4(idx-i) < 10 and assign result to idx 22(bot3)
+        Instr(14, 4, 10, 2, 0, 0, 0, 22), #Step3  #14: Compare idx 4(idx-i) < 10 and assign result to idx 22(reg3)
         Instr(20, 22, 1, 3, 0, 0, 0, 0), #Step4  #20: Cond jump to +1/+3 if true/false
 
-        #IF Both TRUE (Append from X_Words)
-        Instr(17, 1, 4, 0, 0, 0, 0, 23), #Step5  #17: Assign idx4 (idx-i) of idx 1 (X_words) to idx 23(bot4)
+        #IF regh TRUE (Append from X_Words)
+        Instr(17, 1, 4, 0, 0, 0, 0, 23), #Step5  #17: Assign idx4 (idx-i) of idx 1 (X_words) to idx 23(reg4)
         Instr(19, 5, 0, 0, 0, 0, 0, 0), #Step6  #19: jump to +5
 
         #IF only the former TRUE (Append from fill/consts)
-        Instr(17, 12, 5, 0, 0, 0, 0, 23), #Step7  #17: Assign idx5 (idx-k) of idx 12 (fill) to idx 23(bot4)
+        Instr(17, 12, 5, 0, 0, 0, 0, 23), #Step7  #17: Assign idx5 (idx-k) of idx 12 (fill) to idx 23(reg4)
         Instr(15, 1, 0, 0, 0, 0, 0, 5), #Step8  #15: add 1 to idx 5 (idx-k)
         Instr(19, 2, 0, 0, 0, 0, 0, 0), #Step9  #19: jump to +2
 
         #ELSE (Append from madlibs_words)
-        Instr(17, 0, 4, 0, 0, 0, 0, 23), #Step10  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 23(bot4)
+        Instr(17, 0, 4, 0, 0, 0, 0, 23), #Step10  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 23(reg4)
 
         # APPEND and INCREMENT
-        Instr(8, 23, 0, 0, 0, 0, 0, 2), #Step11  #8: append idx23(bot4) to idx 2 (X_words)
+        Instr(8, 23, 0, 0, 0, 0, 0, 2), #Step11  #8: append idx23(reg4) to idx 2 (X_words)
         Instr(15, 1, 0, 0, 0, 0, 0, 4), #Step12  #15: add 1 to idx 4
         
         if mem[p1][mem[p3]] == mem[p6] and mem[p3] < 10:
@@ -192,8 +192,8 @@ def step(prog: Program, pc: int, mem):
         
         
         # CHECK IF ITERATE OR NEXT
-        Instr(21, 1, 0, 0, 0, 0, 0, 20), #Step13  #21: Measure a length of index1(X_words) and assign it to idx 20(bot1)
-        Instr(13, 4, 20, 2, 0, 0, 0, 21), #Step14  #14: Compare idx 4(idx-i) < idx 20(bot1) and assign result to idx 21(bot2)
+        Instr(21, 1, 0, 0, 0, 0, 0, 20), #Step13  #21: Measure a length of index1(X_words) and assign it to idx 20(reg1)
+        Instr(13, 4, 20, 2, 0, 0, 0, 21), #Step14  #14: Compare idx 4(idx-i) < idx 20(reg1) and assign result to idx 21(reg2)
         Instr(20, 21, -15, 1, 0, 0, 0, 0), #Step15  #20: Cond jump to -15/+1 if true/false
 
         if mem[p3] < len(mem[p1]):
@@ -211,27 +211,27 @@ def step(prog: Program, pc: int, mem):
             p2:4 index-i
         '''
 
-        Instr(14, 4, 0, 0, 0, 0, 0, 20), #Step30  #14: Compare current index (idx 4) == 0 and assign result to idx 20(bot1)
+        Instr(14, 4, 0, 0, 0, 0, 0, 20), #Step30  #14: Compare current index (idx 4) == 0 and assign result to idx 20(reg1)
         Instr(20, 20, 1, 4, 0, 0, 0, 0), #Step1  #20: Cond jump to +1/+4 if true/false
 
         #IF TRUE
-        Instr(10, 0, 0, 0, 0, 0, 0, 21), #Step2  #10: Assign 0 to idx 21(bot2)
-        Instr(17, 2, 21, 0, 0, 0, 0, 3), #Step3  #17: Take idx21(bot2) of idx2(assembled_list) and assign it to des(3:res)
+        Instr(10, 0, 0, 0, 0, 0, 0, 21), #Step2  #10: Assign 0 to idx 21(reg2)
+        Instr(17, 2, 21, 0, 0, 0, 0, 3), #Step3  #17: Take idx21(reg2) of idx2(assembled_list) and assign it to des(3:res)
         Instr(10, 1, 0, 0, 0, 0, 0, 4), #Step4  #10: Assign 1 to idx 4(idx-i)
         
         if mem[p2] == 0:
             mem[des] = mem[p1][0]
             mem[p2] = 1
 
-        Instr(17, 2, 4, 0, 0, 0, 0, 22), #Step5  #17: Take idx 4(idx-i) of idx2(assembled_list) and assign it to idx22(bot2)
+        Instr(17, 2, 4, 0, 0, 0, 0, 22), #Step5  #17: Take idx 4(idx-i) of idx2(assembled_list) and assign it to idx22(reg2)
         Instr(15, " ", 0, 0, 0, 0, 0, 3), #Step6  #15: add " " to des(3:res)
-        Instr(23, 22, 0, 0, 0, 0, 0, 3), #Step7  #23: add idx22(bot2) to des(3:res)
+        Instr(23, 22, 0, 0, 0, 0, 0, 3), #Step7  #23: add idx22(reg2) to des(3:res)
         Instr(15, 1, 0, 0, 0, 0, 0, 4), #Step8  #15: add +1 to idx4 (index-i)
         mem[des] += " " + mem[p1][mem[p2]]
         mem[p2] += 1
     
-        Instr(21, 2, 0, 0, 0, 0, 0, 20), #Step9  #21: Measure a length of index2 (assembled_list) and assign it to idx 20(bot1)
-        Instr(13, 4, 20, 2, 0, 0, 0, 21), #Step10  #13: Compare idx 4(idx-i) < idx 20(bot1) and assign result to idx 21(bot2)
+        Instr(21, 2, 0, 0, 0, 0, 0, 20), #Step9  #21: Measure a length of index2 (assembled_list) and assign it to idx 20(reg1)
+        Instr(13, 4, 20, 2, 0, 0, 0, 21), #Step10  #13: Compare idx 4(idx-i) < idx 20(reg1) and assign result to idx 21(reg2)
         Instr(20, 21, -11, 1, 0, 0, 0, 0), #Step11  #20: Cond jump to -11/+1 if true/false
 
         result_len = len(mem[p1])
@@ -254,20 +254,20 @@ def step(prog: Program, pc: int, mem):
         '''
 
         # IF curr madlibs_words is equal to "_"
-        Instr(17, 0, 4, 0, 0, 0, 0, 20), #Step0  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 20(bot1)
-        Instr(14, 20, "_", 0, 0, 0, 0, 21), #Step1  #14: Compare idx 20(bot1) and "_" and assign result to idx 21(bot2)
+        Instr(17, 0, 4, 0, 0, 0, 0, 20), #Step0  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 20(reg1)
+        Instr(14, 20, "_", 0, 0, 0, 0, 21), #Step1  #14: Compare idx 20(reg1) and "_" and assign result to idx 21(reg2)
         Instr(20, 21, 1, 4, 0, 0, 0, 0), #Step2  #20: Cond jump to +1/+4 if true/false
 
         ## IF TRUE append fill[idx-k] to assembled_list
-        Instr(17, 12, 5, 0, 0, 0, 0, 22), #Step3  #17: Assign idx5 (idx-k) of idx 12 (fill) to idx 22(bot3)
+        Instr(17, 12, 5, 0, 0, 0, 0, 22), #Step3  #17: Assign idx5 (idx-k) of idx 12 (fill) to idx 22(reg3)
         Instr(15, 1, 0, 0, 0, 0, 0, 5), #Step4  #15: add 1 to idx 5 (idx-k)
         Instr(19, 2, 0, 0, 0, 0, 0, 0), #Step5  #19: jump to +2
 
         ## ELSE append fill[idx-k] to assembled_list
-        Instr(17, 0, 4, 0, 0, 0, 0, 22), #Step6  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 22(bot3)
+        Instr(17, 0, 4, 0, 0, 0, 0, 22), #Step6  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 22(reg3)
         
         ## Append ops & Increment
-        Instr(8, 22, 0, 0, 0, 0, 0, 2), #Step7  #8: append idx22(bot3) to idx 2 (assembled_list)
+        Instr(8, 22, 0, 0, 0, 0, 0, 2), #Step7  #8: append idx22(reg3) to idx 2 (assembled_list)
         Instr(15, 1, 0, 0, 0, 0, 0, 4), #Step8  #15: add 1 to idx 4 (idx-i)
 
 
@@ -278,8 +278,8 @@ def step(prog: Program, pc: int, mem):
             mem[des].append(mem[p3][mem[p1]])
         mem[p1] += 1
         
-        Instr(21, 0, 0, 0, 0, 0, 0, 20), #Step9  #21: Measure a length of index0 (madlibs_words) and assign it to idx 20(bot1)
-        Instr(13, 4, 20, 2, 0, 0, 0, 21), #Step10  #13: Compare idx 4(idx-i) < idx 20(bot1) and assign result to idx 21(bot2)
+        Instr(21, 0, 0, 0, 0, 0, 0, 20), #Step9  #21: Measure a length of index0 (madlibs_words) and assign it to idx 20(reg1)
+        Instr(13, 4, 20, 2, 0, 0, 0, 21), #Step10  #13: Compare idx 4(idx-i) < idx 20(reg1) and assign result to idx 21(reg2)
         Instr(20, 21, -11, 1, 0, 0, 0, 0), #Step11  #20: Cond jump to -11/+1 if true/false   
         assembled_size = len(mem[0])
         if mem[p1] < assembled_size:
@@ -571,10 +571,10 @@ def main():
             17: madlibs
             18: nouns
             19: X
-            20: bot1
-            21: bot2
-            22: bot3
-            23: bot4
+            20: reg1
+            21: reg2
+            22: reg3
+            23: reg4
     '''
     #TODO: uncomment with PicoZKCompiler('picozk_test', options=['ram']):
 
@@ -599,35 +599,35 @@ def main():
     madlibs = madlibs #17
     nouns = nouns #18 
     X = X #19
-    bot1 = None #20
-    bot2 = None #21
-    bot3 = None #22
-    bot4 = None #23
+    reg1 = None #20
+    reg2 = None #21
+    reg3 = None #22
+    reg4 = None #23
 
     mem = [madlibs_words, X_words, assembled_list, result, i, k, madlibs_len,
            first, second, third, fourth, fifth, fill, blank, X_len, zero, underscore, 
-           madlibs, nouns, X, bot1, bot2, bot3, bot4]
+           madlibs, nouns, X, reg1, reg2, reg3, reg4]
         
     program = [ 
                #  Split madlibs into a list of strings, madlibs_words
-               Instr(17, 17, 4, 0, 0, 0, 0, 20),    ## Step0  #17: Assign idx4 of idx 17 (madlibs) to idx 20(bot1)
-               Instr(14, 20, " ", 0, 0, 0, 0, 21),  ## Step1  #13: Compare idx 20(bot1) and idx 13 and assign result to idx 21(bot2)
+               Instr(17, 17, 4, 0, 0, 0, 0, 20),    ## Step0  #17: Assign idx4 of idx 17 (madlibs) to idx 20(reg1)
+               Instr(14, 20, " ", 0, 0, 0, 0, 21),  ## Step1  #13: Compare idx 20(reg1) and idx 13 and assign result to idx 21(reg2)
                Instr(20, 21, 1, 5, 0, 0, 0, 0),     ## Step2  #20: Cond jump to +1/+5 if true/false
                
-               Instr(11, 17, 5, 4, 0, 0, 0, 22),    ## Step3  #11: Assign idx 5 to 4 of idx 17 to idx 22 (bot 3)
+               Instr(11, 17, 5, 4, 0, 0, 0, 22),    ## Step3  #11: Assign idx 5 to 4 of idx 17 to idx 22 (reg 3)
                Instr(8, 22, 0, 0, 0, 0, 0, 0),      ## Step4  #8: append idx22 to idx 0
                Instr(9, 4, 0, 0, 0, 0, 0, 5),       ## Step5  #9: Assign idx 4 (index i) to idx 5 (idx-k)
                Instr(15, 1, 0, 0, 0, 0, 0, 5),      ## Step6  #15: add 1 to idx 5 (idx-k)
                
                Instr(15, 1, 0, 0, 0, 0, 0, 4),      ## Step7  #15: add 1 to idx 4 (idx-i)
                
-               Instr(14, 4, madlibs_len, 2, 0, 0, 0, 20),     ## Step8  #14: Check if idx 4 (idx-i) < madlibs_len, and assign result to idx 20(bot1)
+               Instr(14, 4, madlibs_len, 2, 0, 0, 0, 20),     ## Step8  #14: Check if idx 4 (idx-i) < madlibs_len, and assign result to idx 20(reg1)
                Instr(20, 20, -9, 1, 0, 0, 0, 0),    ## Step9 #20: jump to next or back to beginning
                
-               Instr(18, 17, -1, 0, 0, 0, 0, 21),   ## Step10 #18 take last elem of idx 17(madlibs) into idx 21(bot2)
-               Instr(14, 21, " ", 1, 0, 0, 0, 22),  ## Step11 #13 Compare idx13 (" ") and idx21(bot2) to check non-equality, assign it to idx 22(bot3)
+               Instr(18, 17, -1, 0, 0, 0, 0, 21),   ## Step10 #18 take last elem of idx 17(madlibs) into idx 21(reg2)
+               Instr(14, 21, " ", 1, 0, 0, 0, 22),  ## Step11 #13 Compare idx13 (" ") and idx21(reg2) to check non-equality, assign it to idx 22(reg3)
 
-               Instr(12, 17, 5, 0, 0, 0, 0, 22),    ## Step12 #12: Assign idx 5 till end of idx 17(madlibs) to idx 22 (bot 4)
+               Instr(12, 17, 5, 0, 0, 0, 0, 22),    ## Step12 #12: Assign idx 5 till end of idx 17(madlibs) to idx 22 (reg 4)
                Instr(8, 22, 0, 0, 0, 0, 0, 0),      ## Step13 #8: append idx22 to idx 0
 
                Instr(16, 0, 0, 0, 0, 0, 0, 4),      ## Step14 #9: Set index i to 0
@@ -635,31 +635,31 @@ def main():
 
 
                # Assigning hard-coded nouns 1 and 2
-               Instr(18, 18, 3, 0, 0, 0, 0, 20),    ## Step16 #9: Set index 3 of nouns to idx 20 (bot1)
-               Instr(8, 20, 0, 0, 0, 0, 0, 12),     ## Step17 #8: Append hard-coded noun1/2, idx 20(bot1)
-               Instr(18, 18, 4, 0, 0, 0, 0, 20),    ## Step18 #9: Set index 4 of nouns to idx 20 (bot1)
-               Instr(8, 20, 0, 0, 0, 0, 0, 12),     ## Step19 #8: Append hard-coded noun2/2, idx 20(bot1)
+               Instr(18, 18, 3, 0, 0, 0, 0, 20),    ## Step16 #9: Set index 3 of nouns to idx 20 (reg1)
+               Instr(8, 20, 0, 0, 0, 0, 0, 12),     ## Step17 #8: Append hard-coded noun1/2, idx 20(reg1)
+               Instr(18, 18, 4, 0, 0, 0, 0, 20),    ## Step18 #9: Set index 4 of nouns to idx 20 (reg1)
+               Instr(8, 20, 0, 0, 0, 0, 0, 12),     ## Step19 #8: Append hard-coded noun2/2, idx 20(reg1)
 
 
                # Split X into a list of strings, X_words
-               Instr(17, 19, 4, 0, 0, 0, 0, 20), #Step20  #17: Assign idx4 of idx 19 (X) to idx 20(bot1)
-               Instr(14, 20, " ", 0, 0, 0, 0, 21), #Step21  #14: Compare idx 21(bot2) and ()" ") and assign result to idx 21(bot2)
+               Instr(17, 19, 4, 0, 0, 0, 0, 20), #Step20  #17: Assign idx4 of idx 19 (X) to idx 20(reg1)
+               Instr(14, 20, " ", 0, 0, 0, 0, 21), #Step21  #14: Compare idx 21(reg2) and ()" ") and assign result to idx 21(reg2)
                Instr(20, 21, 1, 5, 0, 0, 0, 0), #Step22  #20: Cond jump to +1/+5 if true/false
 
-               Instr(11, 19, 5, 4, 0, 0, 0, 22), #Step23  #11: Assign idx k/5 to i/4 of idx 19 (X) to idx 22 (bot 3)
+               Instr(11, 19, 5, 4, 0, 0, 0, 22), #Step23  #11: Assign idx k/5 to i/4 of idx 19 (X) to idx 22 (reg 3)
                Instr(8, 22, 0, 0, 0, 0, 0, 1), #Step24  #8: append idx22 to idx 1 (X_words)
                Instr(9, 4, 0, 0, 0, 0, 0, 5), #Step25  #9: Assign idx 4 (index i) to idx 5
                Instr(15, 1, 0, 0, 0, 0, 0, 5), #Step26  #15: add 1 to idx 5
 
                Instr(15, 1, 0, 0, 0, 0, 0, 4), #Step27  #15: add 1 to idx 4
 
-               Instr(13, 4, 14, 2, 0, 0, 0, 20), #Step28  #13: Compare idx 4 and idx 6 and assign result to idx 20(bot1)
+               Instr(13, 4, 14, 2, 0, 0, 0, 20), #Step28  #13: Compare idx 4 and idx 6 and assign result to idx 20(reg1)
                Instr(20, 20, -9, 1, 0, 0, 0, 0), #Step29 #20: cond jump to next or start from the beginning of this block (-9)
-               Instr(18, 19, -1, 0, 0, 0, 0, 21),  #Step30 #18 take last elem of idx 19 into idx 21(bot2)
-               Instr(14, 21, " ", 1, 0, 0, 0, 22), #Step31 #14 Compare idx21(bot2) and (" ") to check inequality, assign it to idx 22(bot3)
+               Instr(18, 19, -1, 0, 0, 0, 0, 21),  #Step30 #18 take last elem of idx 19 into idx 21(reg2)
+               Instr(14, 21, " ", 1, 0, 0, 0, 22), #Step31 #14 Compare idx21(reg2) and (" ") to check inequality, assign it to idx 22(reg3)
                Instr(20, 22, 1, 3, 0, 0, 0, 0),    #Step32 #20: Cond jump to +1/+3 if true/false
 
-               Instr(12, 19, 5, 0, 0, 0, 0, 22),   #Step33 #12: Assign idx 5 till end of idx 19(X) to idx 22 (bot 4)
+               Instr(12, 19, 5, 0, 0, 0, 0, 22),   #Step33 #12: Assign idx 5 till end of idx 19(X) to idx 22 (reg 4)
                Instr(8, 22, 0, 0, 0, 0, 0, 1),     #Step34 #8: append idx22 to idx 1 (X_words)
 
                Instr(16, 0, 0, 0, 0, 0, 0, 4),      ## Step35 #9: Set index i to 0
@@ -668,54 +668,54 @@ def main():
 
                # Take the first three nouns from X and hard-code the rest from the nouns list
                ## FIRST IF curr madlibs_words is equal to "_"
-               Instr(17, 0, 4, 0, 0, 0, 0, 20), #Step37  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 20(bot1)
-               Instr(14, 20, "_", 0, 0, 0, 0, 21), #Step38  #14: Compare idx 20(bot1) and "_" and assign result to idx 21(bot2)
+               Instr(17, 0, 4, 0, 0, 0, 0, 20), #Step37  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 20(reg1)
+               Instr(14, 20, "_", 0, 0, 0, 0, 21), #Step38  #14: Compare idx 20(reg1) and "_" and assign result to idx 21(reg2)
                Instr(20, 21, 1, 8, 0, 0, 0, 0), #Step39  #20: Cond jump to +1/+8 if true/false
 
                ## SECOND IF index of madlibs_words is less than 10 (idx of third fill)
-               Instr(14, 4, 10, 2, 0, 0, 0, 22), #Step40  #14: Compare idx 4(idx-i) < 10 and assign result to idx 22(bot3)
+               Instr(14, 4, 10, 2, 0, 0, 0, 22), #Step40  #14: Compare idx 4(idx-i) < 10 and assign result to idx 22(reg3)
                Instr(20, 22, 1, 3, 0, 0, 0, 0), #Step41  #20: Cond jump to +1/+3 if true/false
 
-               ## IF Both TRUE (Append from X_Words)
-               Instr(17, 1, 4, 0, 0, 0, 0, 23), #Step42  #17: Assign idx4 (idx-i) of idx 1 (X_words) to idx 23(bot4)
+               ## IF regh TRUE (Append from X_Words)
+               Instr(17, 1, 4, 0, 0, 0, 0, 23), #Step42  #17: Assign idx4 (idx-i) of idx 1 (X_words) to idx 23(reg4)
                Instr(19, 5, 0, 0, 0, 0, 0, 0), #Step43  #19: jump to +5
 
                ## IF only the former TRUE (Append from fill/consts)
-               Instr(17, 12, 5, 0, 0, 0, 0, 23), #Step44  #17: Assign idx5 (idx-k) of idx 12 (fill) to idx 23(bot4)
+               Instr(17, 12, 5, 0, 0, 0, 0, 23), #Step44  #17: Assign idx5 (idx-k) of idx 12 (fill) to idx 23(reg4)
                Instr(15, 1, 0, 0, 0, 0, 0, 5), #Step45  #15: add 1 to idx 5 (idx-k)
                Instr(19, 2, 0, 0, 0, 0, 0, 0), #Step46  #19: jump to +2
 
                ## ELSE (Append from madlibs_words)
-               Instr(17, 0, 4, 0, 0, 0, 0, 23), #Step47  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 23(bot4)
+               Instr(17, 0, 4, 0, 0, 0, 0, 23), #Step47  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 23(reg4)
 
                ## APPEND and INCREMENT
-               Instr(8, 23, 0, 0, 0, 0, 0, 2), #Step48  #8: append idx23(bot4) to idx 2 (X_words)
+               Instr(8, 23, 0, 0, 0, 0, 0, 2), #Step48  #8: append idx23(reg4) to idx 2 (X_words)
                Instr(15, 1, 0, 0, 0, 0, 0, 4), #Step49  #15: add 1 to idx 4
                 
                ## CHECK IF ITERATE OR NEXT
-               Instr(21, 1, 0, 0, 0, 0, 0, 20), #Step50  #21: Measure a length of index1(X_words) and assign it to idx 20(bot1)
-               Instr(13, 4, 20, 2, 0, 0, 0, 21), #Step51  #14: Compare idx 4(idx-i) < idx 20(bot1) and assign result to idx 21(bot2)
+               Instr(21, 1, 0, 0, 0, 0, 0, 20), #Step50  #21: Measure a length of index1(X_words) and assign it to idx 20(reg1)
+               Instr(13, 4, 20, 2, 0, 0, 0, 21), #Step51  #14: Compare idx 4(idx-i) < idx 20(reg1) and assign result to idx 21(reg2)
                Instr(20, 21, -15, 1, 0, 0, 0, 0), #Step52  #20: Cond jump to -15/+1 if true/false
 
                Instr(16, 0, 0, 0, 0, 0, 0, 4),    ## Step53 #9: Set index i to 0
 
 
                # Stringify the list
-               Instr(14, 4, 0, 0, 0, 0, 0, 20), #Step54  #14: Compare current index (idx 4) == 0 and assign result to idx 20(bot1)
+               Instr(14, 4, 0, 0, 0, 0, 0, 20), #Step54  #14: Compare current index (idx 4) == 0 and assign result to idx 20(reg1)
                Instr(20, 20, 1, 4, 0, 0, 0, 0), #Step55  #20: Cond jump to +1/+4 if true/false
 
                ##IF TRUE
-               Instr(10, 0, 0, 0, 0, 0, 0, 21), #Step56  #10: Assign 0 to idx 21(bot2)
-               Instr(17, 2, 21, 0, 0, 0, 0, 3), #Step57  #17: Take idx21(bot2) of idx2(assembled_list) and assign it to des(3:res)
+               Instr(10, 0, 0, 0, 0, 0, 0, 21), #Step56  #10: Assign 0 to idx 21(reg2)
+               Instr(17, 2, 21, 0, 0, 0, 0, 3), #Step57  #17: Take idx21(reg2) of idx2(assembled_list) and assign it to des(3:res)
                Instr(10, 1, 0, 0, 0, 0, 0, 4), #Step58  #10: Assign 1 to idx 4(idx-i)
                 
-               Instr(17, 2, 4, 0, 0, 0, 0, 22), #Step59  #17: Take idx 4(idx-i) of idx2(assembled_list) and assign it to idx22(bot2)
+               Instr(17, 2, 4, 0, 0, 0, 0, 22), #Step59  #17: Take idx 4(idx-i) of idx2(assembled_list) and assign it to idx22(reg2)
                Instr(15, " ", 0, 0, 0, 0, 0, 3), #Step60  #15: add " " to des(3:res)
-               Instr(23, 22, 0, 0, 0, 0, 0, 3), #Step61  #23: add idx22(bot2) to des(3:res)
+               Instr(23, 22, 0, 0, 0, 0, 0, 3), #Step61  #23: add idx22(reg2) to des(3:res)
                Instr(15, 1, 0, 0, 0, 0, 0, 4), #Step62  #15: add +1 to idx4 (index-i)
             
-               Instr(21, 2, 0, 0, 0, 0, 0, 20), #Step63  #21: Measure a length of index2 (assembled_list) and assign it to idx 20(bot1)
-               Instr(13, 4, 20, 2, 0, 0, 0, 21), #Step64  #13: Compare idx 4(idx-i) < idx 20(bot1) and assign result to idx 21(bot2)
+               Instr(21, 2, 0, 0, 0, 0, 0, 20), #Step63  #21: Measure a length of index2 (assembled_list) and assign it to idx 20(reg1)
+               Instr(13, 4, 20, 2, 0, 0, 0, 21), #Step64  #13: Compare idx 4(idx-i) < idx 20(reg1) and assign result to idx 21(reg2)
                Instr(20, 21, -11, 1, 0, 0, 0, 0), #Step65  #20: Cond jump to -11/+1 if true/false
                
                Instr(22, 0, 0, 0, 0, 0, 0, 0),    ## Step66 #22: Terminal
@@ -755,35 +755,35 @@ def main():
     madlibs = madlibs #17 
     nouns = nouns #18
     X = None #19 Not available for reproducer
-    bot1 = None #20
-    bot2 = None #21
-    bot3 = None #22
-    bot4 = None #23
+    reg1 = None #20
+    reg2 = None #21
+    reg3 = None #22
+    reg4 = None #23
 
     repro_mem = [madlibs_words, X_words, assembled_list, result, i, k, madlibs_len,
            first, second, third, fourth, fifth, fill, blank, X_len, zero, underscore, 
-           madlibs, nouns, X, bot1, bot2, bot3, bot4]
+           madlibs, nouns, X, reg1, reg2, reg3, reg4]
     
     program = [
                #  Split madlibs into a list of strings, madlibs_words
-               Instr(17, 17, 4, 0, 0, 0, 0, 20),    ## Step0  #17: Assign idx4 of idx 17 (madlibs) to idx 20(bot1)
-               Instr(14, 20, " ", 0, 0, 0, 0, 21),   ## Step1  #13: Compare idx 20(bot1) and idx 13 (=" ") and assign result to idx 21(bot2)
+               Instr(17, 17, 4, 0, 0, 0, 0, 20),    ## Step0  #17: Assign idx4 of idx 17 (madlibs) to idx 20(reg1)
+               Instr(14, 20, " ", 0, 0, 0, 0, 21),   ## Step1  #13: Compare idx 20(reg1) and idx 13 (=" ") and assign result to idx 21(reg2)
                Instr(20, 21, 1, 5, 0, 0, 0, 0),     ## Step2  #20: Cond jump to +1/+5 if true/false
                
-               Instr(11, 17, 5, 4, 0, 0, 0, 22),    ## Step3  #11: Assign idx 5 to 4 of idx 17 to idx 22 (bot 3)
+               Instr(11, 17, 5, 4, 0, 0, 0, 22),    ## Step3  #11: Assign idx 5 to 4 of idx 17 to idx 22 (reg 3)
                Instr(8, 22, 0, 0, 0, 0, 0, 0),      ## Step4  #8: append idx22 to idx 0
                Instr(9, 4, 0, 0, 0, 0, 0, 5),       ## Step5  #9: Assign idx 4 (index i) to idx 5 (idx-k)
                Instr(15, 1, 0, 0, 0, 0, 0, 5),      ## Step6  #15: add 1 to idx 5 (idx-k)
                
                Instr(15, 1, 0, 0, 0, 0, 0, 4),      ## Step7  #15: add 1 to idx 4 (idx-i)
                
-               Instr(14, 4, madlibs_len, 2, 0, 0, 0, 20),     ## Step8  #14: Check if idx 4 (idx-i) < madlibs_len, and assign result to idx 20(bot1)
+               Instr(14, 4, madlibs_len, 2, 0, 0, 0, 20),     ## Step8  #14: Check if idx 4 (idx-i) < madlibs_len, and assign result to idx 20(reg1)
                Instr(20, 20, -9, 1, 0, 0, 0, 0),    ## Step9 #20: jump to next or back to beginning
                
-               Instr(18, 17, -1, 0, 0, 0, 0, 21),   ## Step10 #18 take last elem of idx 17(madlibs) into idx 21(bot2)
-               Instr(14, 21, " ", 1, 0, 0, 0, 22),   ## Step11 #13 Compare idx13 (" ") and idx21(bot2) to check non-equality, assign it to idx 22(bot3)
+               Instr(18, 17, -1, 0, 0, 0, 0, 21),   ## Step10 #18 take last elem of idx 17(madlibs) into idx 21(reg2)
+               Instr(14, 21, " ", 1, 0, 0, 0, 22),   ## Step11 #13 Compare idx13 (" ") and idx21(reg2) to check non-equality, assign it to idx 22(reg3)
 
-               Instr(12, 17, 5, 0, 0, 0, 0, 22),    ## Step13 #12: Assign idx 5 till end of idx 17(madlibs) to idx 22 (bot 4)
+               Instr(12, 17, 5, 0, 0, 0, 0, 22),    ## Step13 #12: Assign idx 5 till end of idx 17(madlibs) to idx 22 (reg 4)
                Instr(8, 22, 0, 0, 0, 0, 0, 0),      ## Step14 #8: append idx22 to idx 0
 
                Instr(9, 15, 0, 0, 0, 0, 0, 4),      ## Step15 #9: Setting index i to 0
@@ -791,38 +791,38 @@ def main():
 
 
                # Assigning hard-coded nouns 1 - 5
-               Instr(18, 18, 0, 0, 0, 0, 0, 20),  ## Step17 #9: Setting index i to 20 (bot1)
+               Instr(18, 18, 0, 0, 0, 0, 0, 20),  ## Step17 #9: Setting index i to 20 (reg1)
                Instr(8, 20, 0, 0, 0, 0, 0, 12),   ## Step18 #8: Assigning hard-coded noun1/2
-               Instr(18, 18, 1, 0, 0, 0, 0, 20),  ## Step19 #9: Setting index i to 20 (bot1)
+               Instr(18, 18, 1, 0, 0, 0, 0, 20),  ## Step19 #9: Setting index i to 20 (reg1)
                Instr(8, 20, 0, 0, 0, 0, 0, 12),   ## Step20 #8: Assigning hard-coded noun2/2
-               Instr(18, 18, 2, 0, 0, 0, 0, 20),  ## Step21 #9: Setting index i to 20 (bot1)
+               Instr(18, 18, 2, 0, 0, 0, 0, 20),  ## Step21 #9: Setting index i to 20 (reg1)
                Instr(8, 20, 0, 0, 0, 0, 0, 12),   ## Step22 #8: Assigning hard-coded noun1/2
-               Instr(18, 18, 3, 0, 0, 0, 0, 20),  ## Step23 #9: Setting index i to 20 (bot1)
+               Instr(18, 18, 3, 0, 0, 0, 0, 20),  ## Step23 #9: Setting index i to 20 (reg1)
                Instr(8, 20, 0, 0, 0, 0, 0, 12),   ## Step24 #8: Assigning hard-coded noun2/2
-               Instr(18, 18, 4, 0, 0, 0, 0, 20),  ## Step25 #9: Setting index i to 20 (bot1)
+               Instr(18, 18, 4, 0, 0, 0, 0, 20),  ## Step25 #9: Setting index i to 20 (reg1)
                Instr(8, 20, 0, 0, 0, 0, 0, 12),   ## Step26 #8: Assigning hard-coded noun2/2
 
 
                # Hard-Code all blanks from the nouns list
                ## IF curr madlibs_words is equal to "_"
-               Instr(17, 0, 4, 0, 0, 0, 0, 20), #Step27  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 20(bot1)
-               Instr(14, 20, "_", 0, 0, 0, 0, 21), #Step28  #14: Compare idx 20(bot1) and "_" and assign result to idx 21(bot2)
+               Instr(17, 0, 4, 0, 0, 0, 0, 20), #Step27  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 20(reg1)
+               Instr(14, 20, "_", 0, 0, 0, 0, 21), #Step28  #14: Compare idx 20(reg1) and "_" and assign result to idx 21(reg2)
                Instr(20, 21, 1, 4, 0, 0, 0, 0), #Step29  #20: Cond jump to +1/+4 if true/false
 
                ## IF TRUE append fill[idx-k] to assembled_list
-               Instr(17, 12, 5, 0, 0, 0, 0, 22), #Step30  #17: Assign idx5 (idx-k) of idx 12 (fill) to idx 22(bot3)
+               Instr(17, 12, 5, 0, 0, 0, 0, 22), #Step30  #17: Assign idx5 (idx-k) of idx 12 (fill) to idx 22(reg3)
                Instr(15, 1, 0, 0, 0, 0, 0, 5), #Step31  #15: add 1 to idx 5 (idx-k)
                Instr(19, 2, 0, 0, 0, 0, 0, 0), #Step32  #19: jump to +2
 
                ## ELSE append fill[idx-k] to assembled_list
-               Instr(17, 0, 4, 0, 0, 0, 0, 22), #Step33  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 22(bot3)
+               Instr(17, 0, 4, 0, 0, 0, 0, 22), #Step33  #17: Assign idx4 (idx-i) of idx 0 (madlibs_words) to idx 22(reg3)
                 
                ## Append ops & Increment
-               Instr(8, 22, 0, 0, 0, 0, 0, 2), #Step34  #8: append idx22(bot3) to idx 2 (assembled_list)
+               Instr(8, 22, 0, 0, 0, 0, 0, 2), #Step34  #8: append idx22(reg3) to idx 2 (assembled_list)
                Instr(15, 1, 0, 0, 0, 0, 0, 4), #Step35  #15: add 1 to idx 4 (idx-i)
                 
-               Instr(21, 0, 0, 0, 0, 0, 0, 20), #Step36  #21: Measure a length of index0 (madlibs_words) and assign it to idx 20(bot1)
-               Instr(13, 4, 20, 2, 0, 0, 0, 21), #Step37  #13: Compare idx 4(idx-i) < idx 20(bot1) and assign result to idx 21(bot2)
+               Instr(21, 0, 0, 0, 0, 0, 0, 20), #Step36  #21: Measure a length of index0 (madlibs_words) and assign it to idx 20(reg1)
+               Instr(13, 4, 20, 2, 0, 0, 0, 21), #Step37  #13: Compare idx 4(idx-i) < idx 20(reg1) and assign result to idx 21(reg2)
                Instr(20, 21, -11, 1, 0, 0, 0, 0), #Step38  #20: Cond jump to -11/+1 if true/false   
 
                Instr(9, 15, 0, 0, 0, 0, 0, 4),    # Step39 #9: Setting index i to 0
@@ -830,21 +830,21 @@ def main():
 
 
                # Stringify the list
-               Instr(14, 4, 0, 0, 0, 0, 0, 20), #Step41  #14: Compare current index (idx 4) == 0 and assign result to idx 20(bot1)
+               Instr(14, 4, 0, 0, 0, 0, 0, 20), #Step41  #14: Compare current index (idx 4) == 0 and assign result to idx 20(reg1)
                Instr(20, 20, 1, 4, 0, 0, 0, 0), #Step42  #20: Cond jump to +1/+4 if true/false
 
                ##IF TRUE
-               Instr(10, 0, 0, 0, 0, 0, 0, 21), #Step43  #10: Assign 0 to idx 21(bot2)
-               Instr(17, 2, 21, 0, 0, 0, 0, 3), #Step44  #17: Take idx21(bot2) of idx2(assembled_list) and assign it to des(3:res)
+               Instr(10, 0, 0, 0, 0, 0, 0, 21), #Step43  #10: Assign 0 to idx 21(reg2)
+               Instr(17, 2, 21, 0, 0, 0, 0, 3), #Step44  #17: Take idx21(reg2) of idx2(assembled_list) and assign it to des(3:res)
                Instr(10, 1, 0, 0, 0, 0, 0, 4), #Step45  #10: Assign 1 to idx 4(idx-i)
                 
-               Instr(17, 2, 4, 0, 0, 0, 0, 22), #Step46  #17: Take idx 4(idx-i) of idx2(assembled_list) and assign it to idx22(bot2)
+               Instr(17, 2, 4, 0, 0, 0, 0, 22), #Step46  #17: Take idx 4(idx-i) of idx2(assembled_list) and assign it to idx22(reg2)
                Instr(15, " ", 0, 0, 0, 0, 0, 3), #Step47  #15: add " " to des(3:res)
-               Instr(23, 22, 0, 0, 0, 0, 0, 3), #Step48  #23: add idx22(bot2) to des(3:res)
+               Instr(23, 22, 0, 0, 0, 0, 0, 3), #Step48  #23: add idx22(reg2) to des(3:res)
                Instr(15, 1, 0, 0, 0, 0, 0, 4), #Step49  #15: add +1 to idx4 (index-i)
             
-               Instr(21, 2, 0, 0, 0, 0, 0, 20), #Step50  #21: Measure a length of index2 (assembled_list) and assign it to idx 20(bot1)
-               Instr(13, 4, 20, 2, 0, 0, 0, 21), #Step51  #13: Compare idx 4(idx-i) < idx 20(bot1) and assign result to idx 21(bot2)
+               Instr(21, 2, 0, 0, 0, 0, 0, 20), #Step50  #21: Measure a length of index2 (assembled_list) and assign it to idx 20(reg1)
+               Instr(13, 4, 20, 2, 0, 0, 0, 21), #Step51  #13: Compare idx 4(idx-i) < idx 20(reg1) and assign result to idx 21(reg2)
                Instr(20, 21, -11, 1, 0, 0, 0, 0), #Step52  #20: Cond jump to -11/+1 if true/false
                
                Instr(22, 0, 0, 0, 0, 0, 0, 0),    # Step53 #22: Terminal
