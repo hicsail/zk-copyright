@@ -373,7 +373,7 @@ def main():
 
 
         # END
-               Instr(-1, 0, 0, 0, 0, 0),  ## Step67  #-1: Terminal
+               Instr(-1, 0, 0, 0, 0, 0),  ## Step66  #-1: Terminal
               ]
 
     pro_prog = make_program(program)
@@ -485,25 +485,25 @@ def main():
         # Stringify the assembled_list into result
                
             ## Only IF idx-i == 0: Append assembled_list[0] to result
-               Instr(3, 9, 0, 0, 8, 0),   ## Step55  #3: Compare current index-i (idx 9) == 0 and assign result to idx 8(bot1)
-               Instr(4, 1, 3, 8, 0, 1),   ## Step56  #4: Cond jump to +1/+4 if true/false
-               Instr(7, 5, 0, 0, 6, 0),   ## Step57  #7: Take idx 8(bot1) of idx5(assembled_list) and assign it to des(6:result)
-               Instr(1, 1, 0, 0, 9, 0),   ## Step58  #1: Assign 1 to idx 9(idx-i)
+               Instr(3, 9, 0, 0, 8, 0),   ## Step41  #3: Compare current index-i (idx 9) == 0 and assign result to idx 8(bot1)
+               Instr(4, 1, 3, 8, 0, 1),   ## Step42  #4: Cond jump to +1/+4 if true/false
+               Instr(7, 5, 0, 0, 6, 0),   ## Step43  #7: Take idx 8(bot1) of idx5(assembled_list) and assign it to des(6:result)
+               Instr(1, 1, 0, 0, 9, 0),   ## Step44  #1: Assign 1 to idx 9(idx-i)
                
             ## Append " " +  assembled_list[idx-i] to result
-               Instr(7, 5, 9, 0, 8, 1),   ## Step59  #7: Take idx 9(idx-i) of idx5 (assembled_list) and assign it to idx8(bot1)
-               Instr(2, " ", 0, 0, 6, 0), ## Step60  #2: add " " to des(6:res)
-               Instr(2, 8, 0, 0, 6, 1),   ## Step61  #2: add idx8(bot1) to des(6:res)
-               Instr(2, 1, 0, 0, 9, 0),   ## Step62  #2: add +1 to idx9 (index-i)
+               Instr(7, 5, 9, 0, 8, 1),   ## Step45  #7: Take idx 9(idx-i) of idx5 (assembled_list) and assign it to idx8(bot1)
+               Instr(2, " ", 0, 0, 6, 0), ## Step46  #2: add " " to des(6:res)
+               Instr(2, 8, 0, 0, 6, 1),   ## Step47  #2: add idx8(bot1) to des(6:res)
+               Instr(2, 1, 0, 0, 9, 0),   ## Step48  #2: add +1 to idx9 (index-i)
             
             ## Determine whether or not to iterate over again depending idx-i< len(assembled_list)
-               Instr(5, 5, 0, 0, 8, 0),   ## Step63  #9: Measure a length of index5 (assembled_list) and assign it to idx 8(bot1)
-               Instr(3, 9, 8, 2, 8, 1),   ## Step64  #3: Compare idx 9(idx-i) < idx 8(bot1) and assign result to idx 8(bot1)
-               Instr(4, -10, 1, 8, 0, 1), ## Step65  #4: Cond jump to -10/+1 if true/false
+               Instr(5, 5, 0, 0, 8, 0),   ## Step49  #9: Measure a length of index5 (assembled_list) and assign it to idx 8(bot1)
+               Instr(3, 9, 8, 2, 8, 1),   ## Step50  #3: Compare idx 9(idx-i) < idx 8(bot1) and assign result to idx 8(bot1)
+               Instr(4, -10, 1, 8, 0, 1), ## Step51  #4: Cond jump to -10/+1 if true/false
 
 
         # END
-               Instr(-1, 0, 0, 0, 0, 0),  ## Step67  #-1: Terminal
+               Instr(-1, 0, 0, 0, 0, 0),  ## Step52  #-1: Terminal
               ]
     repro_prog = make_program(program)
 
