@@ -233,7 +233,7 @@ def main():
     nouns = nouns #1
     X = X #2
     
-    madlibs_words = [] #3
+    madlibs_words = [] #3 TODO: Comes for free
     X_words = [] #4
     assembled_list = [] #5
     result = "" #6
@@ -388,7 +388,8 @@ def main():
     print('')
     assert("I have a dog and cat , and every day I walk her to the park" == prod_Y)
 
-
+    #TODO: Cost at most
+    
     # Reproducer
     madlibs = madlibs #0
     nouns = nouns #1
