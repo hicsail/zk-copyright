@@ -36,7 +36,7 @@ def make_X(madlibs, nouns):
     return X
 
 
-def step(prog: Program, pc: int, mem):
+def step(prog: Program, pc: int, mem: list, weight: int):
     
     instr = fetch(prog, pc)
     p1 = instr.src1
@@ -58,8 +58,8 @@ def step(prog: Program, pc: int, mem):
             mem[des] = p1
         elif imm ==1:
             mem[des] = mem[p1]
-
-        return new_pc + 1
+        
+        return new_pc + 1, weight +1
 
 
     # 2. add const/mem[val] to des
@@ -73,8 +73,8 @@ def step(prog: Program, pc: int, mem):
             mem[des] += p1
         elif imm ==1:
             mem[des] += mem[p1]
-        
-        return new_pc + 1
+
+        return new_pc + 1, weight +1
 
 
     # 3. compare value in one index with const
@@ -100,7 +100,8 @@ def step(prog: Program, pc: int, mem):
             mem[des] = (mem[p1] < p2)
         elif p3 ==3:
             mem[des] = (mem[p1] > p2)
-        return new_pc + 1
+
+        return new_pc + 1, weight +1
 
             
     # 4. jump or cond-jump
@@ -113,22 +114,23 @@ def step(prog: Program, pc: int, mem):
         '''
 
         if imm == 0:
-            return new_pc + p1
+            return new_pc + p1, weight +1
         elif mem[p3]==True:
-            return new_pc + p1
+            return new_pc + p1, weight +1
         else:
-            return new_pc + p2
+            return new_pc + p2, weight +1
 
 
     # 5. length of 
     elif instr.opcode == 5:
+
         '''
             des: target index
             p1: list/string to measure length
         '''
         mem[des] = len(mem[p1])
         
-        return new_pc +1
+        return new_pc + 1, weight +1
     
 
     # 6. access more than one index in list
@@ -145,7 +147,7 @@ def step(prog: Program, pc: int, mem):
         elif imm == 1:
             mem[des] = mem[p1][mem[p2]:]
 
-        return new_pc + 1
+        return new_pc + 1, weight +1
         
 
     # 7. Access nested list by constant/pointer
@@ -161,7 +163,7 @@ def step(prog: Program, pc: int, mem):
         elif imm == 1:
             mem[des] = mem[p1][mem[p2]]
 
-        return new_pc + 1
+        return new_pc + 1, weight +1
 
 
     # 8. Append Value
@@ -172,13 +174,13 @@ def step(prog: Program, pc: int, mem):
             p1: any index
         '''
         mem[des].append(mem[p1])
-        return new_pc + 1
+        return new_pc + 1, weight +1
    
 
     # -1. terminal
     elif instr.opcode == -1:
 
-        return new_pc        
+        return new_pc, weight
 
 
 def make_program(prog): #TODO: ZKListify
@@ -224,7 +226,6 @@ def main():
     n_iter = 1500
     fillup = 10
     X_len=len(X)
-    mad_len=len(madlibs)
 
     #TODO: uncomment with PicoZKCompiler('picozk_test', options=['ram']):
 
@@ -233,7 +234,7 @@ def main():
     nouns = nouns #1
     X = X #2
     
-    madlibs_words = [] #3
+    madlibs_words = madlibs.split() #3
     X_words = [] #4
     assembled_list = [] #5
     result = "" #6
@@ -249,35 +250,6 @@ def main():
            reg1, reg2, reg3, reg4]
         
     program = [ 
-        #  Making madlibs_words (a list of strings) by spliting madlibs into words
-
-            ## Only IF madlibs[curr] (char) == " ": Append madlibs[idx-k : idx-i] (from last blank to current blank = word) to madlibs_words
-               Instr(7, 0, 9, 0, 8, 1),       ## Step0  #7: Assign idx9 (idx-i) of idx 0(madlibs) to idx 8(reg1)
-               Instr(3, 8, " ", 0, 8, 0),     ## Step1  #3: Compare idx 8(reg1) == " " and assign result to idx 8(reg1)
-               Instr(4, 1, 5, 8, 0, 1),       ## Step2  #4: Cond jump to +1/+5 if true/false
-
-               Instr(6, 0, 10, 9, 8, 0),      ## Step3  #6: Assign idx 10 to 9 of idx 0 (madlibs) to idx 8 (reg1)
-               Instr(8, 8, 0, 0, 3, 0),       ## Step4  #14: append idx8 to idx 3 (madlibs_words)
-               Instr(1, 9, 0, 0, 10, 1),      ## Step5  #1: Assign idx 9 (index i) to idx 10 (idx-k)
-               Instr(2, 1, 0, 0, 10, 0),      ## Step6  #2: add 1 to idx 10 (idx-k)
-
-               Instr(2, 1, 0, 0, 9, 0),       ## Step7  #2: add 1 to idx 9 (idx-i)
-               
-            ## Determine whether or not to iterate over again depending idx-i< len(madlibs_len)
-               Instr(3, 9, mad_len, 2, 8, 0), ## Step8  #3: Check if idx 9 (idx-i) < madlibs_len, and assign result to idx 8(reg1)
-               Instr(4, -9, 1, 8, 0, 1),      ## Step9  #4: jump to next or back to beginning
-               
-            ## Only IF last elem of madlibs != " " (if string not ending with blank): Append madlibs[k:] (the last word) to madlibs_words
-               Instr(7, 0, -1, 0, 8, 0),      ## Step10  #7: take last elem of idx 0(madlibs) into idx 8(reg1)
-               Instr(3, 8, " ", 1, 8, 0),     ## Step11  #3: Compare idx8(reg1) != " ", assign it to idx 8(reg1)
-               Instr(4, 1, 3, 8, 0, 1),       ## Step12  #4: Cond jump to +1/+3 if true/false
-
-               Instr(6, 0, 10, 0, 8, 1),      ## Step13  #6: Assign idx 10 till end of idx 0(madlibs) to idx 8 (reg1)
-               Instr(8, 8, 0, 0, 3, 0),       ## Step14  #8: append idx8 (reg1) to idx 3(madlibs)
-
-               Instr(1, 0, 0, 0, 9, 0),       ## Step15  #1: Set idx9(index-i) to 0
-               Instr(1, 0, 0, 0, 10, 0),      ## Step16  #1: Set idx10(index-k) to 0
-
 
         # Make a fill list from hard-coded nouns 1 and 2
 
@@ -379,14 +351,16 @@ def main():
     pro_prog = make_program(program)
     
     pc = 0
+    weight = 0
 
     for i in range(n_iter):
-        pc = step(pro_prog, pc, mem)
+        pc, weight = step(pro_prog, pc, mem, weight)
 
     prod_Y = mem[6]
     print('prod_Y: ', prod_Y)
     print('')
     assert("I have a dog and cat , and every day I walk her to the park" == prod_Y)
+    assert(weight < n_iter)
 
 
     # Reproducer
@@ -394,7 +368,7 @@ def main():
     nouns = nouns #1
     X = None #2 Not available for reproducer
     
-    madlibs_words = [] #3
+    madlibs_words = madlibs.split() #3
     X_words = None #4 Not available for reproducer
     assembled_list = [] #5
     result = "" #6
@@ -410,35 +384,6 @@ def main():
            reg1, reg2, reg3, reg4]
     
     program = [
-        #  Making madlibs_words (a list of strings) by spliting madlibs into words
-
-            ## Only IF madlibs[curr] (char) == " ": Append madlibs[idx-k : idx-i] (from last blank to current blank = word) to madlibs_words
-               Instr(7, 0, 9, 0, 8, 1),       ## Step0  #7: Assign idx9 (idx-i) of idx 0(madlibs) to idx 8(reg1)
-               Instr(3, 8, " ", 0, 8, 0),     ## Step1  #3: Compare idx 8(reg1) == " " and assign result to idx 8(reg1)
-               Instr(4, 1, 5, 8, 0, 1),       ## Step2  #4: Cond jump to +1/+5 if true/false
-
-               Instr(6, 0, 10, 9, 8, 0),      ## Step3  #6: Assign idx 10 to 9 of idx 0 (madlibs) to idx 8 (reg1)
-               Instr(8, 8, 0, 0, 3, 0),       ## Step4  #14: append idx8 to idx 3 (madlibs_words)
-               Instr(1, 9, 0, 0, 10, 1),      ## Step5  #1: Assign idx 9 (index i) to idx 10 (idx-k)
-               Instr(2, 1, 0, 0, 10, 0),      ## Step6  #2: add 1 to idx 10 (idx-k)
-
-               Instr(2, 1, 0, 0, 9, 0),       ## Step7  #2: add 1 to idx 9 (idx-i)
-               
-            ## Determine whether or not to iterate over again depending idx-i< len(madlibs_len)
-               Instr(3, 9, mad_len, 2, 8, 0), ## Step8  #3: Check if idx 9 (idx-i) < madlibs_len, and assign result to idx 8(reg1)
-               Instr(4, -9, 1, 8, 0, 1),      ## Step9  #4: jump to next or back to beginning
-               
-            ## Only IF last elem of madlibs != " " (if string not ending with blank): Append madlibs[k:] (the last word) to madlibs_words
-               Instr(7, 0, -1, 0, 8, 0),      ## Step10  #7: take last elem of idx 0(madlibs) into idx 8(reg1)
-               Instr(3, 8, " ", 1, 8, 0),     ## Step11  #3: Compare idx8(reg1) != " ", assign it to idx 8(reg1)
-               Instr(4, 1, 3, 8, 0, 1),       ## Step12  #4: Cond jump to +1/+3 if true/false
-
-               Instr(6, 0, 10, 0, 8, 1),      ## Step13  #6: Assign idx 10 till end of idx 0(madlibs) to idx 8 (reg1)
-               Instr(8, 8, 0, 0, 3, 0),       ## Step14  #8: append idx8 (reg1) to idx 3(madlibs)
-
-               Instr(1, 0, 0, 0, 9, 0),       ## Step15  #1: Set idx9(index-i) to 0
-               Instr(1, 0, 0, 0, 10, 0),      ## Step16  #1: Set idx10(index-k) to 0
-
 
         # Make a fill list by appending hard-coded nouns 1 - 5
 
@@ -508,15 +453,16 @@ def main():
     repro_prog = make_program(program)
 
     pc = 0
+    weight = 0
 
     for i in range(n_iter):
-        pc = step(repro_prog, pc, repro_mem)
+        pc, weight = step(repro_prog, pc, repro_mem, weight)
         
     reprod_Y = repro_mem[6]
     print('reprod_Y: ', reprod_Y)
     print('')
     assert("I have a dog and cat , and every day I walk her to the park" == reprod_Y)
-
+    assert(weight < n_iter)
 
 if __name__ == "__main__":
     main()
