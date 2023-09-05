@@ -44,37 +44,40 @@ orig="/code/"
 cp $orig$file.py $dir$file.py
 
 
-name=$target/$file$underscore$prime_fam$underscore$size
+# Refresh the directory
+rm -r irs
+mkdir -p irs
 
-rel="picozk_test.rel"
-wit0="picozk_test.type0.wit"
-ins0="picozk_test.type0.ins"
-wit1="picozk_test.type1.wit"
-ins1="picozk_test.type1.ins"
-wit2="picozk_test.type2.wit"
-ins2="picozk_test.type2.ins"
-
-
-[ -e $rel  ] && rm $rel
-[ -e $wit0  ] && rm $wit0
-[ -e $ins0 ] && rm $ins0
-[ -e $wit1  ] && rm $wit1
-[ -e $ins1 ] && rm $ins1
-[ -e $wit2  ] && rm $wit2
-[ -e $ins2 ] && rm $ins2
 
 # Actual Execution
-
 echo "Running $file ....";
 
-if python3 $dir$file.py
-    then
-        if wtk-firealarm $rel $wit0 $ins0 $wit1 $ins1 $wit2 $ins2
+python3 $dir$file.py
+dirlist=`ls irs`
+echo $dirlist
+
+# Creat dir
+mkdir -p irs/wit
+mkdir -p irs/ins
+
+# Run firealarm test
+cd irs && wtk-firealarm $dirlist && cd ..
+
+echo "wtk-firealarm successfully completed"
+
+# Copy into directory compatible with mac-and-cheese
+for ir in ${dirlist}
+    do
+        if [[ "irs/$ir" == *.ins ]]
             then
-                echo "wtk-firealarm successfully completed"
-            else
-                echo "Error during wtk-firealarm"
+                # if it has, move it to irs/ins
+                mv ./irs/$ir ./irs/ins/$ir
         fi
-    else
-        echo "Error in the python script - abort"
-fi
+        if [[ "irs/$ir" == *.wit ]]
+            then
+                # if it has, move it to irs/ins
+                mv ./irs/$ir ./irs/wit/$ir
+        fi
+done
+# copy the irs into local
+cp -r ./irs /code

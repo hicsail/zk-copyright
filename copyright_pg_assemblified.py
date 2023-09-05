@@ -1,7 +1,9 @@
+from dataclasses import dataclass
 from typing import List
 from picozk import *
 
-# Class to hold a single instruction TODO: @dataclass
+# Class to hold a single instruction
+@dataclass
 class Instr:
     def __init__(self, opcode: int, src1: int, src2: int, src3: int, dest: int, imm: int):
         self.opcode = opcode
@@ -12,7 +14,8 @@ class Instr:
         self.imm = imm
 
 
-# Class to hold a program as multiple lists of instructions TODO: @dataclass
+# Class to hold a program as multiple lists of instructions
+@dataclass
 class Program:
     def __init__(self, opcode: List[int], src1: List[int], src2: List[int], src3: List[int], dest: List[int], imm: List[int]):
         self.opcode: List[int] = opcode
@@ -258,8 +261,8 @@ def main():
     n_iter = 1500
     fillup = 10
     X_len=len(X)
-
-    with PicoZKCompiler('picozk_test', options=['ram']):
+    
+    with PicoZKCompiler('irs/picozk_test', options=['ram']):
 
         # Producer
         madlibs = madlibs #0
