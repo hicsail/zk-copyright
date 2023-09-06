@@ -113,7 +113,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
             p5: concat sec_string(imm==2) or char/strng(imm==3)
         '''
         if imm == 0: # This is for arithmetic addition
-            mem[des] += p1
+            mem[des] += p4
         elif imm ==1:
             mem[des] += mem[p1]
         elif imm == 2:
@@ -341,12 +341,12 @@ def main():
                     Instr(4, 12, 13, 8, 1, "", 6, 12, 13, 6, 1),       ## Step7  #4: Cond jump to +1/+6 if true/false
 
                     Instr(6, 2, 10, 9, 0, "", 0, 8, 13, 6, 0),      ## Step8  #6: Assign idx10 (idx-k) : idx9 (idx-i) of idx 2 (X) to idx 8 (reg1)
-                    Instr(8, 11, 12, 8, 0, "", 0, 12, 4, 6, 1),      ## Step9  #8: Set idx8 (reg1) to idx 11 (reg4:idx to set the val) of idx 4 (X_words)
-                    Instr(1, 9, 12, 0, 0, "", 0, 10, 13, 6, 1),      ## Step10  #1: Assign idx 9 (idx-i/reg2) to idx 10 (idx-k/reg3)
-                    Instr(2, 1, 12, 0, 0, "", 0, 10, 13, 6, 0),      ## Step11  #2: add 1 to idx 10 (idx-k/reg3)
-                    Instr(2, 1, 12, 0, 0, "", 0, 11, 13, 6, 0),      ## Step12  #2: add 1 to idx 11 (X_words counter/reg4)
+                    Instr(8, 11, 13, 8, 0, "", 0, 12, 4, 6, 1),      ## Step9  #8: Set idx8 (reg1) to idx 11 (reg4:idx to set the val) of idx 4 (X_words)
+                    Instr(1, 9, 13, 0, 0, "", 0, 10, 13, 6, 1),      ## Step10  #1: Assign idx 9 (idx-i/reg2) to idx 10 (idx-k/reg3)
+                    Instr(2, 12, 13, 0, 1, "", 0, 10, 13, 6, 0),      ## Step11  #2: add 1 to idx 10 (idx-k/reg3)
+                    Instr(2, 12, 13, 0, 1, "", 0, 11, 13, 6, 0),      ## Step12  #2: add 1 to idx 11 (X_words counter/reg4)
 
-                    Instr(2, 1, 12, 0, 0, "", 0, 9, 13, 6, 0),       ## Step13  #2: add 1 to idx 9 (idx-i/reg2)
+                    Instr(2, 12, 13, 0, 1, "", 0, 9, 13, 6, 0),       ## Step13  #2: add 1 to idx 9 (idx-i/reg2)
 
                 ## Determine whether or not to iterate over again depending idx-i< len(X)
                     Instr(3, 9, X_len, 2, 0, "", 0, 8, 13, 6, 0),   ## Step14  #3: Compare idx 9 (idx-i) < len(X) and assign result to idx 8(reg1)
@@ -382,7 +382,7 @@ def main():
 
                 ## IF only the former TRUE (Append from fill/consts)
                     Instr(7, 10, 7, 12, 0, "", 0, 8, 13, 6, 1),      ## Step31  #7: Assign idx10 (idx-k) of idx 7 (fill) to idx 8(reg1)
-                    Instr(2, 1, 13, 12, 0, "", 0, 10, 13, 6, 0),      ## Step32  #2: add 1 to idx 10 (idx-k)
+                    Instr(2, 12, 13, 12, 1, "", 0, 10, 13, 6, 0),      ## Step32  #2: add 1 to idx 10 (idx-k)
                     Instr(4, 12, 13, 12, 2, "", 0, 12, 13, 6, 0),       ## Step33  #4: jump to +2
 
                 ## ELSE (Append from madlibs_words)
@@ -390,7 +390,7 @@ def main():
 
                 ## APPEND and INCREMENT
                     Instr(8, 9, 12, 8, 0, "", 0, 12, 5, 6, 1),       ## Step35  #8: append idx8 (reg1) to idx5 (assembled_list)
-                    Instr(2, 1, 0, 0, 0, "", 0, 9, 13, 6, 0),       ## Step36  #2: add 1 to idx 9 (idx-i)
+                    Instr(2, 12, 13, 12, 1, "", 0, 9, 13, 6, 0),       ## Step36  #2: add 1 to idx 9 (idx-i)
                     
                 ## CHECK IF ITERATE OR NEXT
                     Instr(5, 12, 4, 0, 0, "", 0, 8, 13, 6, 0),       ## Step37  #9: Measure a length of index4(X_words) and assign it to idx 8(reg1)
@@ -410,9 +410,9 @@ def main():
                     
                 ## Append " " +  assembled_list[idx-i] to result
                     Instr(7, 9, 5, 0, 0, "", 0, 8, 13, 6, 1),       ## Step45  #7: Take idx 9(idx-i) of idx5 (assembled_list) and set it to idx8(reg1)
-                    Instr(2, 0, 0, 0, 0, " ", 0, 12, 13, 6, 3),     ## Step46  #2: add " " to des(6:res)
-                    Instr(2, 0, 0, 0, 0, 8, 0, 12, 13, 6, 2),       ## Step47  #2: add idx8(reg1) to des(6:res)
-                    Instr(2, 1, 0, 0, 0, "", 0, 9, 13, 6, 0),       ## Step48  #2: add +1 to idx9 (index-i)
+                    Instr(2, 12, 13, 12, 0, " ", 0, 12, 13, 6, 3),     ## Step46  #2: add " " to des(6:res)
+                    Instr(2, 12, 13, 12, 0, 8, 0, 12, 13, 6, 2),       ## Step47  #2: add idx8(reg1) to des(6:res)
+                    Instr(2, 12, 13, 12, 1, "", 0, 9, 13, 6, 0),       ## Step48  #2: add +1 to idx9 (index-i)
                 
                 ## Determine whether or not to iterate over again depending idx-i< len(assembled_list)
                     Instr(5, 12, 5, 0, 0, "", 0, 8, 13, 6, 0),       ## Step49  #9: Measure a length of index5 (assembled_list) and set it to idx 8(reg1)
@@ -439,6 +439,7 @@ def main():
                   mux(weight < n_iter, SecretInt(0), SecretInt(1))
                   , SecretInt(1))
         assert0(res)
+        assert(val_of(res)==0)
 
 
         # Reproducer
@@ -489,7 +490,7 @@ def main():
 
                     ## TRUE: Append from fill[idx-k] to assembled_list
                     Instr(7, 10, 7, 0, 0, "", 0, 8, 13, 6, 1),      ## Step14  #7: Assign idx10 (idx-k) of idx 7 (fill) to idx 8(reg1)
-                    Instr(2, 1, 0, 0, 0, "", 0, 10, 13, 6, 0),      ## Step15  #2: add 1 to idx 10 (idx-k)
+                    Instr(2, 12, 13, 12, 1, "", 0, 10, 13, 6, 0),      ## Step15  #2: add 1 to idx 10 (idx-k)
                     Instr(4, 12, 13, 12, 2, "", 0, 12, 13, 6, 0),       ## Step16  #4: jump to +2
 
                     ## ELSE: Append from madlibs_words[idx-k] to assembled_list
@@ -497,15 +498,15 @@ def main():
                     
                 ## Append ops based on above
                     Instr(8, 9, 12, 8, 0, "", 0, 12, 5, 6, 1),       ## Step18  #14: append idx 8(reg1) to idx 5 (assembled_list)
-                    Instr(2, 1, 0, 0, 0, "", 0, 9, 13, 6, 0),       ## Step19  #2: add 1 to idx 9 (idx-i)
+                    Instr(2, 12, 13, 12, 1, "", 0, 9, 13, 6, 0),       ## Step19  #2: add 1 to idx 9 (idx-i)
 
                 ## Determine whether or not to iterate over again depending idx-i< len(madlibs_words)
                     Instr(5, 12, 3, 0, 0, "", 0, 8, 13, 6, 0),       ## Step20  #9: Measure a length of index0 (madlibs_words) and assign it to idx 8(reg1)
                     Instr(3, 9, 8, 2, 0, "", 0, 8, 13, 6, 1),       ## Step21  #3: Compare idx 9(idx-i) < idx 8(reg1) and assign result to idx 8(reg1)
                     Instr(4, 12, 13, 8, -11, "", 1, 12, 13, 6, 1),     ## Step22  #4: Cond jump to -11/+1 if true/false
 
-                    Instr(1, 0, 0, 0, 0, "", 0, 9, 13, 6, 0),       ## Step23  #1: Set index i to 0
-                    Instr(1, 0, 0, 0, 0, "", 0, 10, 13, 6, 0),      ## Step24  #1: Set index k to 0
+                    Instr(1, 12, 13, 12, 0, "", 0, 9, 13, 6, 0),       ## Step23  #1: Set index i to 0
+                    Instr(1, 12, 13, 12, 0, "", 0, 10, 13, 6, 0),      ## Step24  #1: Set index k to 0
 
 
             # Stringify the assembled_list into result
@@ -514,13 +515,13 @@ def main():
                     Instr(3, 9, 0, 0, 0, "", 0, 8, 13, 6, 0),       ## Step25  #3: Compare current index-i (idx 9) == 0 and set result to idx 8(reg1)
                     Instr(4, 12, 13, 8, 1, "", 3, 12, 13, 6, 1),       ## Step26  #4: Cond jump to +1/+4 if true/false
                     Instr(7, 0, 5, 0, 0, 0, 0, 12, 13, 6, 2),       ## Step27  #7: Take the first element (idx 0) of idx5(assembled_list) and set it to des(6:result)
-                    Instr(1, 0, 0, 0, 1, "", 0, 9, 13, 6, 0),       ## Step28  #1: Set 1 to idx 9(idx-i)
+                    Instr(1, 12, 13, 12, 1, "", 0, 9, 13, 6, 0),       ## Step28  #1: Set 1 to idx 9(idx-i)
                     
                 ## Append " " +  assembled_list[idx-i] to result
                     Instr(7, 9, 5, 0, 0, "", 0, 8, 13, 6, 1),       ## Step29  #7: Take idx 9(idx-i) of idx5 (assembled_list) and set it to idx8(reg1)
-                    Instr(2, 0, 0, 0, 0, " ", 0, 12, 13, 6, 3),     ## Step30  #2: add " " to des(6:res)
-                    Instr(2, 0, 0, 0, 0, 8, 0, 12, 13, 6, 2),       ## Step31  #2: add idx8(reg1) to des(6:res)
-                    Instr(2, 1, 0, 0, 0, "", 0, 9, 13, 6, 0),       ## Step32  #2: add +1 to idx9 (index-i)
+                    Instr(2, 12, 13, 12, 0, " ", 0, 12, 13, 6, 3),     ## Step30  #2: add " " to des(6:res)
+                    Instr(2, 12, 13, 12, 0, 8, 0, 12, 13, 6, 2),       ## Step31  #2: add idx8(reg1) to des(6:res)
+                    Instr(2, 12, 13, 12, 1, "", 0, 9, 13, 6, 0),       ## Step32  #2: add +1 to idx9 (index-i)
                 
                 ## Determine whether or not to iterate over again depending idx-i< len(assembled_list)
                     Instr(5, 12, 5, 0, 0, "", 0, 8, 13, 6, 0),       ## Step33  #9: Measure a length of index5 (assembled_list) and set it to idx 8(reg1)
@@ -546,6 +547,7 @@ def main():
                   mux(weight < n_iter, SecretInt(0), SecretInt(1))
                   , SecretInt(1))
         assert0(res)
+        assert(val_of(res)==0)
 
 if __name__ == "__main__":
     main()
