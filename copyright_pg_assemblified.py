@@ -199,13 +199,14 @@ def step(prog: Program, pc: int, mem: list, weight: int):
             des:target
             p1: index of list
             p2: constant/pointer (imm==0/1)
+            p5: constant/pointer (imm==2)
         '''
         if imm == 0:
             mem[des] = mem[p1][p2]
         elif imm == 1:
             mem[des] = mem[p1][mem[p2]]
         elif imm == 2:
-            mem[des] = int_to_string(val_of(mem[p1][p2]))
+            mem[t_des] = int_to_string(val_of(mem[p1][p5]))
 
         return new_pc + 1, weight +1
 
@@ -309,10 +310,11 @@ def main():
         reg4 = 0 #11
 
         dummy_int = 0 #12
+        dummy_list = [0] * 16 #13
 
         mem = [madlibs, nouns_list, X, 
                 madlibs_words, X_words, assembled_list, result, fill,
-                reg1, reg2, reg3, reg4, dummy_int]
+                reg1, reg2, reg3, reg4, dummy_int, dummy_list]
         
         program = [ 
 
@@ -396,7 +398,7 @@ def main():
                 ## Only IF idx-i == 0: Append assembled_list[0] to result
                     Instr(3, 9, 0, 0, 0, "", 8, 0, 6, 0),       ## Step41  #3: Compare current index-i (idx 9) == 0 and set result to idx 8(reg1)
                     Instr(4, 1, 3, 8, 0, "", 0, 0, 6, 1),       ## Step42  #4: Cond jump to +1/+4 if true/false
-                    Instr(7, 5, 0, 0, 0, "", 6, 0, 6, 2),       ## Step43  #7: Take the first element (idx 0) of idx5(assembled_list) and set it to des(6:result)
+                    Instr(7, 5, 0, 0, 0, 0, 6, 0, 6, 2),       ## Step43  #7: Take the first element (idx 0) of idx5(assembled_list) and set it to des(6:result)
                     Instr(1, 0, 0, 0, 1, "", 9, 0, 6, 0),       ## Step44  #1: Set 1 to idx 9(idx-i)
                     
                 ## Append " " +  assembled_list[idx-i] to result
@@ -449,10 +451,11 @@ def main():
         reg4 = 0 #11
 
         dummy_int = 0 #12
+        dummy_list = [0] * 16 #13
 
         repro_mem = [madlibs, nouns_list, X, 
                 madlibs_words, X_words, assembled_list, result, fill,
-                reg1, reg2, reg3, reg4, dummy_int]
+                reg1, reg2, reg3, reg4, dummy_int, dummy_list]
 
         program = [
 
@@ -503,7 +506,7 @@ def main():
                 ## Only IF idx-i == 0: Append assembled_list[0] to result
                     Instr(3, 9, 0, 0, 0, "", 8, 0, 6, 0),       ## Step25  #3: Compare current index-i (idx 9) == 0 and set result to idx 8(reg1)
                     Instr(4, 1, 3, 8, 0, "", 0, 0, 6, 1),       ## Step26  #4: Cond jump to +1/+4 if true/false
-                    Instr(7, 5, 0, 0, 0, "", 6, 0, 6, 2),       ## Step27  #7: Take the first element (idx 0) of idx5(assembled_list) and set it to des(6:result)
+                    Instr(7, 5, 0, 0, 0, 0, 6, 0, 6, 2),       ## Step27  #7: Take the first element (idx 0) of idx5(assembled_list) and set it to des(6:result)
                     Instr(1, 0, 0, 0, 1, "", 9, 0, 6, 0),       ## Step28  #1: Set 1 to idx 9(idx-i)
                     
                 ## Append " " +  assembled_list[idx-i] to result
