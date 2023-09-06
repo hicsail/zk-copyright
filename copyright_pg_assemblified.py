@@ -186,14 +186,14 @@ def step(prog: Program, pc: int, mem: list, weight: int):
 
         '''
             des:target
-            p1: index of origin
-            p2: beginning index of nested list of origin
+            p1: beginning index of nested list of origin
+            p2: index of origin
             p3: end index of nested list of origin (imm==0)/otherwise automatically till end (imm==1)
         '''
         if imm == 0:
-            mem[des] = string_to_int(mem[p1][mem[p2]:mem[p3]])
+            mem[des] = string_to_int(mem[p2][mem[p1]:mem[p3]])
         elif imm == 1:
-            mem[des] = string_to_int(mem[p1][mem[p2]:])
+            mem[des] = string_to_int(mem[p2][mem[p1]:])
 
         return new_pc + 1, weight +1
         
@@ -341,7 +341,7 @@ def main():
                     Instr(3, 8, 13, 12, 0, "", " ", 8, 13, 6, 0),     ## Step6  #3: Compare idx 8(reg1) and " " and assign result to idx 8(reg1)
                     Instr(4, 12, 13, 8, 1, "", 6, 12, 13, 6, 1),       ## Step7  #4: Cond jump to +1/+6 if true/false
 
-                    Instr(6, 2, 10, 9, 0, "", 0, 8, 13, 6, 0),      ## Step8  #6: Assign idx10 (idx-k) : idx9 (idx-i) of idx 2 (X) to idx 8 (reg1)
+                    Instr(6, 10, 2, 9, 0, "", 0, 8, 13, 6, 0),      ## Step8  #6: Assign idx10 (idx-k) : idx9 (idx-i) of idx 2 (X) to idx 8 (reg1)
                     Instr(8, 11, 13, 8, 0, "", 0, 12, 4, 6, 1),      ## Step9  #8: Set idx8 (reg1) to idx 11 (reg4:idx to set the val) of idx 4 (X_words)
                     Instr(1, 9, 13, 0, 0, "", 0, 10, 13, 6, 1),      ## Step10  #1: Assign idx 9 (idx-i/reg2) to idx 10 (idx-k/reg3)
                     Instr(2, 12, 13, 0, 1, "", 0, 10, 13, 6, 0),      ## Step11  #2: add 1 to idx 10 (idx-k/reg3)
@@ -358,7 +358,7 @@ def main():
                     Instr(3, 8, 13, 0, 1, "", " ", 8, 13, 6, 0),     ## Step17  #3: Compare idx8(reg1) != " ", assign it to idx 8(reg1)
                     Instr(4, 12, 13, 8, 1,   "", 3, 12, 13, 6, 1),       ## Step18  #4: Cond jump to +1/+3 if true/false
 
-                    Instr(6, 2, 10, 0, 0, "", 0, 8, 13, 6, 1),      ## Step19  #6: Assign idx 10(idx-k) till end of idx 2(X) to idx 8 (reg1)
+                    Instr(6, 10, 2, 0, 0, "", 0, 8, 13, 6, 1),      ## Step19  #6: Assign idx 10(idx-k) till end of idx 2(X) to idx 8 (reg1)
                     Instr(8, 11, 12, 8, 0, "", 0, 12, 4, 6, 1),      ## Step20  #8: Set idx8 to idx 11 (X_words counter/reg4:idx to set the val) of idx 4 (X_words)
 
                     Instr(1, 12, 13, 12, 0, "", 0, 9, 13, 6, 0),       ## Step21  #1: Set idx-9 (idx-i) to 0
