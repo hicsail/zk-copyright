@@ -88,6 +88,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     if instr.opcode == 1:
 
         '''
+            #This does not support list to list assignment or string/char to string/char
             des:depends
             p1:const(imm==0) or by mem[val](imm==1)
         '''
@@ -169,7 +170,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
             des: target index
             p1: list/string to measure length
         '''
-        mem[des] = len(mem[p1])
+        mem[des] = len(mem[p2])
         
         return new_pc + 1, weight +1
     
@@ -307,9 +308,11 @@ def main():
         reg3 = 0 #10
         reg4 = 0 #11
 
+        dummy_int = 0 #12
+
         mem = [madlibs, nouns_list, X, 
                 madlibs_words, X_words, assembled_list, result, fill,
-                reg1, reg2, reg3, reg4]
+                reg1, reg2, reg3, reg4, dummy_int]
         
         program = [ 
 
@@ -381,7 +384,7 @@ def main():
                     Instr(2, 1, 0, 0, 0, "", 9, 0, 6, 0),       ## Step36  #2: add 1 to idx 9 (idx-i)
                     
                 ## CHECK IF ITERATE OR NEXT
-                    Instr(5, 4, 0, 0, 0, "", 8, 0, 6, 0),       ## Step37  #9: Measure a length of index4(X_words) and assign it to idx 8(reg1)
+                    Instr(5, 12, 4, 0, 0, "", 8, 0, 6, 0),       ## Step37  #9: Measure a length of index4(X_words) and assign it to idx 8(reg1)
                     Instr(3, 9, 8, 2, 0, "", 8, 0, 6, 1),       ## Step38  #3: Compare idx 9(idx-i) < idx 8(reg1) and assign result to idx 8(reg1)
                     Instr(4, -15, 1, 8, 0, "", 0, 0, 6, 1),     ## Step39  #4: Cond jump to -15/+1 if true/false
 
@@ -403,7 +406,7 @@ def main():
                     Instr(2, 1, 0, 0, 0, "", 9, 0, 6, 0),       ## Step48  #2: add +1 to idx9 (index-i)
                 
                 ## Determine whether or not to iterate over again depending idx-i< len(assembled_list)
-                    Instr(5, 5, 0, 0, 0, "", 8, 0, 6, 0),       ## Step49  #9: Measure a length of index5 (assembled_list) and set it to idx 8(reg1)
+                    Instr(5, 12, 5, 0, 0, "", 8, 0, 6, 0),       ## Step49  #9: Measure a length of index5 (assembled_list) and set it to idx 8(reg1)
                     Instr(3, 9, 8, 2, 0, "", 8, 0, 6, 1),       ## Step50  #3: Compare idx 9(idx-i) < idx 8(reg1) and assign result to idx 8(reg1)
                     Instr(4, -10, 1, 8, 0, "", 0, 0, 6, 1),     ## Step51  #4: Cond jump to -10/+1 if true/false
 
@@ -445,9 +448,11 @@ def main():
         reg3 = 0 #10
         reg4 = 0 #11
 
+        dummy_int = 0 #12
+
         repro_mem = [madlibs, nouns_list, X, 
                 madlibs_words, X_words, assembled_list, result, fill,
-                reg1, reg2, reg3, reg4]
+                reg1, reg2, reg3, reg4, dummy_int]
 
         program = [
 
@@ -485,7 +490,7 @@ def main():
                     Instr(2, 1, 0, 0, 0, "", 9, 0, 6, 0),       ## Step19  #2: add 1 to idx 9 (idx-i)
 
                 ## Determine whether or not to iterate over again depending idx-i< len(madlibs_words)
-                    Instr(5, 3, 0, 0, 0, "", 8, 0, 6, 0),       ## Step20  #9: Measure a length of index0 (madlibs_words) and assign it to idx 8(reg1)
+                    Instr(5, 12, 3, 0, 0, "", 8, 0, 6, 0),       ## Step20  #9: Measure a length of index0 (madlibs_words) and assign it to idx 8(reg1)
                     Instr(3, 9, 8, 2, 0, "", 8, 0, 6, 1),       ## Step21  #3: Compare idx 9(idx-i) < idx 8(reg1) and assign result to idx 8(reg1)
                     Instr(4, -11, 1, 8, 0, "", 0, 0, 6, 1),     ## Step22  #4: Cond jump to -11/+1 if true/false
 
@@ -508,7 +513,7 @@ def main():
                     Instr(2, 1, 0, 0, 0, "", 9, 0, 6, 0),       ## Step32  #2: add +1 to idx9 (index-i)
                 
                 ## Determine whether or not to iterate over again depending idx-i< len(assembled_list)
-                    Instr(5, 5, 0, 0, 0, "", 8, 0, 6, 0),       ## Step33  #9: Measure a length of index5 (assembled_list) and set it to idx 8(reg1)
+                    Instr(5, 12, 5, 0, 0, "", 8, 0, 6, 0),       ## Step33  #9: Measure a length of index5 (assembled_list) and set it to idx 8(reg1)
                     Instr(3, 9, 8, 2, 0, "", 8, 0, 6, 1),       ## Step34  #3: Compare idx 9(idx-i) < idx 8(reg1) and assign result to idx 8(reg1)
                     Instr(4, -10, 1, 8, 0, "", 0, 0, 6, 1),     ## Step35  #4: Cond jump to -10/+1 if true/false
 
