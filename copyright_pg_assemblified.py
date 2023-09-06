@@ -78,6 +78,8 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     p4 = instr.src4
     p5 = instr.src5
     des = instr.dest
+    s_des = instr.s_dest
+    t_des = instr.t_dest
     imm =  instr.imm
     new_pc = pc
 
@@ -104,14 +106,14 @@ def step(prog: Program, pc: int, mem: list, weight: int):
             des: target
             p1: increment by const(imm==0) or by mem[val](imm==1)
         '''
-        if imm == 0:
+        if imm == 0: # This is for arithmetic addition
             mem[des] += p1
         elif imm ==1:
             mem[des] += mem[p1]
         elif imm == 2:
-            mem[des] += int_to_string(val_of(mem[p1]))
-        elif imm == 3:
-            mem[des] += p5
+            mem[des] += int_to_string(val_of(mem[p5]))
+        elif imm == 3: # This is for char/string append
+            mem[des] += p5        
 
         return new_pc + 1, weight +1
 
@@ -397,7 +399,7 @@ def main():
                 ## Append " " +  assembled_list[idx-i] to result
                     Instr(7, 5, 9, 0, 0, "", 8, 0, 6, 1),       ## Step45  #7: Take idx 9(idx-i) of idx5 (assembled_list) and set it to idx8(reg1)
                     Instr(2, 0, 0, 0, 0, " ",6, 0, 6, 3),     ## Step46  #2: add " " to des(6:res)
-                    Instr(2, 8, 0, 0, 0, "", 6, 0, 6, 2),       ## Step47  #2: add idx8(reg1) to des(6:res)
+                    Instr(2, 0, 0, 0, 0, 8, 6, 0, 6, 2),       ## Step47  #2: add idx8(reg1) to des(6:res)
                     Instr(2, 1, 0, 0, 0, "", 9, 0, 6, 0),       ## Step48  #2: add +1 to idx9 (index-i)
                 
                 ## Determine whether or not to iterate over again depending idx-i< len(assembled_list)
@@ -494,21 +496,21 @@ def main():
             # Stringify the assembled_list into result
                     
                 ## Only IF idx-i == 0: Append assembled_list[0] to result
-                    Instr(3, 9, 0, 0, 0, "", 8, 0, 6, 0),       ## Step41  #3: Compare current index-i (idx 9) == 0 and set result to idx 8(reg1)
-                    Instr(4, 1, 3, 8, 0, "", 0, 0, 6, 1),       ## Step42  #4: Cond jump to +1/+4 if true/false
-                    Instr(7, 5, 0, 0, 0, "", 6, 0, 6, 2),       ## Step43  #7: Take the first element (idx 0) of idx5(assembled_list) and set it to des(6:result)
-                    Instr(1, 0, 0, 0, 1, "", 9, 0, 6, 0),       ## Step44  #1: Set 1 to idx 9(idx-i)
+                    Instr(3, 9, 0, 0, 0, "", 8, 0, 6, 0),       ## Step25  #3: Compare current index-i (idx 9) == 0 and set result to idx 8(reg1)
+                    Instr(4, 1, 3, 8, 0, "", 0, 0, 6, 1),       ## Step26  #4: Cond jump to +1/+4 if true/false
+                    Instr(7, 5, 0, 0, 0, "", 6, 0, 6, 2),       ## Step27  #7: Take the first element (idx 0) of idx5(assembled_list) and set it to des(6:result)
+                    Instr(1, 0, 0, 0, 1, "", 9, 0, 6, 0),       ## Step28  #1: Set 1 to idx 9(idx-i)
                     
                 ## Append " " +  assembled_list[idx-i] to result
-                    Instr(7, 5, 9, 0, 0, "", 8, 0, 6, 1),       ## Step45  #7: Take idx 9(idx-i) of idx5 (assembled_list) and set it to idx8(reg1)
-                    Instr(2, 0, 0, 0, 0, " ", 6, 0, 6, 3),     ## Step46  #2: add " " to des(6:res)
-                    Instr(2, 8, 0, 0, 0, "", 6, 0, 6, 2),       ## Step47  #2: add idx8(reg1) to des(6:res)
-                    Instr(2, 1, 0, 0, 0, "", 9, 0, 6, 0),       ## Step48  #2: add +1 to idx9 (index-i)
+                    Instr(7, 5, 9, 0, 0, "", 8, 0, 6, 1),       ## Step29  #7: Take idx 9(idx-i) of idx5 (assembled_list) and set it to idx8(reg1)
+                    Instr(2, 0, 0, 0, 0, " ",6, 0, 6, 3),     ## Step30  #2: add " " to des(6:res)
+                    Instr(2, 0, 0, 0, 0, 8, 6, 0, 6, 2),       ## Step31  #2: add idx8(reg1) to des(6:res)
+                    Instr(2, 1, 0, 0, 0, "", 9, 0, 6, 0),       ## Step32  #2: add +1 to idx9 (index-i)
                 
                 ## Determine whether or not to iterate over again depending idx-i< len(assembled_list)
-                    Instr(5, 5, 0, 0, 0, "", 8, 0, 6, 0),       ## Step49  #9: Measure a length of index5 (assembled_list) and set it to idx 8(reg1)
-                    Instr(3, 9, 8, 2, 0, "", 8, 0, 6, 1),       ## Step50  #3: Compare idx 9(idx-i) < idx 8(reg1) and assign result to idx 8(reg1)
-                    Instr(4, -10, 1, 8, 0, "", 0, 0, 6, 1),     ## Step51  #4: Cond jump to -10/+1 if true/false
+                    Instr(5, 5, 0, 0, 0, "", 8, 0, 6, 0),       ## Step33  #9: Measure a length of index5 (assembled_list) and set it to idx 8(reg1)
+                    Instr(3, 9, 8, 2, 0, "", 8, 0, 6, 1),       ## Step34  #3: Compare idx 9(idx-i) < idx 8(reg1) and assign result to idx 8(reg1)
+                    Instr(4, -10, 1, 8, 0, "", 0, 0, 6, 1),     ## Step35  #4: Cond jump to -10/+1 if true/false
 
 
             # END
