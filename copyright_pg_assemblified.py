@@ -86,8 +86,19 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     imm =  instr.imm
     new_pc = pc
 
-    print("step", pc+1, "ops:", instr.opcode, "-", imm, "des type", type(mem[des]))
-    assert(type(mem[des])==int or type(mem[des])==bool, type(val_of(mem[des]))==int)
+    # print("step", pc+1, "ops:", instr.opcode, "-", imm, "mem[p2][mem[p1]:mem[p3]]", mem[p2][mem[p1]:mem[p3]], type(mem[p2][mem[p1]:mem[p3]]))
+
+
+    assert(type(mem[p1])==bool, type(val_of(mem[p1]))==int)
+    assert(type(mem[p2])==list or type(mem[p2])==ZKList or type(mem[p2])==str)
+    assert(type(mem[p3])!=list or type(mem[p3])!=ZKList)
+    assert(type(p4)==bool, type(val_of(p4))==int)
+    assert(type(p5)!=list, type(p5)!=ZKList)
+    
+    # assert(type(mem[p2][mem[p1]:mem[p3]])==str)
+    
+
+    assert(type(mem[des])==bool, type(val_of(mem[des]))==int)
     assert(type(mem[t_des])==str)
     assert(type(mem[s_des])==ZKList or type(mem[s_des])==List)
 
@@ -372,7 +383,7 @@ def main():
                     Instr(4, 12, 13, 8, 1,   blank, 3, 12, 13, 6, 1),       ## Step18  #4: Cond jump to +1/+3 if true/false
 
                     Instr(6, 10, 2, 12, 0, blank, 0, 8, 13, 6, 1),      ## Step19  #6: Assign idx 10(idx-k) till end of idx 2(X) to idx 8 (reg1)
-                    Instr(8, 11, 12, 8, 0, blank, 0, 12, 4, 6, 1),      ## Step20  #8: Set idx8 to idx 11 (X_words counter/reg4:idx to set the val) of idx 4 (X_words)
+                    Instr(8, 11, 13, 8, 0, blank, 0, 12, 4, 6, 1),      ## Step20  #8: Set idx8 to idx 11 (X_words counter/reg4:idx to set the val) of idx 4 (X_words)
 
                     Instr(1, 12, 13, 12, 0, blank, 0, 9, 13, 6, 0),       ## Step21  #1: Set idx-9 (idx-i) to 0
                     Instr(1, 12, 13, 12, 0, blank, 0, 10, 13, 6, 0),      ## Step22  #1: Set idx-10 (idx-k) to 0
@@ -403,7 +414,7 @@ def main():
                     Instr(7, 9, 3, 12, 0, blank, 0, 8, 13, 6, 1),       ## Step34  #7: Assign idx9 (idx-i) of idx 3 (madlibs_words) to idx 8(reg1)
 
                 ## APPEND and INCREMENT
-                    Instr(8, 9, 12, 8, 0, blank, 0, 12, 5, 6, 1),       ## Step35  #8: append idx8 (reg1) to idx5 (assembled_list)
+                    Instr(8, 9, 13, 8, 0, blank, 0, 12, 5, 6, 1),       ## Step35  #8: append idx8 (reg1) to idx5 (assembled_list)
                     Instr(2, 12, 13, 12, 1, blank, 0, 9, 13, 6, 0),       ## Step36  #2: add 1 to idx 9 (idx-i)
                     
                 ## CHECK IF ITERATE OR NEXT
@@ -511,7 +522,7 @@ def main():
                     Instr(7, 9, 3, 12, 0, blank, 0, 8, 13, 6, 1),       ## Step17  #7: Assign idx9 (idx-i) of idx 3 (madlibs_words) to idx 8(reg1)
                     
                 ## Append ops based on above
-                    Instr(8, 9, 12, 8, 0, blank, 0, 12, 5, 6, 1),       ## Step18  #14: append idx 8(reg1) to idx 5 (assembled_list)
+                    Instr(8, 9, 13, 8, 0, blank, 0, 12, 5, 6, 1),       ## Step18  #14: append idx 8(reg1) to idx 5 (assembled_list)
                     Instr(2, 12, 13, 12, 1, blank, 0, 9, 13, 6, 0),       ## Step19  #2: add 1 to idx 9 (idx-i)
 
                 ## Determine whether or not to iterate over again depending idx-i< len(madlibs_words)
