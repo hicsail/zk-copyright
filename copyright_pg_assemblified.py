@@ -407,9 +407,8 @@ def main():
                 ## Only IF idx-i == 0: Append assembled_list[0] to result
                     Instr(3, 9, 13, 12, 0, "", 0, 8, 13, 6, 0),       ## Step41  #3: Compare current index-i (idx 9) == 0 and set result to idx 8(reg1)
                     Instr(4, 12, 13, 8, 1, "", 3, 12, 13, 6, 1),       ## Step42  #4: Cond jump to +1/+4 if true/false
-                    # TODO:0 in p5 -> ""
                     Instr(7, 12, 5, 12, 0, "", 0, 12, 13, 6, 2),       ## Step43  #7: Take the first element (idx 0) of idx5(assembled_list) and set it to des(6:result)
-                    Instr(1, 0, 0, 0, 1, "", 0, 9, 13, 6, 0),       ## Step44  #1: Set 1 to idx 9(idx-i)
+                    Instr(1, 12, 13, 12, 1, "", 0, 9, 13, 6, 0),       ## Step44  #1: Set 1 to idx 9(idx-i)
                     
                 ## Append " " +  assembled_list[idx-i] to result
                     Instr(7, 9, 5, 12, 0, "", 0, 8, 13, 6, 1),       ## Step45  #7: Take idx 9(idx-i) of idx5 (assembled_list) and set it to idx8(reg1)
