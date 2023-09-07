@@ -86,11 +86,10 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     imm =  instr.imm
     new_pc = pc
 
-    # print("step", pc+1, "ops:", instr.opcode, "-", imm, "des type", type(mem[des]))
-    # assert(type(mem[des])==int or type(mem[des])==bool)
-    # assert(type(mem[t_des])==str)
-    # assert(type(mem[s_des])==ZKList or type(mem[s_des])==List)
-    # assert(type(mem[des])==
+    print("step", pc+1, "ops:", instr.opcode, "-", imm, "des type", type(mem[des]))
+    assert(type(mem[des])==int or type(mem[des])==bool, type(val_of(mem[des]))==int)
+    assert(type(mem[t_des])==str)
+    assert(type(mem[s_des])==ZKList or type(mem[s_des])==List)
 
     # 1. Set a const/mem[val] to dest
     if instr.opcode == 1:
@@ -221,6 +220,8 @@ def step(prog: Program, pc: int, mem: list, weight: int):
             mem[des] = mem[p2][mem[p1]]
         elif imm == 2:
             mem[t_des] = int_to_string(val_of(mem[p2][p4]))
+        elif imm == 3:
+            mem[t_des] = mem[p2][mem[p1]] #This is for stringa , used during X_words creation
 
         return new_pc + 1, weight +1
 
@@ -330,10 +331,11 @@ def main():
 
         dummy_int = 0 #12
         dummy_list = ZKList([0] * 16) #13
+        reg5 = '' #14 This is used for only str
 
         mem = [madlibs, nouns_list, X, 
                 madlibs_words, X_words, assembled_list, result, fill,
-                reg1, reg2, reg3, reg4, dummy_int, dummy_list]
+                reg1, reg2, reg3, reg4, dummy_int, dummy_list, reg5]
         
         program = [ 
 
@@ -348,8 +350,8 @@ def main():
             # Making X_words (a list of strings) from X (a string)
 
                 ## Only IF X[curr] == " ": Append X[idx-k : idx-i] (from last blank to current blank = word) to X_words
-                    Instr(7, 9, 2, 12, 0, blank, 0, 8, 13, 6, 1),       ## Step5  #7: Assign idx9 (idx-i/reg2) of idx 2 (X) to idx 8(reg1)
-                    Instr(3, 8, 13, 12, 0, blank, 0, 8, 13, 6, 2),     ## Step6  #3: Compare idx 8(reg1) and " " and assign result to idx 8(reg1)
+                    Instr(7, 9, 2, 12, 0, blank, 0, 8, 13, 14, 3),       ## Step5  #7: Assign idx9 (idx-i/reg2) of idx 2 (X) to idx 14(reg5)
+                    Instr(3, 14, 13, 12, 0, blank, 0, 8, 13, 6, 2),     ## Step6  #3: Compare idx 8(reg1) and " " and assign result to idx 8(reg1)
                     Instr(4, 12, 13, 8, 1, blank, 6, 12, 13, 6, 1),       ## Step7  #4: Cond jump to +1/+6 if true/false
 
                     Instr(6, 10, 2, 9, 0, blank, 0, 8, 13, 6, 0),      ## Step8  #6: Assign idx10 (idx-k) : idx9 (idx-i) of idx 2 (X) to idx 8 (reg1)
@@ -365,8 +367,8 @@ def main():
                     Instr(4, 12, 13, 8, -10, blank, 1, 12, 13, 6, 1),     ## Step15  #4: cond jump to next or start from the beginning of this block (-9)
 
                 ## Only IF  X[-1] != " " (if string not ending with blank): Append X[k:] (the last word) to X_words
-                    Instr(7, 12, 2, 12, -1, blank, 0, 8, 13, 6, 0),      ## Step16  #7 take last elem of idx2 (X) into idx 8(reg1)
-                    Instr(3, 8, 13, 12, 1, blank, 0, 8, 13, 6, 2),     ## Step17  #3: Compare idx8(reg1) != " ", assign it to idx 8(reg1)
+                    Instr(7, 12, 2, 12, -1, blank, 0, 8, 13, 14, 3),      ## Step16  #7 take last elem of idx2 (X) into idx 8(reg1)
+                    Instr(3, 14, 13, 12, 1, blank, 0, 8, 13, 6, 2),     ## Step17  #3: Compare idx8(reg1) != " ", assign it to idx 8(reg1)
                     Instr(4, 12, 13, 8, 1,   blank, 3, 12, 13, 6, 1),       ## Step18  #4: Cond jump to +1/+3 if true/false
 
                     Instr(6, 10, 2, 12, 0, blank, 0, 8, 13, 6, 1),      ## Step19  #6: Assign idx 10(idx-k) till end of idx 2(X) to idx 8 (reg1)
