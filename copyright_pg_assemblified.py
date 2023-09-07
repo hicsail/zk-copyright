@@ -109,16 +109,16 @@ def step(prog: Program, pc: int, mem: list, weight: int):
 
         '''
             des: target
-            p1: increment by const(imm==0)
+            p1: increment by const(imm==0) or concat sec_string(imm==2)
             p4: increment by mem[val](imm==1)
-            p5: concat sec_string(imm==2) or char/strng(imm==3)
+            p5: char/strng(imm==3)
         '''
         if imm == 0: # This is for arithmetic addition
             mem[des] += p4
         elif imm ==1:
             mem[des] += mem[p1]
         elif imm == 2:
-            mem[t_des] += int_to_string(val_of(mem[p5]))
+            mem[t_des] += int_to_string(val_of(mem[p1]))
         elif imm == 3: # This is for char/string append
             mem[t_des] += p5        
 
@@ -204,16 +204,16 @@ def step(prog: Program, pc: int, mem: list, weight: int):
 
         '''
             des:target
-            p1: index of list
+            p1: index of list(imm==1)
             p2: constant/pointer (imm==0/1)
-            p5: constant/pointer (imm==2)
+            p4: const index of list(imm==0/2)
         '''
         if imm == 0:
-            mem[des] = mem[p2][p1]
+            mem[des] = mem[p2][p4]
         elif imm == 1:
             mem[des] = mem[p2][mem[p1]]
         elif imm == 2:
-            mem[t_des] = int_to_string(val_of(mem[p2][p5]))
+            mem[t_des] = int_to_string(val_of(mem[p2][p4]))
 
         return new_pc + 1, weight +1
 
@@ -229,7 +229,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
         '''
                 
         if imm == 0:
-            mem[s_des][p1] = mem[p3]
+            mem[s_des][p4] = mem[p3]
         elif imm == 1:
             mem[s_des][mem[p1]] = mem[p3]
    
@@ -329,10 +329,10 @@ def main():
 
             # Make a fill list from hard-coded nouns 1 and 2
 
-                    Instr(7, 3, 1, 12, 0, "", 0, 8, 13, 6, 0),       ## Step1  #7: Set index 3 of idx1 (nouns) to idx 8 (reg1)
-                    Instr(8, 0, 13, 8, 0, "", 0, 12, 7, 6, 0),       ## Step2  #8: Set hard-coded noun1/2, idx 8(reg1), to idx 7(fill)
-                    Instr(7, 4, 1, 12, 0, "", 0, 8, 13, 6, 0),       ## Step3  #7: Set index 4 of idx1 (nouns) to idx 8 (reg1)
-                    Instr(8, 1, 13, 8, 0, "", 0, 12, 7, 6, 0),       ## Step4  #8: Set hard-coded noun2/2, idx 8(reg1), to idx 7(fill)
+                    Instr(7, 12, 1, 12, 3, "", 0, 8, 13, 6, 0),       ## Step1  #7: Set index 3 of idx1 (nouns) to idx 8 (reg1)
+                    Instr(8, 12, 13, 8, 0, "", 0, 12, 7, 6, 0),       ## Step2  #8: Set hard-coded noun1/2, idx 8(reg1), to idx 7(fill)
+                    Instr(7, 12, 1, 12, 4, "", 0, 8, 13, 6, 0),       ## Step3  #7: Set index 4 of idx1 (nouns) to idx 8 (reg1)
+                    Instr(8, 12, 13, 8, 1, "", 0, 12, 7, 6, 0),       ## Step4  #8: Set hard-coded noun2/2, idx 8(reg1), to idx 7(fill)
 
 
             # Making X_words (a list of strings) from X (a string)
@@ -355,7 +355,7 @@ def main():
                     Instr(4, 12, 13, 8, -10, "", 1, 12, 13, 6, 1),     ## Step15  #4: cond jump to next or start from the beginning of this block (-9)
 
                 ## Only IF  X[-1] != " " (if string not ending with blank): Append X[k:] (the last word) to X_words
-                    Instr(7, -1, 2, 12, 0, "", 0, 8, 13, 6, 0),      ## Step16  #7 take last elem of idx2 (X) into idx 8(reg1)
+                    Instr(7, 12, 2, 12, -1, "", 0, 8, 13, 6, 0),      ## Step16  #7 take last elem of idx2 (X) into idx 8(reg1)
                     Instr(3, 8, 13, 12, 1, "", " ", 8, 13, 6, 0),     ## Step17  #3: Compare idx8(reg1) != " ", assign it to idx 8(reg1)
                     Instr(4, 12, 13, 8, 1,   "", 3, 12, 13, 6, 1),       ## Step18  #4: Cond jump to +1/+3 if true/false
 
@@ -408,13 +408,13 @@ def main():
                     Instr(3, 9, 13, 12, 0, "", 0, 8, 13, 6, 0),       ## Step41  #3: Compare current index-i (idx 9) == 0 and set result to idx 8(reg1)
                     Instr(4, 12, 13, 8, 1, "", 3, 12, 13, 6, 1),       ## Step42  #4: Cond jump to +1/+4 if true/false
                     # TODO:0 in p5 -> ""
-                    Instr(7, 12, 5, 12, 0, 0, 0, 12, 13, 6, 2),       ## Step43  #7: Take the first element (idx 0) of idx5(assembled_list) and set it to des(6:result)
+                    Instr(7, 12, 5, 12, 0, "", 0, 12, 13, 6, 2),       ## Step43  #7: Take the first element (idx 0) of idx5(assembled_list) and set it to des(6:result)
                     Instr(1, 0, 0, 0, 1, "", 0, 9, 13, 6, 0),       ## Step44  #1: Set 1 to idx 9(idx-i)
                     
                 ## Append " " +  assembled_list[idx-i] to result
                     Instr(7, 9, 5, 12, 0, "", 0, 8, 13, 6, 1),       ## Step45  #7: Take idx 9(idx-i) of idx5 (assembled_list) and set it to idx8(reg1)
                     Instr(2, 12, 13, 12, 0, " ", 0, 12, 13, 6, 3),     ## Step46  #2: add " " to des(6:res)
-                    Instr(2, 12, 13, 12, 0, 8, 0, 12, 13, 6, 2),       ## Step47  #2: add idx8(reg1) to des(6:res)
+                    Instr(2, 8, 13, 12, 0, "", 0, 12, 13, 6, 2),       ## Step47  #2: add idx8(reg1) to des(6:res)
                     Instr(2, 12, 13, 12, 1, "", 0, 9, 13, 6, 0),       ## Step48  #2: add +1 to idx9 (index-i)
                 
                 ## Determine whether or not to iterate over again depending idx-i< len(assembled_list)
@@ -472,16 +472,16 @@ def main():
 
             # Make a fill list by appending hard-coded nouns 1 - 5
 
-                    Instr(7, 0, 1, 0, 0, "", 0, 8, 13, 6, 0),       ## Step1  #7: Set index 0 of idx1 (nouns) to 8 (reg1)
-                    Instr(8, 0, 12, 8, 0, "", 0, 12, 7, 6, 0),       ## Step2  #14: Set hard-coded noun1/5 to idx7 (fill)
-                    Instr(7, 1, 1, 0, 0, "", 0, 8, 13, 6, 0),       ## Step3  #7: Set index 1 of idx1 (nouns) to 8 (reg1)
-                    Instr(8, 1, 12, 8, 0, "", 0, 12, 7, 6, 0),       ## Step4  #14: Set hard-coded noun2/5 to idx7 (fill)
-                    Instr(7, 2, 1, 0, 0, "", 0, 8, 13, 6, 0),       ## Step5  #7: Set index 2 of idx1 (nouns) to 8 (reg1)
-                    Instr(8, 2, 12, 8, 0, "", 0, 12, 7, 6, 0),       ## Step6  #14: Set hard-coded noun3/5 to idx7 (fill)
-                    Instr(7, 3, 1, 0, 0, "", 0, 8, 13, 6, 0),       ## Step7  #7: Set index 3 of idx1 (nouns) to 8 (reg1)
-                    Instr(8, 3, 12, 8, 0, "", 0, 12, 7, 6, 0),       ## Step8  #14: Set hard-coded noun4/5 to idx7 (fill)
-                    Instr(7, 4, 1, 0, 0, "", 0, 8, 13, 6, 0),       ## Step9  #7: Set index 4 of idx1 (nouns) to 8 (reg1)
-                    Instr(8, 4, 12, 8, 0, "", 0, 12, 7, 6, 0),       ## Step10 #14: Set hard-coded noun5/5 to idx7 (fill)
+                    Instr(7, 12, 1, 0, 0, "", 0, 8, 13, 6, 0),       ## Step1  #7: Set index 0 of idx1 (nouns) to 8 (reg1)
+                    Instr(8, 12, 13, 8, 0, "", 0, 12, 7, 6, 0),       ## Step2  #14: Set hard-coded noun1/5 to idx7 (fill)
+                    Instr(7, 12, 1, 0, 1, "", 0, 8, 13, 6, 0),       ## Step3  #7: Set index 1 of idx1 (nouns) to 8 (reg1)
+                    Instr(8, 12, 13, 8, 1, "", 0, 12, 7, 6, 0),       ## Step4  #14: Set hard-coded noun2/5 to idx7 (fill)
+                    Instr(7, 12, 1, 0, 2, "", 0, 8, 13, 6, 0),       ## Step5  #7: Set index 2 of idx1 (nouns) to 8 (reg1)
+                    Instr(8, 12, 13, 8, 2, "", 0, 12, 7, 6, 0),       ## Step6  #14: Set hard-coded noun3/5 to idx7 (fill)
+                    Instr(7, 12, 1, 0, 3, "", 0, 8, 13, 6, 0),       ## Step7  #7: Set index 3 of idx1 (nouns) to 8 (reg1)
+                    Instr(8, 12, 13, 8, 3, "", 0, 12, 7, 6, 0),       ## Step8  #14: Set hard-coded noun4/5 to idx7 (fill)
+                    Instr(7, 12, 1, 0, 4, "", 0, 8, 13, 6, 0),       ## Step9  #7: Set index 4 of idx1 (nouns) to 8 (reg1)
+                    Instr(8, 12, 13, 8, 4, "", 0, 12, 7, 6, 0),       ## Step10 #14: Set hard-coded noun5/5 to idx7 (fill)
                     
 
             # Hard-Code all blanks from the nouns list
@@ -517,13 +517,13 @@ def main():
                 ## Only IF idx-i == 0: Append assembled_list[0] to result
                     Instr(3, 9, 13, 12, 0, "", 0, 8, 13, 6, 0),       ## Step25  #3: Compare current index-i (idx 9) == 0 and set result to idx 8(reg1)
                     Instr(4, 12, 13, 8, 1, "", 3, 12, 13, 6, 1),       ## Step26  #4: Cond jump to +1/+4 if true/false
-                    Instr(7, 0, 5, 12, 0, 0, 0, 12, 13, 6, 2),       ## Step27  #7: Take the first element (idx 0) of idx5(assembled_list) and set it to des(6:result)
+                    Instr(7, 12, 5, 12, 0, "", 0, 12, 13, 6, 2),       ## Step27  #7: Take the first element (idx 0) of idx5(assembled_list) and set it to des(6:result)
                     Instr(1, 12, 13, 12, 1, "", 0, 9, 13, 6, 0),       ## Step28  #1: Set 1 to idx 9(idx-i)
                     
                 ## Append " " +  assembled_list[idx-i] to result
                     Instr(7, 9, 5, 12, 0, "", 0, 8, 13, 6, 1),       ## Step29  #7: Take idx 9(idx-i) of idx5 (assembled_list) and set it to idx8(reg1)
                     Instr(2, 12, 13, 12, 0, " ", 0, 12, 13, 6, 3),     ## Step30  #2: add " " to des(6:res)
-                    Instr(2, 12, 13, 12, 0, 8, 0, 12, 13, 6, 2),       ## Step31  #2: add idx8(reg1) to des(6:res)
+                    Instr(2, 8, 13, 12, 0, "", 0, 12, 13, 6, 2),       ## Step31  #2: add idx8(reg1) to des(6:res)
                     Instr(2, 12, 13, 12, 1, "", 0, 9, 13, 6, 0),       ## Step32  #2: add +1 to idx9 (index-i)
                 
                 ## Determine whether or not to iterate over again depending idx-i< len(assembled_list)
