@@ -86,21 +86,23 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     imm =  instr.imm
     new_pc = pc
 
-    # print("step", pc+1, "ops:", instr.opcode, "-", imm, "mem[p2][mem[p1]:mem[p3]]", mem[p2][mem[p1]:mem[p3]], type(mem[p2][mem[p1]:mem[p3]]))
-
-
-    assert(type(mem[p1])==bool, type(val_of(mem[p1]))==int)
-    assert(type(mem[p2])==list or type(mem[p2])==ZKList or type(mem[p2])==str)
-    assert(type(mem[p3])!=list or type(mem[p3])!=ZKList)
-    assert(type(p4)==bool, type(val_of(p4))==int)
-    assert(type(p5)!=list, type(p5)!=ZKList, type(p5)==int)
-    
-    # assert(type(mem[p2][mem[p1]:mem[p3]])==str) TODO
+    # print("step", pc+1,  mem[p1], mem[p3])
+    # print("step", pc+1, "ops:", instr.opcode, "-", imm, "mem[p6][mem[p1]:mem[p3]]", mem[p6][mem[p1]:mem[p3]], type(mem[p6][mem[p1]:mem[p3]]))
     
 
-    assert(type(mem[des])==bool, type(val_of(mem[des]))==int)
-    assert(type(mem[t_des])==str)
-    assert(type(mem[s_des])==ZKList or type(mem[s_des])==List)
+
+    # assert(type(mem[p1])==bool, val_of(mem[p1])==int)
+    # assert(type(mem[p2])==list or type(mem[p2])==ZKList or type(mem[p2])==str)
+    # assert(type(mem[p3])!=list or type(mem[p3])!=ZKList)
+    # assert(type(p4)==bool, val_of(p4)==int)
+    # assert(type(p5)!=list, type(p5)!=ZKList, type(p5)==int)
+    
+    # assert(type(mem[p6][mem[p1]:mem[p3]])==str)
+    
+
+    # assert(type(mem[des])==bool, type(mem[des])==int)
+    # assert(type(mem[t_des])==str)
+    # assert(type(mem[s_des])==ZKList or type(mem[s_des])==List)
 
     # 1. Set a const/mem[val] to dest
     if instr.opcode == 1:
@@ -155,8 +157,8 @@ def step(prog: Program, pc: int, mem: list, weight: int):
             comp = p5
         elif imm == 1:
             comp = mem[p3]
-        elif imm == 2:
-            comp = " "
+        # elif imm == 2:
+        #     comp = " "
 
         if p4 ==0:
             mem[des] = (mem[p1] == comp)
@@ -166,6 +168,29 @@ def step(prog: Program, pc: int, mem: list, weight: int):
             mem[des] = (mem[p1] < comp)
         elif p4 ==3:
             mem[des] = (mem[p1] > comp)
+
+        return new_pc + 1, weight +1
+
+
+    # 10. compare value in one index with const
+    elif instr.opcode == 10:
+
+        '''
+            des: target
+            p6: element 1 to compare
+            p5: const(imm==0) 
+            p4: operation (0: equal, 1:not equal, 2: p1 is smaller than p2, 3: p1 is greater than p2)
+        '''
+        
+        if imm == 0:
+            comp = p5
+        elif imm == 2:
+            comp = " "
+
+        if p4 ==0:
+            mem[des] = (mem[p6] == comp)
+        elif p4 ==1:
+            mem[des] = (mem[p6] != comp)
 
         return new_pc + 1, weight +1
 
@@ -363,7 +388,7 @@ def main():
 
                 ## Only IF X[curr] == " ": Append X[idx-k : idx-i] (from last blank to current blank = word) to X_words
                     Instr(7, 9, 2, 12, 0, blank, 15, 8, 13, 14, 3),       ## Step5  #7: Assign idx9 (idx-i/reg2) of idx 2 (X) to idx 14(reg5)
-                    Instr(3, 14, 13, 12, 0, blank, 15, 8, 13, 6, 2),     ## Step6  #3: Compare idx 8(reg1) and " " and assign result to idx 8(reg1)
+                    Instr(10, 12, 13, 12, 0, blank, 14, 8, 13, 6, 2),     ## Step6  #3: Compare idx 8(reg1) and " " and assign result to idx 8(reg1)
                     Instr(4, 12, 13, 8, 1, 6, 0, 12, 13, 6, 1),       ## Step7  #4: Cond jump to +1/+6 if true/false
 
                     Instr(6, 10, 13, 9, 0, blank, 2, 8, 13, 6, 0),      ## Step8  #6: Assign idx10 (idx-k) : idx9 (idx-i) of idx 2 (X) to idx 8 (reg1)
@@ -375,12 +400,12 @@ def main():
                     Instr(2, 12, 13, 12, 1, blank, 15, 9, 13, 6, 0),       ## Step13  #2: add 1 to idx 9 (idx-i/reg2)
 
                 ## Determine whether or not to iterate over again depending idx-i< len(X)
-                    Instr(3, 9, 13, 2, 2, X_len, 15, 8, 13, 6, 0),   ## Step14  #3: Compare idx 9 (idx-i) < len(X) and assign result to idx 8(reg1)
+                    Instr(3, 9, 13, 12, 2, X_len, 15, 8, 13, 6, 0),   ## Step14  #3: Compare idx 9 (idx-i) < len(X) and assign result to idx 8(reg1)
                     Instr(4, 12, 13, 8, -10, 1, 15, 12, 13, 6, 1),     ## Step15  #4: cond jump to next or start from the beginning of this block (-10)
 
                 ## Only IF  X[-1] != " " (if string not ending with blank): Append X[k:] (the last word) to X_words
                     Instr(7, 12, 2, 12, -1, blank, 15, 8, 13, 14, 3),      ## Step16  #7 take last elem of idx2 (X) into idx 8(reg1)
-                    Instr(3, 14, 13, 12, 1, blank, 15, 8, 13, 6, 2),     ## Step17  #3: Compare idx8(reg1) != " ", assign it to idx 8(reg1)
+                    Instr(10, 12, 13, 12, 1, blank, 14, 8, 13, 6, 2),     ## Step17  #3: Compare idx8(reg1) != " ", assign it to idx 8(reg1)
                     Instr(4, 12, 13, 8, 1,   3, 15, 12, 13, 6, 1),       ## Step18  #4: Cond jump to +1/+3 if true/false
 
                     Instr(6, 10, 13, 12, 0, blank, 2, 8, 13, 6, 1),      ## Step19  #6: Assign idx 10(idx-k) till end of idx 2(X) to idx 8 (reg1)
@@ -486,11 +511,12 @@ def main():
 
         dummy_int = 0 #12
         dummy_list = ZKList([0] * 16) #13
+        reg5 = '' #14 This is used for only str
         dummy_str = "abcdefghijklmnopqrstuvwxyz" #15
 
         repro_mem = [madlibs, nouns_list, X, 
                 madlibs_words, X_words, assembled_list, result, fill,
-                reg1, reg2, reg3, reg4, dummy_int, dummy_list, dummy_str]
+                reg1, reg2, reg3, reg4, dummy_int, dummy_list, reg5, dummy_str]
 
         program = [
 
