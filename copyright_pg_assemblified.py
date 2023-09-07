@@ -109,8 +109,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     assert(type(mem[p2][p4])==int or type(mem[p2][p4])==ArithmeticWire)
 
     mem[s_des][p4]
-    print(mem[s_des], val_of(mem[p1]))
-    mem[s_des][mem[p1]]
+    mem[s_des][mem[p9]]
 
     assert(type(mem[des])==bool or type(mem[des])==int or type(mem[des])==ArithmeticWire)
     assert(type(mem[t_des])==str)
