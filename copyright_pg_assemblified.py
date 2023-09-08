@@ -102,8 +102,8 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     imm =  instr.imm
     new_pc = pc
 
-    print("step", pc+1, mem[p6], mem[p1])
-    # print("step", pc+1, "ops:", instr.opcode, "-", imm, "mem[p6][mem[p1]]", mem[p6][mem[p1]], type(mem[p6][mem[p1]]))
+    print("step", pc+1, mem[p6], mem[p1], p1)
+    print("step", pc+1, "ops:", instr.opcode, "-", imm, "mem[p6][mem[p1]]", mem[p6][mem[p1]], type(mem[p6][mem[p1]]))
     assert(type(mem[p1])==int or type(mem[p1])==ArithmeticWire)
     assert(type(mem[p2])==list or type(mem[p2])==ZKList or type(mem[p2])==str)
     assert(type(mem[p3])==bool or type(mem[p3])==int or type(mem[p3])==ArithmeticWire)
@@ -113,7 +113,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     assert(type(mem[p6][mem[p7]:mem[p8]])==str)
     assert(type(mem[p6][mem[p7]:])==str)
     assert(type(mem[p2][p4])==int or type(mem[p2][p4])==ArithmeticWire)
-    # assert(type(mem[p6][mem[p1]])==str)
+    assert(type(mem[p6][mem[p1]])==str)
 
     mem[s_des][p4]
     mem[s_des][mem[p9]]
@@ -145,6 +145,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
         '''
             des: target
             p1: increment by const(imm==0) or concat sec_string(imm==2)
+            p1: concat sec_string(imm==4) indexed by ArithWire
             p4: increment by mem[val](imm==1)
             p5: char/strng(imm==3)
         '''
@@ -156,6 +157,8 @@ def step(prog: Program, pc: int, mem: list, weight: int):
             mem[t_des] += int_to_string(val_of(mem[p1]))
         elif imm == 3: # This is for char/string append
             mem[t_des] += " "
+        elif imm ==4:
+            mem[t_des] += int_to_string(val_of(mem[p3]))
 
         return new_pc + 1, weight +1
 
@@ -478,7 +481,7 @@ def main():
                 ## Append " " +  assembled_list[idx-i] to result
                     Instr(7, 9, 5, 12, 0, blank, 15, 12, 12, 12, 12, 8, 13, 6, 1),       ## Step45  #7: Take idx 9(idx-i) of idx5 (assembled_list) and set it to idx8(reg1)
                     Instr(2, 12, 13, 12, 0, blank, 15, 12, 12, 12, 12, 12, 13, 6, 3),     ## Step46  #2: add " " to des(6:res)
-                    Instr(2, 8, 13, 12, 0, blank, 15, 12, 12, 12, 12, 12, 13, 6, 2),       ## Step47  #2: add idx8(reg1) to des(6:res)
+                    Instr(2, 12, 13, 8, 0, blank, 15, 12, 12, 12, 12, 12, 13, 6, 4),       ## Step47  #2: add idx8(reg1) to des(6:res)
                     Instr(2, 12, 13, 12, 1, blank, 15, 12, 12, 12, 12, 9, 13, 6, 0),       ## Step48  #2: add +1 to idx9 (index-i)
                 
                 ## Determine whether or not to iterate over again depending idx-i< len(assembled_list)
@@ -589,7 +592,7 @@ def main():
                 ## Append " " +  assembled_list[idx-i] to result
                     Instr(7, 9, 5, 12, 0, blank, 15, 12, 12, 12, 12, 8, 13, 6, 1),       ## Step29  #7: Take idx 9(idx-i) of idx5 (assembled_list) and set it to idx8(reg1)
                     Instr(2, 12, 13, 12, 0, blank, 15, 12, 12, 12, 12, 12, 13, 6, 3),     ## Step30  #2: add " " to des(6:res)
-                    Instr(2, 8, 13, 12, 0, blank, 15, 12, 12, 12, 12, 12, 13, 6, 2),       ## Step31  #2: add idx8(reg1) to des(6:res)
+                    Instr(2, 12, 13, 8, 0, blank, 15, 12, 12, 12, 12, 12, 13, 6, 4),       ## Step31  #2: add idx8(reg1) to des(6:res)
                     Instr(2, 12, 13, 12, 1, blank, 15, 12, 12, 12, 12, 9, 13, 6, 0),       ## Step32  #2: add +1 to idx9 (index-i)
                 
                 ## Determine whether or not to iterate over again depending idx-i< len(assembled_list)
