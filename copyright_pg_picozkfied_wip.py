@@ -6,8 +6,8 @@ from picozk import *
 @dataclass
 class Instr:
     def __init__(self, opcode: int, src1: int, src2: int, src3: int, src4: int, src5: int, 
-                 src6: int, src7: int, src8: int, src9: int, src10: int, 
-                 dest: int, s_dest: int, t_dest: int, 
+                 src9: int, src10: int, 
+                 dest: int, s_dest: int,
                  imm: int):
         self.opcode = opcode
         self.src1 = src1
@@ -15,14 +15,10 @@ class Instr:
         self.src3 = src3
         self.src4 = src4
         self.src5 = src5
-        self.src6 = src6
-        self.src7 = src7
-        self.src8 = src8
         self.src9 = src9
         self.src10 = src10
         self.dest = dest
         self.s_dest = s_dest
-        self.t_dest = t_dest
         self.imm = imm
 
 
@@ -30,22 +26,18 @@ class Instr:
 @dataclass
 class Program:
     def __init__(self, opcode: List[int], src1: List[int], src2: List[int], src3: List[int], src4: List[int], src5: List[int], 
-                 src6: List[int],  src7: List[int],  src8: List[int],  src9: List[int], src10: List[int], 
-                 dest: List[int], s_dest: List[int], t_dest: List[int], imm: List[int]):
+                 src9: List[int], src10: List[int], 
+                 dest: List[int], s_dest: List[int], imm: List[int]):
         self.opcode: List[int] = opcode
         self.src1: List[int] = src1
         self.src2: List[int] = src2
         self.src3: List[int] = src3
         self.src4: List[int] = src4
         self.src5: List[int] = src5
-        self.src6: List[int] = src6
-        self.src7: List[int] = src7
-        self.src8: List[int] = src8
         self.src9: List[int] = src9
         self.src10: List[int] = src10
         self.dest: List[int] = dest
         self.s_dest: List[int] = s_dest
-        self.t_dest: List[int] = t_dest
         self.imm: List[int] = imm
 
 
@@ -59,14 +51,10 @@ def make_program(prog): #TODO: ZKListify
     src3 = [0 for _ in range(length)]
     src4 = [0 for _ in range(length)]
     src5 = [0 for _ in range(length)]
-    src6 = [0 for _ in range(length)]
-    src7 = [0 for _ in range(length)]
-    src8 = [0 for _ in range(length)]
     src9 = [0 for _ in range(length)]
     src10 = [0 for _ in range(length)]
     dest = [0 for _ in range(length)]
     s_dest = [0 for _ in range(length)]
-    t_dest = [0 for _ in range(length)]
     imm = [0 for _ in range(length)]
 
     for i, instr in enumerate(prog):
@@ -76,19 +64,15 @@ def make_program(prog): #TODO: ZKListify
         src3[i] = instr.src3
         src4[i] = instr.src4
         src5[i] = instr.src5
-        src6[i] = instr.src6
-        src7[i] = instr.src7
-        src8[i] = instr.src8
         src9[i] = instr.src9
         src10[i] = instr.src10
         dest[i] = instr.dest
         s_dest[i] = instr.s_dest
-        t_dest[i] = instr.t_dest
         imm[i] = instr.imm
 
     return Program(opcode, src1, src2, src3, src4, src5, 
-                   src6, src7, src8, src9, src10, 
-                   dest, s_dest, t_dest, 
+                   src9, src10, 
+                   dest, s_dest,
                    imm)
 
 
@@ -100,14 +84,10 @@ def fetch(prog: Program, pc: SecretInt):
                  prog.src3[pc],
                  prog.src4[pc],
                  prog.src5[pc],
-                 prog.src6[pc],
-                 prog.src7[pc],
-                 prog.src8[pc],
                  prog.src9[pc],
                  prog.src10[pc],
                  prog.dest[pc],
                  prog.s_dest[pc],
-                 prog.t_dest[pc],
                  prog.imm[pc])
 
 
@@ -159,14 +139,10 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     p3 = instr.src3
     p4 = instr.src4
     p5 = instr.src5
-    p6 = instr.src6
-    p7 = instr.src7
-    p8 = instr.src8
     p9 = instr.src9
     p10 = instr.src10
     des = instr.dest
     s_des = instr.s_dest
-    t_des = instr.t_dest
     imm =  instr.imm
     new_pc = pc
 
@@ -178,15 +154,10 @@ def step(prog: Program, pc: int, mem: list, weight: int):
         p1: mem[val](imm==1)
         p4: const(imm==0)
     
-        if imm == 0:
-            mem[des] = p4
-        elif imm ==1:
-            mem[des] = mem[p1]
+        mem[des] = p4
     '''
 
-    mem[des] = mux(instr.opcode == 1,
-                    mux(imm == 0, p4, mem[p1]), 
-               mem[des])
+    mem[des] = mux(instr.opcode == 1, p4, mem[des])
         
 
     # 2. add const/mem[val] to des
@@ -197,30 +168,11 @@ def step(prog: Program, pc: int, mem: list, weight: int):
         p4: increment by mem[val](imm==1)
         p5: char/strng(imm==3)
     
-        if imm == 0: # This is for arithmetic addition
-            mem[des] += p4
-        elif imm ==1:
-            mem[des] += mem[p1]
-        elif imm == 2:
-            mem[t_des] += int_to_string(val_of(mem[p1]))
-        elif imm == 3: # This is for char/string append
-            mem[t_des] += " "
-        elif imm ==4:
-            mem[t_des] += int_to_string(val_of(mem[p3]))
+        mem[des] += p4
+            
     '''
 
-    mem[des] =  mux(instr.opcode == 2, 
-                    mux(imm == 0, mem[des] + p4,
-                        mux(imm == 1, mem[des] + mem[p1], mem[des])),
-                mem[des])
-
-
-    mem[t_des] = mux(instr.opcode == 2, 
-                     mux(imm == 2, mem[t_des] + int_to_string(val_of(mem[p1])),
-                         mux(imm ==3, mem[t_des] + " ",
-                             mux(imm == 4, mem[t_des] + int_to_string(val_of(mem[p3])), mem[t_des]))),
-                 mem[t_des])
-
+    mem[des] =  mux(instr.opcode == 2, mem[des] + p4, mem[des])
 
     # 3. compare value in one index with const
     '''
@@ -234,37 +186,22 @@ def step(prog: Program, pc: int, mem: list, weight: int):
             comp = p5
         elif imm == 1:
             comp = mem[p3]
-        elif imm == 2:
-            comp = " "
+
 
         if p4 ==0:
             mem[des] = (mem[p10] == comp)
-        elif p4 ==1:
-            mem[des] = (mem[p10] != comp)
         elif p4 ==2:
             mem[des] = (mem[p10] < comp)
-        elif p4 ==3:
-            mem[des] = (mem[p10] > comp)
-        # Below is for string ops during making X_words 
-        elif p4 ==4:
-            mem[des] = (mem[p6] == comp)
-        elif p4 ==5:
-            mem[des] = (mem[p6] != comp)
+
     '''
         
     comp = mux(instr.opcode == 3, mux(imm == 0, p5, mux(imm == 1, mem[p3], 500000)), 500000)
-    comp_str = mux(instr.opcode == 3 and imm == 2, " ", "dummy")
 
     mem[des] = mux(instr.opcode == 3,
                    mux(p4 == 0, (mem[p10] == comp), 
-                        mux(p4 == 1, (mem[p10] != comp),
                             mux(p4 == 2, (mem[p10] < comp),
-                                mux(p4 == 3, (mem[p10] > comp),
-                                    mem[des])))), mem[des])
+                                    mem[des])), mem[des])
                                     
-    mem[des] = mux(instr.opcode == 3,
-                   mux(p4 == 4, (mem[p6] == comp_str),
-                       mux(p4 == 5, (mem[p6] != comp_str), mem[des])), mem[des])
 
 
     # 4/-1. jump or cond-jump/terminal
@@ -299,19 +236,6 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     mem[des] = mux(instr.opcode == 5, len(mem[p2]), mem[des])
     
 
-    # 6. access more than one index in list
-    
-    '''
-        des:target
-        p7: beginning index of nested list of origin
-        p6: index of string type in mem
-        p8: end index of nested list of origin (imm==0)/otherwise automatically till end (imm==1)
-    '''
-    mem[des] = mux(instr.opcode == 6,
-                   mux(imm == 0, string_to_int(mem[p6][mem[p7]:mem[p8]]), 
-                       string_to_int(mem[p6][mem[p7]:])), 
-                mem[des])
-
     # 7. Access nested list by constant/pointer
     '''
         des:target
@@ -319,26 +243,10 @@ def step(prog: Program, pc: int, mem: list, weight: int):
         p2: constant/pointer (imm==0/1)
         p4: const index of list(imm==0/2)
 
-        if imm == 0:
-            mem[des] = mem[p2][p4]
-        elif imm == 1:
-            mem[des] = mem[p2][mem[p1]]
-        elif imm == 2:
-            mem[t_des] = int_to_string(val_of(mem[p2][p4]))
-        elif imm == 3:
-            mem[t_des] = mem[p6][mem[p1]] #This is for strings , used during X_words creation
+        mem[des] = mem[p2][mem[p1]]
     '''
 
-    mem[des] = mux(instr.opcode == 7, 
-                   mux(imm == 0, mem[p2][p4],
-                       mux(imm == 1, mem[p2][mem[p1]], mem[des])),
-                mem[des])
-
-
-    mem[t_des] = mux(instr.opcode == 7,
-                     mux(imm == 2, int_to_string(val_of(mem[p2][p4])),
-                         mux(imm == 3, mem[p6][mem[p1]], mem[t_des])),
-                 mem[t_des])
+    mem[des] = mux(instr.opcode == 7, mem[p2][mem[p1]], mem[des])
 
 
     # 8. Set Value to list
@@ -355,13 +263,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
         
     '''
 
-    mem[s_des][p4] = mux(instr.opcode == 8,
-                            mux(imm == 0, mem[p3], mem[s_des][p4]), 
-                     mem[s_des][p4])
-
-    mem[s_des][mem[p9]] = mux(instr.opcode == 8,
-                                mux(imm == 1, mem[p3], mem[s_des][mem[p9]]), 
-                          mem[s_des][mem[p9]])
+    mem[s_des][mem[p9]] = mux(instr.opcode == 8, mem[p3], mem[s_des][mem[p9]])
 
     return new_pc + step, weight +1
 
@@ -420,39 +322,39 @@ def main():
             # Take the first three nouns from X and hard-code the rest from the fill list
             
                 ## FIRST IF curr madlibs_words is equal to "_"
-                    Instr(7, 9, 3, 12, 0, blank, 15, 12, 16, 12, 12, 8, 13, 6, 1),       ## Step1  #7: Assign idx9 (idx-i) of idx 3 (madlibs_words) to idx 8(reg1)
-                    Instr(3, 12, 13, 12, 0, under, 15, 12, 16, 12, 8, 8, 13, 6, 0),     ## Step2  #3: Compare idx 8(reg1) and "_" and assign result to idx 8(reg1)
-                    Instr(4, 12, 13, 8, 1, 8, 15, 12, 16, 12, 12, 12, 13, 6, 1),       ## Step3  #4: Cond jump to +1/+8 if true/false
+                    Instr(7, 9, 3, 12, 0, blank, 12, 12, 8, 13, 1),       ## Step1  #7: Assign idx9 (idx-i) of idx 3 (madlibs_words) to idx 8(reg1)
+                    Instr(3, 12, 13, 12, 0, under, 12, 8, 8, 13, 0),     ## Step2  #3: Compare idx 8(reg1) and "_" and assign result to idx 8(reg1)
+                    Instr(4, 12, 13, 8, 1, 8,      12, 12, 12, 13, 1),       ## Step3  #4: Cond jump to +1/+8 if true/false
 
                 ## SECOND IF index of madlibs_words is less than fill_upto (upto idx of third fill)
-                    Instr(3, 12, 13, 12, 2, fillup, 15, 12, 16, 12, 9, 8, 13, 6, 0),  ## Step4  #3: Compare idx 9(idx-i) < fill_upto (10 for now) and assign result to idx 8(reg1)
-                    Instr(4, 12, 13, 8, 1, 3, 15, 12, 16, 12, 12, 12, 13, 6, 1),       ## Step5  #4: Cond jump to +1/+3 if true/false
+                    Instr(3, 12, 13, 12, 2, fillup, 12, 9, 8, 13, 0),  ## Step4  #3: Compare idx 9(idx-i) < fill_upto (10 for now) and assign result to idx 8(reg1)
+                    Instr(4, 12, 13, 8, 1, 3,       12, 12, 12, 13, 1),       ## Step5  #4: Cond jump to +1/+3 if true/false
 
                 ## IF Both TRUE (Append from X_Words)
-                    Instr(7, 9, 4, 12, 0, blank, 15, 12, 16, 12, 12, 8, 13, 6, 1),       ## Step6  #7: Assign idx 9 (idx-i) of idx 4 (X_words) to idx 8(reg1)
-                    Instr(4, 12, 13, 12, 5, 0, 15, 12, 16, 12, 12, 12, 13, 6, 0),       ## Step7  #4: jump to +5
+                    Instr(7, 9, 4, 12, 0, blank, 12, 12, 8, 13, 1),       ## Step6  #7: Assign idx 9 (idx-i) of idx 4 (X_words) to idx 8(reg1)
+                    Instr(4, 12, 13, 12, 5, 0, 12, 12, 12, 13, 0),       ## Step7  #4: jump to +5
 
                 ## IF only the former TRUE (Append from fill/consts)
-                    Instr(7, 10, 7, 12, 0, blank, 15, 12, 16, 12, 12, 8, 13, 6, 1),      ## Step8  #7: Assign idx10 (idx-k) of idx 7 (fill) to idx 8(reg1)
-                    Instr(2, 12, 13, 12, 1, blank, 15, 12, 16, 12, 12, 10, 13, 6, 0),      ## Step9  #2: add 1 to idx 10 (idx-k)
-                    Instr(4, 12, 13, 12, 2, 0, 15, 12, 16, 12, 12, 12, 13, 6, 0),       ## Step10  #4: jump to +2
+                    Instr(7, 10, 7, 12, 0, blank, 12, 12, 8, 13, 1),      ## Step8  #7: Assign idx10 (idx-k) of idx 7 (fill) to idx 8(reg1)
+                    Instr(2, 12, 13, 12, 1, blank, 12, 12, 10, 13, 0),      ## Step9  #2: add 1 to idx 10 (idx-k)
+                    Instr(4, 12, 13, 12, 2, 0, 12, 12, 12, 13, 0),       ## Step10  #4: jump to +2
 
                 ## ELSE (Append from madlibs_words)
-                    Instr(7, 9, 3, 12, 0, blank, 15, 12, 16, 12, 12, 8, 13, 6, 1),       ## Step11  #7: Assign idx9 (idx-i) of idx 3 (madlibs_words) to idx 8(reg1)
+                    Instr(7, 9, 3, 12, 0, blank, 12, 12, 8, 13, 1),       ## Step11  #7: Assign idx9 (idx-i) of idx 3 (madlibs_words) to idx 8(reg1)
 
                 ## APPEND and INCREMENT
-                    Instr(8, 12, 13, 8, 0, blank, 15, 12, 16, 9, 12, 12, 5, 6, 1),       ## Step12  #8: append idx8 (reg1) to idx5 (assembled_list)
-                    Instr(2, 12, 13, 12, 1, blank, 15, 12, 16, 12, 12, 9, 13, 6, 0),       ## Step13  #2: add 1 to idx 9 (idx-i)
+                    Instr(8, 12, 13, 8, 0, blank, 9, 12, 12, 5, 1),       ## Step12  #8: append idx8 (reg1) to idx5 (assembled_list)
+                    Instr(2, 12, 13, 12, 1, blank, 12, 12, 9, 13, 0),       ## Step13  #2: add 1 to idx 9 (idx-i)
                     
                 ## CHECK IF ITERATE OR NEXT
-                    Instr(5, 12, 4, 12, 0, blank, 15, 12, 16, 12, 12, 8, 13, 6, 0),       ## Step14  #9: Measure a length of index4(X_words) and assign it to idx 8(reg1)
-                    Instr(3, 12, 13, 8, 2, blank, 15, 12, 16, 12, 9, 8, 13, 6, 1),       ## Step15  #3: Compare idx 9(idx-i) < idx 8(reg1) and assign result to idx 8(reg1)
-                    Instr(4, 12, 13, 8, -15, 1, 15, 12, 16, 12, 12, 12, 13, 6, 1),     ## Step16  #4: Cond jump to -15/+1 if true/false
+                    Instr(5, 12, 4, 12, 0, blank, 12, 12, 8, 13, 0),       ## Step14  #9: Measure a length of index4(X_words) and assign it to idx 8(reg1)
+                    Instr(3, 12, 13, 8, 2, blank, 12, 9, 8, 13, 1),       ## Step15  #3: Compare idx 9(idx-i) < idx 8(reg1) and assign result to idx 8(reg1)
+                    Instr(4, 12, 13, 8, -15, 1, 12, 12, 12, 13, 1),     ## Step16  #4: Cond jump to -15/+1 if true/false
 
-                    Instr(1, 12, 13, 12, 0, blank, 15, 12, 16, 12, 12, 9, 13, 6, 0),       ## Step17  #1: Set index9 (idx-i) to 0
+                    Instr(1, 12, 13, 12, 0, blank, 12, 12, 9, 13, 0),       ## Step17  #1: Set index9 (idx-i) to 0
 
             # END
-                    Instr(-1, 12, 13, 12, 0, blank, 15, 12, 16, 12, 12, 12, 13, 6, 0),      ## Step18  #-1: Terminal
+                    Instr(-1, 12, 13, 12, 0, blank, 12, 12, 12, 13, 0),      ## Step18  #-1: Terminal
                     ]
 
         pro_prog = make_program(program)
@@ -505,32 +407,32 @@ def main():
             # Hard-Code all blanks from the nouns list
                 
                 ## IF madlibs_words[curr] == "_"
-                    Instr(7, 9, 3, 12, 0, blank, 15, 12, 16, 12, 12, 8, 13, 6, 1),       ## Step1  #7: Assign idx9 (idx-i) of idx 3 (madlibs_words) to idx 8(reg1)
-                    Instr(3, 12, 13, 12, 0, under, 15, 12, 16, 12, 8, 8, 13, 6, 0),     ## Step2  #3: Compare idx 10(reg1) and "_" and assign result to idx 10(reg1)
-                    Instr(4, 12, 13, 8, 1, 4, 15, 12, 16, 12, 12, 12, 13, 6, 1),       ## Step3  #4: Cond jump to +1/+4 if true/false
+                    Instr(7, 9, 3, 12, 0, blank, 12, 12, 8, 13, 1),       ## Step1  #7: Assign idx9 (idx-i) of idx 3 (madlibs_words) to idx 8(reg1)
+                    Instr(3, 12, 13, 12, 0, under, 12, 8, 8, 13, 0),     ## Step2  #3: Compare idx 10(reg1) and "_" and assign result to idx 10(reg1)
+                    Instr(4, 12, 13, 8, 1, 4, 12, 12, 12, 13, 1),       ## Step3  #4: Cond jump to +1/+4 if true/false
 
                     ## TRUE: Append from fill[idx-k] to assembled_list
-                    Instr(7, 10, 7, 12, 0, blank, 15, 12, 16, 12, 12, 8, 13, 6, 1),      ## Step4  #7: Assign idx10 (idx-k) of idx 7 (fill) to idx 8(reg1)
-                    Instr(2, 12, 13, 12, 1, blank, 15, 12, 16, 12, 12, 10, 13, 6, 0),      ## Step5  #2: add 1 to idx 10 (idx-k)
-                    Instr(4, 12, 13, 12, 2, 0, 15, 12, 16, 12, 12, 12, 13, 6, 0),       ## Step6  #4: jump to +2
+                    Instr(7, 10, 7, 12, 0, blank, 12, 12, 8, 13, 1),      ## Step4  #7: Assign idx10 (idx-k) of idx 7 (fill) to idx 8(reg1)
+                    Instr(2, 12, 13, 12, 1, blank, 12, 12, 10, 13, 0),      ## Step5  #2: add 1 to idx 10 (idx-k)
+                    Instr(4, 12, 13, 12, 2, 0, 12, 12, 12, 13, 0),       ## Step6  #4: jump to +2
 
                     ## ELSE: Append from madlibs_words[idx-k] to assembled_list
-                    Instr(7, 9, 3, 12, 0, blank, 15, 12, 16, 12, 12, 8, 13, 6, 1),       ## Step7  #7: Assign idx9 (idx-i) of idx 3 (madlibs_words) to idx 8(reg1)
+                    Instr(7, 9, 3, 12, 0, blank, 12, 12, 8, 13, 1),       ## Step7  #7: Assign idx9 (idx-i) of idx 3 (madlibs_words) to idx 8(reg1)
                     
                 ## Append ops based on above
-                    Instr(8, 12, 13, 8, 0, blank, 15, 12, 16, 9, 12, 12, 5, 6, 1),       ## Step8  #14: append idx 8(reg1) to idx 5 (assembled_list)
-                    Instr(2, 12, 13, 12, 1, blank, 15, 12, 16, 12, 12, 9, 13, 6, 0),       ## Step9  #2: add 1 to idx 9 (idx-i)
+                    Instr(8, 12, 13, 8, 0, blank, 9, 12, 12, 5, 1),       ## Step8  #14: append idx 8(reg1) to idx 5 (assembled_list)
+                    Instr(2, 12, 13, 12, 1, blank, 12, 12, 9, 13, 0),       ## Step9  #2: add 1 to idx 9 (idx-i)
 
                 ## Determine whether or not to iterate over again depending idx-i< len(madlibs_words)
-                    Instr(5, 12, 3, 12, 0, blank, 15, 12, 16, 12, 12, 8, 13, 6, 0),       ## Step10  #9: Measure a length of index0 (madlibs_words) and assign it to idx 8(reg1)
-                    Instr(3, 12, 13, 8, 2, 0, 15, 12, 16, 12, 9, 8, 13, 6, 1),       ## Step11  #3: Compare idx 9(idx-i) < idx 8(reg1) and assign result to idx 8(reg1)
-                    Instr(4, 12, 13, 8, -11, 1, 15, 12, 16, 12, 12, 12, 13, 6, 1),     ## Step12  #4: Cond jump to -11/+1 if true/false
+                    Instr(5, 12, 3, 12, 0, blank, 12, 12, 8, 13, 0),       ## Step10  #9: Measure a length of index0 (madlibs_words) and assign it to idx 8(reg1)
+                    Instr(3, 12, 13, 8, 2, 0, 12, 9, 8, 13, 1),       ## Step11  #3: Compare idx 9(idx-i) < idx 8(reg1) and assign result to idx 8(reg1)
+                    Instr(4, 12, 13, 8, -11, 1, 12, 12, 12, 13, 1),     ## Step12  #4: Cond jump to -11/+1 if true/false
 
-                    Instr(1, 12, 13, 12, 0, blank, 15, 12, 16, 12, 12, 9, 13, 6, 0),       ## Step13  #1: Set index i to 0
-                    Instr(1, 12, 13, 12, 0, blank, 15, 12, 16, 12, 12, 10, 13, 6, 0),      ## Step14  #1: Set index k to 0
+                    Instr(1, 12, 13, 12, 0, blank, 12, 12, 9, 13, 0),       ## Step13  #1: Set index i to 0
+                    Instr(1, 12, 13, 12, 0, blank, 12, 12, 10, 13, 0),      ## Step14  #1: Set index k to 0
 
             # END
-                    Instr(-1, 12, 13, 12, 0, blank, 15, 12, 16, 12, 12, 12, 13, 6, 0),      ## Step15  #-1: Terminal
+                    Instr(-1, 12, 13, 12, 0, blank, 12, 12, 12, 13, 0),      ## Step15  #-1: Terminal
                     ]
         repro_prog = make_program(program)
 
