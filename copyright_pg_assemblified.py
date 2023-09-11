@@ -102,25 +102,38 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     imm =  instr.imm
     new_pc = pc
 
-    print("step", pc+1, mem[p6], mem[p1], p1)
-    print("step", pc+1, "ops:", instr.opcode, "-", imm, "mem[p6][mem[p1]]", mem[p6][mem[p1]], type(mem[p6][mem[p1]]))
-    assert(type(mem[p1])==int or type(mem[p1])==ArithmeticWire)
-    assert(type(mem[p2])==list or type(mem[p2])==ZKList or type(mem[p2])==str)
-    assert(type(mem[p3])==bool or type(mem[p3])==int or type(mem[p3])==ArithmeticWire)
-    assert(type(p4)==int)
-    assert(type(p5)==int)
     
+    # Ops 1/2/4
+    assert(type(p4)==int) #This checks for Ops 4 too
+    assert(type(p5)==int)
+    assert(type(mem[p1])==int or type(mem[p1])==ArithmeticWire)
+    assert(type(mem[p3])==bool or type(mem[p3])==int or type(mem[p3])==ArithmeticWire)
+    
+    # Ops 3
+    assert(type(p10)==int)
+    assert(type(mem[p6])==str)
+    
+    # Ops 5
+    assert(type(mem[p2])==list or type(mem[p2])==ZKList or type(mem[p2])==str)
+
+    # Ops 6
     assert(type(mem[p6][mem[p7]:mem[p8]])==str)
     assert(type(mem[p6][mem[p7]:])==str)
+
+    # Ops 7
     assert(type(mem[p2][p4])==int or type(mem[p2][p4])==ArithmeticWire)
+    assert(type(mem[p2][mem[p1]])==int or type(mem[p2][mem[p1]])==ArithmeticWire)
     assert(type(mem[p6][mem[p1]])==str)
 
+    # Ops 8
     mem[s_des][p4]
     mem[s_des][mem[p9]]
 
+    # Memory
     assert(type(mem[des])==bool or type(mem[des])==int or type(mem[des])==ArithmeticWire)
     assert(type(mem[t_des])==str)
     assert(type(mem[s_des])==ZKList or type(mem[s_des])==List)
+
 
     # 1. Set a const/mem[val] to dest
     if instr.opcode == 1:
