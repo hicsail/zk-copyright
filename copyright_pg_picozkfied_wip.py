@@ -288,7 +288,6 @@ def main():
     fillup = 10
 
     under = string_to_int("_")
-    blank = 0
     
     with PicoZKCompiler('irs/picozk_test', options=['ram']):
 
