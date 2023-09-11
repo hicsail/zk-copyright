@@ -29,45 +29,45 @@ class Instr:
 # Class to hold a program as multiple lists of instructions
 @dataclass
 class Program:
-    def __init__(self, opcode: ZKList, src1: ZKList, src2: ZKList, src3: ZKList, src4: ZKList, src5: ZKList, 
-             src6: ZKList, src7: ZKList, src8: ZKList, src9: ZKList, src10: ZKList, 
-             dest: ZKList, s_dest: ZKList, t_dest: ZKList, imm: ZKList):
-        
-        self.opcode: ZKList = opcode
-        self.src1: ZKList = src1
-        self.src2: ZKList = src2
-        self.src3: ZKList = src3
-        self.src4: ZKList = src4
-        self.src5: ZKList = src5
-        self.src6: ZKList = src6
-        self.src7: ZKList = src7
-        self.src8: ZKList = src8
-        self.src9: ZKList = src9
-        self.src10: ZKList = src10
-        self.dest: ZKList = dest
-        self.s_dest: ZKList = s_dest
-        self.t_dest: ZKList = t_dest
-        self.imm: ZKList = imm
+    def __init__(self, opcode: List[int], src1: List[int], src2: List[int], src3: List[int], src4: List[int], src5: List[int], 
+                 src6: List[int],  src7: List[int],  src8: List[int],  src9: List[int], src10: List[int], 
+                 dest: List[int], s_dest: List[int], t_dest: List[int], imm: List[int]):
+        self.opcode: List[int] = opcode
+        self.src1: List[int] = src1
+        self.src2: List[int] = src2
+        self.src3: List[int] = src3
+        self.src4: List[int] = src4
+        self.src5: List[int] = src5
+        self.src6: List[int] = src6
+        self.src7: List[int] = src7
+        self.src8: List[int] = src8
+        self.src9: List[int] = src9
+        self.src10: List[int] = src10
+        self.dest: List[int] = dest
+        self.s_dest: List[int] = s_dest
+        self.t_dest: List[int] = t_dest
+        self.imm: List[int] = imm
 
 
 
-def make_program(prog):
+
+def make_program(prog): #TODO: ZKListify
     length = len(prog)
-    opcode = ZKList([0 for _ in range(length)])
-    src1 = ZKList([0 for _ in range(length)])
-    src2 = ZKList([0 for _ in range(length)])
-    src3 = ZKList([0 for _ in range(length)])
-    src4 = ZKList([0 for _ in range(length)])
-    src5 = ZKList([0 for _ in range(length)])
-    src6 = ZKList([0 for _ in range(length)])
-    src7 = ZKList([0 for _ in range(length)])
-    src8 = ZKList([0 for _ in range(length)])
-    src9 = ZKList([0 for _ in range(length)])
-    src10 = ZKList([0 for _ in range(length)])
-    dest = ZKList([0 for _ in range(length)])
-    s_dest = ZKList([0 for _ in range(length)])
-    t_dest = ZKList([0 for _ in range(length)])
-    imm = ZKList([0 for _ in range(length)])
+    opcode = [0 for _ in range(length)]
+    src1 = [0 for _ in range(length)]
+    src2 = [0 for _ in range(length)]
+    src3 = [0 for _ in range(length)]
+    src4 = [0 for _ in range(length)]
+    src5 = [0 for _ in range(length)]
+    src6 = [0 for _ in range(length)]
+    src7 = [0 for _ in range(length)]
+    src8 = [0 for _ in range(length)]
+    src9 = [0 for _ in range(length)]
+    src10 = [0 for _ in range(length)]
+    dest = [0 for _ in range(length)]
+    s_dest = [0 for _ in range(length)]
+    t_dest = [0 for _ in range(length)]
+    imm = [0 for _ in range(length)]
 
     for i, instr in enumerate(prog):
         opcode[i] = instr.opcode
@@ -122,6 +122,12 @@ def int_to_string(n):
     return ''.join([chr(int(s[i:i+3])) for i in range(0, len(s), 3)])
 
 
+def reveal(list):
+            res = ""
+            for l in list:
+                res += int_to_string(val_of(l)) + " "
+            return res[:-1]
+        
 
 def make_X(madlibs, nouns):
     X = madlibs.split()
@@ -145,7 +151,7 @@ def reveal_string(input):
     return res[:-1]
         
 
-def step(prog: Program, pc: SecretInt, mem: list, weight: int):
+def step(prog: Program, pc: int, mem: list, weight: int):
     
     instr = fetch(prog, pc)
     p1 = instr.src1
@@ -164,6 +170,7 @@ def step(prog: Program, pc: SecretInt, mem: list, weight: int):
     imm =  instr.imm
     new_pc = pc
 
+
     # 1. Set a const/mem[val] to dest
     '''
         #This does not support list to list assignment or string/char to string/char
@@ -176,6 +183,7 @@ def step(prog: Program, pc: SecretInt, mem: list, weight: int):
         elif imm ==1:
             mem[des] = mem[p1]
     '''
+
     mem[des] = mux(instr.opcode == 1,
                     mux(imm == 0, p4, mem[p1]), 
                mem[des])
@@ -356,7 +364,7 @@ def step(prog: Program, pc: SecretInt, mem: list, weight: int):
                           mem[s_des][mem[p9]])
 
     return new_pc + step, weight +1
-    
+
 
 def main():
     # The Mad Libs template
@@ -381,7 +389,7 @@ def main():
     with PicoZKCompiler('irs/picozk_test', options=['ram']):
 
         # Producer
-        madlibs = "madlibs" #0
+        madlibs = madlibs #0
         nouns_list = nouns_list #1
         X = X #2 TODO: Secrefy
         madlibs_words = madlibs_words #3
@@ -464,7 +472,7 @@ def main():
                     Instr(7, 9, 3, 12, 0, blank, 15, 12, 16, 12, 12, 8, 13, 6, 1),       ## Step34  #7: Assign idx9 (idx-i) of idx 3 (madlibs_words) to idx 8(reg1)
 
                 ## APPEND and INCREMENT
-                    Instr(8, 12, 13, 8, 0, blank, 15, 12, 16, 9, 12, 12, 5, 6, 1),       ## Step35  #8: Set idx8 (reg1) to idx9 (idx-i) of idx5 (assembled_list)
+                    Instr(8, 12, 13, 8, 0, blank, 15, 12, 16, 9, 12, 12, 5, 6, 1),       ## Step35  #8: append idx8 (reg1) to idx5 (assembled_list)
                     Instr(2, 12, 13, 12, 1, blank, 15, 12, 16, 12, 12, 9, 13, 6, 0),       ## Step36  #2: add 1 to idx 9 (idx-i)
                     
                 ## CHECK IF ITERATE OR NEXT
@@ -474,27 +482,6 @@ def main():
 
                     Instr(1, 12, 13, 12, 0, blank, 15, 12, 16, 12, 12, 9, 13, 6, 0),       ## Step40  #1: Set index9 (idx-i) to 0
 
-
-            # Stringify the assembled_list into result
-                    
-                ## Only IF idx-i == 0: Append assembled_list[0] to result
-                    Instr(3, 12, 13, 12, 0, 0, 15, 12, 16, 12, 9, 8, 13, 6, 0),       ## Step41  #3: Compare current index-i (idx 9) == 0 and set result to idx 8(reg1)
-                    Instr(4, 12, 13, 8, 1, 3, 15, 12, 16, 12, 12, 12, 13, 6, 1),       ## Step42  #4: Cond jump to +1/+4 if true/false
-                    Instr(7, 12, 5, 12, 0, blank, 15, 12, 16, 12, 12, 12, 13, 6, 2),       ## Step43  #7: Take the first element (idx 0) of idx5(assembled_list) and set it to des(6:result)
-                    Instr(1, 12, 13, 12, 1, blank, 15, 12, 16, 12, 12, 9, 13, 6, 0),       ## Step44  #1: Set 1 to idx 9(idx-i)
-                    
-                ## Append " " +  assembled_list[idx-i] to result
-                    Instr(7, 9, 5, 12, 0, blank, 15, 12, 16, 12, 12, 8, 13, 6, 1),       ## Step45  #7: Take idx 9(idx-i) of idx5 (assembled_list) and set it to idx8(reg1)
-                    Instr(2, 12, 13, 12, 0, blank, 15, 12, 16, 12, 12, 12, 13, 6, 3),     ## Step46  #2: add " " to des(6:res)
-                    Instr(2, 12, 13, 8, 0, blank, 15, 12, 16, 12, 12, 12, 13, 6, 4),       ## Step47  #2: add idx8(reg1) to des(6:res)
-                    Instr(2, 12, 13, 12, 1, blank, 15, 12, 16, 12, 12, 9, 13, 6, 0),       ## Step48  #2: add +1 to idx9 (index-i)
-                
-                ## Determine whether or not to iterate over again depending idx-i< len(assembled_list)
-                    Instr(5, 12, 5, 12, 0, blank, 15, 12, 16, 12, 12, 8, 13, 6, 0),       ## Step49  #9: Measure a length of index5 (assembled_list) and set it to idx 8(reg1)
-                    Instr(3, 12, 13, 8, 2, blank, 15, 12, 16, 12, 9, 8, 13, 6, 1),       ## Step50  #3: Compare idx 9(idx-i) < idx 8(reg1) and assign result to idx 8(reg1)
-                    Instr(4, 12, 13, 8, -10, 1, 0, 12, 16, 12, 12, 12, 13, 6, 1),     ## Step51  #4: Cond jump to -10/+1 if true/false
-
-
             # END
                     Instr(-1, 12, 13, 12, 0, blank, 15, 12, 16, 12, 12, 12, 13, 6, 0),      ## Step52  #-1: Terminal
                     ]
@@ -503,13 +490,14 @@ def main():
 
         pc = 0
         weight = 0
-
         for i in range(n_iter):
             pc, weight = step(pro_prog, pc, mem, weight)
         
-        prod_Y = mem[6].replace('\x00', '') #TODO: FIXME
+        prod_Y = reveal(mem[5]).replace('\x00', '') #TODO: FIXME
+
         print('prod_Y:', prod_Y)
         print('')
+
         res = mux("I have a dog and cat , and every day I walk her to the park" == prod_Y, 
                   mux(weight <= n_iter, SecretInt(0), SecretInt(1))
                   , SecretInt(1))
@@ -572,27 +560,6 @@ def main():
                     Instr(1, 12, 13, 12, 0, blank, 15, 12, 16, 12, 12, 9, 13, 6, 0),       ## Step23  #1: Set index i to 0
                     Instr(1, 12, 13, 12, 0, blank, 15, 12, 16, 12, 12, 10, 13, 6, 0),      ## Step24  #1: Set index k to 0
 
-
-            # Stringify the assembled_list into result
-                    
-                ## Only IF idx-i == 0: Append assembled_list[0] to result
-                    Instr(3, 12, 13, 12, 0, 0, 15, 12, 16, 12, 9, 8, 13, 6, 0),       ## Step25  #3: Compare current index-i (idx 9) == 0 and set result to idx 8(reg1)
-                    Instr(4, 12, 13, 8, 1, 3, 15, 12, 16, 12, 12, 12, 13, 6, 1),       ## Step26  #4: Cond jump to +1/+4 if true/false
-                    Instr(7, 12, 5, 12, 0, blank, 15, 12, 16, 12, 12, 12, 13, 6, 2),       ## Step27  #7: Take the first element (idx 0) of idx5(assembled_list) and set it to des(6:result)
-                    Instr(1, 12, 13, 12, 1, blank, 15, 12, 16, 12, 12, 9, 13, 6, 0),       ## Step28  #1: Set 1 to idx 9(idx-i)
-                    
-                ## Append " " +  assembled_list[idx-i] to result
-                    Instr(7, 9, 5, 12, 0, blank, 15, 12, 16, 12, 12, 8, 13, 6, 1),       ## Step29  #7: Take idx 9(idx-i) of idx5 (assembled_list) and set it to idx8(reg1)
-                    Instr(2, 12, 13, 12, 0, blank, 15, 12, 16, 12, 12, 12, 13, 6, 3),     ## Step30  #2: add " " to des(6:res)
-                    Instr(2, 12, 13, 8, 0, blank, 15, 12, 16, 12, 12, 12, 13, 6, 4),       ## Step31  #2: add idx8(reg1) to des(6:res)
-                    Instr(2, 12, 13, 12, 1, blank, 15, 12, 16, 12, 12, 9, 13, 6, 0),       ## Step32  #2: add +1 to idx9 (index-i)
-                
-                ## Determine whether or not to iterate over again depending idx-i< len(assembled_list)
-                    Instr(5, 12, 5, 12, 0, blank, 15, 12, 16, 12, 12, 8, 13, 6, 0),       ## Step33  #9: Measure a length of index5 (assembled_list) and set it to idx 8(reg1)
-                    Instr(3, 12, 13, 8, 2, 0, 15, 12, 16, 12, 9, 8, 13, 6, 1),       ## Step34  #3: Compare idx 9(idx-i) < idx 8(reg1) and assign result to idx 8(reg1)
-                    Instr(4, 12, 13, 8, -10, 1, 15, 12, 16, 12, 12, 12, 13, 6, 1),     ## Step35  #4: Cond jump to -10/+1 if true/false
-
-
             # END
                     Instr(-1, 12, 13, 12, 0, blank, 15, 12, 16, 12, 12, 12, 13, 6, 0),      ## Step36  #-1: Terminal
                     ]
@@ -604,7 +571,7 @@ def main():
         for i in range(n_iter):
             pc, weight = step(repro_prog, pc, repro_mem, weight)
 
-        reprod_Y = repro_mem[6].replace('\x00', '') #TODO: FIXME
+        reprod_Y = reveal(repro_mem[5]).replace('\x00', '') #TODO: FIXME
         print('reprod_Y: ', reprod_Y)
         print('')
         res = mux("I have a dog and cat , and every day I walk her to the park" == reprod_Y, 
