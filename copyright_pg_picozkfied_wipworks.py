@@ -29,86 +29,24 @@ class Instr:
 # Class to hold a program as multiple lists of instructions
 @dataclass
 class Program:
-    def __init__(self, opcode: ZKList, src1: ZKList, src2: ZKList, src3: ZKList, src4: ZKList, src5: ZKList, 
-             src6: ZKList, src7: ZKList, src8: ZKList, src9: ZKList, src10: ZKList, 
-             dest: ZKList, s_dest: ZKList, t_dest: ZKList, imm: ZKList):
-        
-        self.opcode: ZKList = opcode
-        self.src1: ZKList = src1
-        self.src2: ZKList = src2
-        self.src3: ZKList = src3
-        self.src4: ZKList = src4
-        self.src5: ZKList = src5
-        self.src6: ZKList = src6
-        self.src7: ZKList = src7
-        self.src8: ZKList = src8
-        self.src9: ZKList = src9
-        self.src10: ZKList = src10
-        self.dest: ZKList = dest
-        self.s_dest: ZKList = s_dest
-        self.t_dest: ZKList = t_dest
-        self.imm: ZKList = imm
-
-
-
-def make_program(prog):
-    length = len(prog)
-    opcode = ZKList([0 for _ in range(length)])
-    src1 = ZKList([0 for _ in range(length)])
-    src2 = ZKList([0 for _ in range(length)])
-    src3 = ZKList([0 for _ in range(length)])
-    src4 = ZKList([0 for _ in range(length)])
-    src5 = ZKList([0 for _ in range(length)])
-    src6 = ZKList([0 for _ in range(length)])
-    src7 = ZKList([0 for _ in range(length)])
-    src8 = ZKList([0 for _ in range(length)])
-    src9 = ZKList([0 for _ in range(length)])
-    src10 = ZKList([0 for _ in range(length)])
-    dest = ZKList([0 for _ in range(length)])
-    s_dest = ZKList([0 for _ in range(length)])
-    t_dest = ZKList([0 for _ in range(length)])
-    imm = ZKList([0 for _ in range(length)])
-
-    for i, instr in enumerate(prog):
-        opcode[i] = instr.opcode
-        src1[i] = instr.src1
-        src2[i] = instr.src2
-        src3[i] = instr.src3
-        src4[i] = instr.src4
-        src5[i] = instr.src5
-        src6[i] = instr.src6
-        src7[i] = instr.src7
-        src8[i] = instr.src8
-        src9[i] = instr.src9
-        src10[i] = instr.src10
-        dest[i] = instr.dest
-        s_dest[i] = instr.s_dest
-        t_dest[i] = instr.t_dest
-        imm[i] = instr.imm
-
-    return Program(opcode, src1, src2, src3, src4, src5, 
-                   src6, src7, src8, src9, src10, 
-                   dest, s_dest, t_dest, 
-                   imm)
-
-
-# Fetch an instruction from a program
-def fetch(prog: Program, pc: SecretInt):
-    return Instr(prog.opcode[pc],
-                 prog.src1[pc],
-                 prog.src2[pc],
-                 prog.src3[pc],
-                 prog.src4[pc],
-                 prog.src5[pc],
-                 prog.src6[pc],
-                 prog.src7[pc],
-                 prog.src8[pc],
-                 prog.src9[pc],
-                 prog.src10[pc],
-                 prog.dest[pc],
-                 prog.s_dest[pc],
-                 prog.t_dest[pc],
-                 prog.imm[pc])
+    def __init__(self, opcode: List[int], src1: List[int], src2: List[int], src3: List[int], src4: List[int], src5: List[int], 
+                 src6: List[int],  src7: List[int],  src8: List[int],  src9: List[int], src10: List[int], 
+                 dest: List[int], s_dest: List[int], t_dest: List[int], imm: List[int]):
+        self.opcode: List[int] = opcode
+        self.src1: List[int] = src1
+        self.src2: List[int] = src2
+        self.src3: List[int] = src3
+        self.src4: List[int] = src4
+        self.src5: List[int] = src5
+        self.src6: List[int] = src6
+        self.src7: List[int] = src7
+        self.src8: List[int] = src8
+        self.src9: List[int] = src9
+        self.src10: List[int] = src10
+        self.dest: List[int] = dest
+        self.s_dest: List[int] = s_dest
+        self.t_dest: List[int] = t_dest
+        self.imm: List[int] = imm
 
 
 def string_to_int(s):
@@ -145,7 +83,7 @@ def reveal_string(input):
     return res[:-1]
         
 
-def step(prog: Program, pc: SecretInt, mem: list, weight: int):
+def step(prog: Program, pc: int, mem: list, weight: int):
     
     instr = fetch(prog, pc)
     p1 = instr.src1
@@ -164,6 +102,7 @@ def step(prog: Program, pc: SecretInt, mem: list, weight: int):
     imm =  instr.imm
     new_pc = pc
 
+
     # 1. Set a const/mem[val] to dest
     '''
         #This does not support list to list assignment or string/char to string/char
@@ -176,6 +115,7 @@ def step(prog: Program, pc: SecretInt, mem: list, weight: int):
         elif imm ==1:
             mem[des] = mem[p1]
     '''
+
     mem[des] = mux(instr.opcode == 1,
                     mux(imm == 0, p4, mem[p1]), 
                mem[des])
@@ -357,6 +297,66 @@ def step(prog: Program, pc: SecretInt, mem: list, weight: int):
 
     return new_pc + step, weight +1
     
+
+
+def make_program(prog): #TODO: ZKListify
+    length = len(prog)
+    opcode = [0 for _ in range(length)]
+    src1 = [0 for _ in range(length)]
+    src2 = [0 for _ in range(length)]
+    src3 = [0 for _ in range(length)]
+    src4 = [0 for _ in range(length)]
+    src5 = [0 for _ in range(length)]
+    src6 = [0 for _ in range(length)]
+    src7 = [0 for _ in range(length)]
+    src8 = [0 for _ in range(length)]
+    src9 = [0 for _ in range(length)]
+    src10 = [0 for _ in range(length)]
+    dest = [0 for _ in range(length)]
+    s_dest = [0 for _ in range(length)]
+    t_dest = [0 for _ in range(length)]
+    imm = [0 for _ in range(length)]
+
+    for i, instr in enumerate(prog):
+        opcode[i] = instr.opcode
+        src1[i] = instr.src1
+        src2[i] = instr.src2
+        src3[i] = instr.src3
+        src4[i] = instr.src4
+        src5[i] = instr.src5
+        src6[i] = instr.src6
+        src7[i] = instr.src7
+        src8[i] = instr.src8
+        src9[i] = instr.src9
+        src10[i] = instr.src10
+        dest[i] = instr.dest
+        s_dest[i] = instr.s_dest
+        t_dest[i] = instr.t_dest
+        imm[i] = instr.imm
+
+    return Program(opcode, src1, src2, src3, src4, src5, 
+                   src6, src7, src8, src9, src10, 
+                   dest, s_dest, t_dest, 
+                   imm)
+
+
+# Fetch an instruction from a program
+def fetch(prog: Program, pc: int):
+    return Instr(prog.opcode[pc],
+                 prog.src1[pc],
+                 prog.src2[pc],
+                 prog.src3[pc],
+                 prog.src4[pc],
+                 prog.src5[pc],
+                 prog.src6[pc],
+                 prog.src7[pc],
+                 prog.src8[pc],
+                 prog.src9[pc],
+                 prog.src10[pc],
+                 prog.dest[pc],
+                 prog.s_dest[pc],
+                 prog.t_dest[pc],
+                 prog.imm[pc])
 
 def main():
     # The Mad Libs template
