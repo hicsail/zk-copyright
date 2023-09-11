@@ -217,6 +217,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
                     mux(imm == 0 or mem[p3]==True, p4, p5), 
                 1))
 
+
     # 5. length of 
     
 
