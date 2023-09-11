@@ -381,7 +381,7 @@ def main():
     with PicoZKCompiler('irs/picozk_test', options=['ram']):
 
         # Producer
-        madlibs = madlibs #0
+        madlibs = "madlibs" #0
         nouns_list = nouns_list #1
         X = X #2 TODO: Secrefy
         madlibs_words = madlibs_words #3
@@ -472,7 +472,7 @@ def main():
                     Instr(7, 9, 3, 12, 0, blank, 15, 12, 16, 12, 12, 8, 13, 6, 1),       ## Step34  #7: Assign idx9 (idx-i) of idx 3 (madlibs_words) to idx 8(reg1)
 
                 ## APPEND and INCREMENT
-                    Instr(8, 12, 13, 8, 0, blank, 15, 12, 16, 9, 12, 12, 5, 6, 1),       ## Step35  #8: append idx8 (reg1) to idx5 (assembled_list)
+                    Instr(8, 12, 13, 8, 0, blank, 15, 12, 16, 9, 12, 12, 5, 6, 1),       ## Step35  #8: Set idx8 (reg1) to idx9 (idx-i) of idx5 (assembled_list)
                     Instr(2, 12, 13, 12, 1, blank, 15, 12, 16, 12, 12, 9, 13, 6, 0),       ## Step36  #2: add 1 to idx 9 (idx-i)
                     
                 ## CHECK IF ITERATE OR NEXT

@@ -49,6 +49,68 @@ class Program:
         self.imm: List[int] = imm
 
 
+
+
+def make_program(prog): #TODO: ZKListify
+    length = len(prog)
+    opcode = [0 for _ in range(length)]
+    src1 = [0 for _ in range(length)]
+    src2 = [0 for _ in range(length)]
+    src3 = [0 for _ in range(length)]
+    src4 = [0 for _ in range(length)]
+    src5 = [0 for _ in range(length)]
+    src6 = [0 for _ in range(length)]
+    src7 = [0 for _ in range(length)]
+    src8 = [0 for _ in range(length)]
+    src9 = [0 for _ in range(length)]
+    src10 = [0 for _ in range(length)]
+    dest = [0 for _ in range(length)]
+    s_dest = [0 for _ in range(length)]
+    t_dest = [0 for _ in range(length)]
+    imm = [0 for _ in range(length)]
+
+    for i, instr in enumerate(prog):
+        opcode[i] = instr.opcode
+        src1[i] = instr.src1
+        src2[i] = instr.src2
+        src3[i] = instr.src3
+        src4[i] = instr.src4
+        src5[i] = instr.src5
+        src6[i] = instr.src6
+        src7[i] = instr.src7
+        src8[i] = instr.src8
+        src9[i] = instr.src9
+        src10[i] = instr.src10
+        dest[i] = instr.dest
+        s_dest[i] = instr.s_dest
+        t_dest[i] = instr.t_dest
+        imm[i] = instr.imm
+
+    return Program(opcode, src1, src2, src3, src4, src5, 
+                   src6, src7, src8, src9, src10, 
+                   dest, s_dest, t_dest, 
+                   imm)
+
+
+# Fetch an instruction from a program
+def fetch(prog: Program, pc: SecretInt):
+    return Instr(prog.opcode[pc],
+                 prog.src1[pc],
+                 prog.src2[pc],
+                 prog.src3[pc],
+                 prog.src4[pc],
+                 prog.src5[pc],
+                 prog.src6[pc],
+                 prog.src7[pc],
+                 prog.src8[pc],
+                 prog.src9[pc],
+                 prog.src10[pc],
+                 prog.dest[pc],
+                 prog.s_dest[pc],
+                 prog.t_dest[pc],
+                 prog.imm[pc])
+
+
 def string_to_int(s):
     return int(''.join([f'{ord(char):03}' for char in s]))
 
@@ -296,67 +358,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
                           mem[s_des][mem[p9]])
 
     return new_pc + step, weight +1
-    
 
-
-def make_program(prog): #TODO: ZKListify
-    length = len(prog)
-    opcode = [0 for _ in range(length)]
-    src1 = [0 for _ in range(length)]
-    src2 = [0 for _ in range(length)]
-    src3 = [0 for _ in range(length)]
-    src4 = [0 for _ in range(length)]
-    src5 = [0 for _ in range(length)]
-    src6 = [0 for _ in range(length)]
-    src7 = [0 for _ in range(length)]
-    src8 = [0 for _ in range(length)]
-    src9 = [0 for _ in range(length)]
-    src10 = [0 for _ in range(length)]
-    dest = [0 for _ in range(length)]
-    s_dest = [0 for _ in range(length)]
-    t_dest = [0 for _ in range(length)]
-    imm = [0 for _ in range(length)]
-
-    for i, instr in enumerate(prog):
-        opcode[i] = instr.opcode
-        src1[i] = instr.src1
-        src2[i] = instr.src2
-        src3[i] = instr.src3
-        src4[i] = instr.src4
-        src5[i] = instr.src5
-        src6[i] = instr.src6
-        src7[i] = instr.src7
-        src8[i] = instr.src8
-        src9[i] = instr.src9
-        src10[i] = instr.src10
-        dest[i] = instr.dest
-        s_dest[i] = instr.s_dest
-        t_dest[i] = instr.t_dest
-        imm[i] = instr.imm
-
-    return Program(opcode, src1, src2, src3, src4, src5, 
-                   src6, src7, src8, src9, src10, 
-                   dest, s_dest, t_dest, 
-                   imm)
-
-
-# Fetch an instruction from a program
-def fetch(prog: Program, pc: int):
-    return Instr(prog.opcode[pc],
-                 prog.src1[pc],
-                 prog.src2[pc],
-                 prog.src3[pc],
-                 prog.src4[pc],
-                 prog.src5[pc],
-                 prog.src6[pc],
-                 prog.src7[pc],
-                 prog.src8[pc],
-                 prog.src9[pc],
-                 prog.src10[pc],
-                 prog.dest[pc],
-                 prog.s_dest[pc],
-                 prog.t_dest[pc],
-                 prog.imm[pc])
 
 def main():
     # The Mad Libs template
