@@ -294,7 +294,7 @@ def main():
         # Producer
         madlibs = madlibs #0 #TODO: Delete
         nouns_list = nouns_list #1
-        X = X #2 TODO: Secrefy  #TODO: Delete
+        X = X #2  #TODO: Delete
         madlibs_words = madlibs_words #3
 
         X_words = ZKList(X_words) #4
@@ -311,6 +311,7 @@ def main():
         dummy_list = ZKList([0] * 100) #13
 
         X_words_len = len(X_words)
+
         mem = [madlibs, nouns_list, X, 
                 madlibs_words, X_words, assembled_list, result, X_nouns,
                 reg1, reg2, reg3, reg4, dummy_int, dummy_list]
@@ -376,12 +377,12 @@ def main():
         # Reproducer
         madlibs = madlibs #0 #TODO: Delete
         nouns_list = nouns_list #1
-        X = None #2 Not available for reproducer
-
+        X = X #2  #TODO: Delete
         madlibs_words = madlibs_words #3
+        
         X_words = None #4 Not available for reproducer
         assembled_list = ZKList([0] * 16) #5
-        result = "" #6
+        result = "" #6  #TODO: Delete
         X_nouns = ZKList([nouns_list[0], nouns_list[1], nouns_list[2], nouns_list[3], nouns_list[4]]) #7
 
         reg1 = 0 #8
@@ -391,7 +392,9 @@ def main():
 
         dummy_int = 0 #12
         dummy_list = ZKList([0] * 100) #13
+
         madlibs_len = len(madlibs_words)
+        
         repro_mem = [madlibs, nouns_list, X, 
                 madlibs_words, X_words, assembled_list, result, X_nouns,
                 reg1, reg2, reg3, reg4, dummy_int, dummy_list]
