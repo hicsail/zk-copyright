@@ -49,6 +49,68 @@ class Program:
         self.imm: List[int] = imm
 
 
+
+
+def make_program(prog): #TODO: ZKListify
+    length = len(prog)
+    opcode = [0 for _ in range(length)]
+    src1 = [0 for _ in range(length)]
+    src2 = [0 for _ in range(length)]
+    src3 = [0 for _ in range(length)]
+    src4 = [0 for _ in range(length)]
+    src5 = [0 for _ in range(length)]
+    src6 = [0 for _ in range(length)]
+    src7 = [0 for _ in range(length)]
+    src8 = [0 for _ in range(length)]
+    src9 = [0 for _ in range(length)]
+    src10 = [0 for _ in range(length)]
+    dest = [0 for _ in range(length)]
+    s_dest = [0 for _ in range(length)]
+    t_dest = [0 for _ in range(length)]
+    imm = [0 for _ in range(length)]
+
+    for i, instr in enumerate(prog):
+        opcode[i] = instr.opcode
+        src1[i] = instr.src1
+        src2[i] = instr.src2
+        src3[i] = instr.src3
+        src4[i] = instr.src4
+        src5[i] = instr.src5
+        src6[i] = instr.src6
+        src7[i] = instr.src7
+        src8[i] = instr.src8
+        src9[i] = instr.src9
+        src10[i] = instr.src10
+        dest[i] = instr.dest
+        s_dest[i] = instr.s_dest
+        t_dest[i] = instr.t_dest
+        imm[i] = instr.imm
+
+    return Program(opcode, src1, src2, src3, src4, src5, 
+                   src6, src7, src8, src9, src10, 
+                   dest, s_dest, t_dest, 
+                   imm)
+
+
+# Fetch an instruction from a program
+def fetch(prog: Program, pc: SecretInt):
+    return Instr(prog.opcode[pc],
+                 prog.src1[pc],
+                 prog.src2[pc],
+                 prog.src3[pc],
+                 prog.src4[pc],
+                 prog.src5[pc],
+                 prog.src6[pc],
+                 prog.src7[pc],
+                 prog.src8[pc],
+                 prog.src9[pc],
+                 prog.src10[pc],
+                 prog.dest[pc],
+                 prog.s_dest[pc],
+                 prog.t_dest[pc],
+                 prog.imm[pc])
+
+
 def string_to_int(s):
     return int(''.join([f'{ord(char):03}' for char in s]))
 
@@ -102,66 +164,33 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     imm =  instr.imm
     new_pc = pc
 
-    # Ops 1/2/4
-    assert(type(p4)==int) #This checks for Ops 4 too
-    assert(type(p5)==int)
-    assert(type(mem[p1])==int or type(mem[p1])==ArithmeticWire)
-    assert(type(mem[p3])==bool or type(mem[p3])==int or type(mem[p3])==ArithmeticWire)
-    
-    # Ops 3
-    assert(type(p10)==int)
-    assert(type(mem[p6])==str)
-    
-    # Ops 5
-    assert(type(mem[p2])==list or type(mem[p2])==ZKList or type(mem[p2])==str)
-
-    # Ops 6
-    assert(len(mem[p6][mem[p7]:mem[p8]])>0)
-    assert(type(mem[p6][mem[p7]:mem[p8]])==str)
-    assert(type(mem[p6][mem[p7]:])==str)
-
-    # Ops 7
-    assert(type(mem[p2][p4])==int or type(mem[p2][p4])==ArithmeticWire)
-    assert(type(mem[p2][mem[p1]])==int or type(mem[p2][mem[p1]])==ArithmeticWire)
-    assert(type(mem[p6][mem[p1]])==str)
-
-    # Ops 8
-    mem[s_des][p4]
-    mem[s_des][mem[p9]]
-
-    # Memory
-    assert(type(mem[des])==bool or type(mem[des])==int or type(mem[des])==ArithmeticWire)
-    assert(type(mem[t_des])==str)
-    assert(type(mem[s_des])==ZKList or type(mem[s_des])==List)
-
 
     # 1. Set a const/mem[val] to dest
-    if instr.opcode == 1:
-
-        '''
-            #This does not support list to list assignment or string/char to string/char
-            des: depends
-            p1: mem[val](imm==1)
-            p4: const(imm==0)
-        '''
+    '''
+        #This does not support list to list assignment or string/char to string/char
+        des: depends
+        p1: mem[val](imm==1)
+        p4: const(imm==0)
+    
         if imm == 0:
             mem[des] = p4
         elif imm ==1:
             mem[des] = mem[p1]
-        
-        return new_pc + 1, weight +1
+    '''
 
+    mem[des] = mux(instr.opcode == 1,
+                    mux(imm == 0, p4, mem[p1]), 
+               mem[des])
+        
 
     # 2. add const/mem[val] to des
-    elif instr.opcode == 2:
-
-        '''
-            des: target
-            p1: increment by const(imm==0) or concat sec_string(imm==2)
-            p1: concat sec_string(imm==4) indexed by ArithWire
-            p4: increment by mem[val](imm==1)
-            p5: char/strng(imm==3)
-        '''
+    '''
+        des: target
+        p1: increment by const(imm==0) or concat sec_string(imm==2)
+        p1: concat sec_string(imm==4) indexed by ArithWire
+        p4: increment by mem[val](imm==1)
+        p5: char/strng(imm==3)
+    
         if imm == 0: # This is for arithmetic addition
             mem[des] += p4
         elif imm ==1:
@@ -172,21 +201,29 @@ def step(prog: Program, pc: int, mem: list, weight: int):
             mem[t_des] += " "
         elif imm ==4:
             mem[t_des] += int_to_string(val_of(mem[p3]))
+    '''
 
-        return new_pc + 1, weight +1
+    mem[des] =  mux(instr.opcode == 2, 
+                    mux(imm == 0, mem[des] + p4,
+                        mux(imm == 1, mem[des] + mem[p1], mem[des])),
+                mem[des])
+
+
+    mem[t_des] = mux(instr.opcode == 2, 
+                     mux(imm == 2, mem[t_des] + int_to_string(val_of(mem[p1])),
+                         mux(imm ==3, mem[t_des] + " ",
+                             mux(imm == 4, mem[t_des] + int_to_string(val_of(mem[p3])), mem[t_des]))),
+                 mem[t_des])
 
 
     # 3. compare value in one index with const
-    elif instr.opcode == 3:
+    '''
+        des: target
+        p10: element 1 to compare
+        p3 mem[val](imm==1) to compare
+        p4: operation (0: equal, 1:not equal, 2: p1 is smaller than p2, 3: p1 is greater than p2)
+        p5: const(imm==0) 
 
-        '''
-            des: target
-            p10: element 1 to compare
-            p3 mem[val](imm==1) to compare
-            p4: operation (0: equal, 1:not equal, 2: p1 is smaller than p2, 3: p1 is greater than p2)
-            p5: const(imm==0) 
-        '''
-        
         if imm == 0:
             comp = p5
         elif imm == 1:
@@ -207,17 +244,28 @@ def step(prog: Program, pc: int, mem: list, weight: int):
             mem[des] = (mem[p6] == comp)
         elif p4 ==5:
             mem[des] = (mem[p6] != comp)
-        return new_pc + 1, weight +1
+    '''
+        
+    comp = mux(instr.opcode == 3, mux(imm == 0, p5, mux(imm == 1, mem[p3], 500000)), 500000)
+    comp_str = mux(instr.opcode == 3 and imm == 2, " ", "dummy")
 
-            
-    # 4. jump or cond-jump
-    elif instr.opcode == 4:
+    mem[des] = mux(instr.opcode == 3,
+                   mux(p4 == 0, (mem[p10] == comp), 
+                        mux(p4 == 1, (mem[p10] != comp),
+                            mux(p4 == 2, (mem[p10] < comp),
+                                mux(p4 == 3, (mem[p10] > comp),
+                                    mem[des])))), mem[des])
+                                    
+    mem[des] = mux(instr.opcode == 3,
+                   mux(p4 == 4, (mem[p6] == comp_str),
+                       mux(p4 == 5, (mem[p6] != comp_str), mem[des])), mem[des])
 
-        '''
-            p3: condition(im==1)
-            p4: pc shift always (imm==0)/if True(imm==1)
-            p5: pc shift if False
-        '''
+
+    # 4/-1. jump or cond-jump/terminal
+    '''
+        p3: condition(im==1)
+        p4: pc shift always (imm==0)/if True(imm==1)
+        p5: pc shift if False
 
         if imm == 0:
             return new_pc + p4, weight +1
@@ -225,46 +273,46 @@ def step(prog: Program, pc: int, mem: list, weight: int):
             return new_pc + p4, weight +1
         elif imm == 1:
             return new_pc + p5, weight +1
+    '''
+    step = mux(instr.opcode == -1, 0,
+                mux(instr.opcode == 4,
+                    mux(imm == 0 or mem[p3]==True, p4, p5), 
+                1))
 
 
     # 5. length of 
-    elif instr.opcode == 5:
+    
 
-        '''
-            des: target index
-            p1: list/string to measure length
-        '''
+    '''
+        des: target index
+        p1: list/string to measure length
+
         mem[des] = len(mem[p2])
-        
-        return new_pc + 1, weight +1
+    '''
+
+    mem[des] = mux(instr.opcode == 5, len(mem[p2]), mem[des])
     
 
     # 6. access more than one index in list
-    elif instr.opcode == 6:
-
-        '''
-            des:target
-            p7: beginning index of nested list of origin
-            p6: index of string type in mem
-            p8: end index of nested list of origin (imm==0)/otherwise automatically till end (imm==1)
-        '''
-        if imm == 0:
-            mem[des] = string_to_int(mem[p6][mem[p7]:mem[p8]])
-        elif imm == 1:
-            mem[des] = string_to_int(mem[p6][mem[p7]:])
-
-        return new_pc + 1, weight +1
-        
+    
+    '''
+        des:target
+        p7: beginning index of nested list of origin
+        p6: index of string type in mem
+        p8: end index of nested list of origin (imm==0)/otherwise automatically till end (imm==1)
+    '''
+    mem[des] = mux(instr.opcode == 6,
+                   mux(imm == 0, string_to_int(mem[p6][mem[p7]:mem[p8]]), 
+                       string_to_int(mem[p6][mem[p7]:])), 
+                mem[des])
 
     # 7. Access nested list by constant/pointer
-    elif instr.opcode == 7:
+    '''
+        des:target
+        p1: index of list(imm==1)
+        p2: constant/pointer (imm==0/1)
+        p4: const index of list(imm==0/2)
 
-        '''
-            des:target
-            p1: index of list(imm==1)
-            p2: constant/pointer (imm==0/1)
-            p4: const index of list(imm==0/2)
-        '''
         if imm == 0:
             mem[des] = mem[p2][p4]
         elif imm == 1:
@@ -273,92 +321,44 @@ def step(prog: Program, pc: int, mem: list, weight: int):
             mem[t_des] = int_to_string(val_of(mem[p2][p4]))
         elif imm == 3:
             mem[t_des] = mem[p6][mem[p1]] #This is for strings , used during X_words creation
+    '''
 
-        return new_pc + 1, weight +1
+    mem[des] = mux(instr.opcode == 7, 
+                   mux(imm == 0, mem[p2][p4],
+                       mux(imm == 1, mem[p2][mem[p1]], mem[des])),
+                mem[des])
+
+
+    mem[t_des] = mux(instr.opcode == 7,
+                     mux(imm == 2, int_to_string(val_of(mem[p2][p4])),
+                         mux(imm == 3, mem[p6][mem[p1]], mem[t_des])),
+                 mem[t_des])
 
 
     # 8. Set Value to list
-    if instr.opcode == 8:
 
-        '''
-            des:target memory address
-            p9: index of target memory
-            p3: any index
-            
-        '''
-                
+    '''
+        des:target memory address
+        p9: index of target memory
+        p3: any index
+        
         if imm == 0:
             mem[s_des][p4] = mem[p3]
         elif imm == 1:
             mem[s_des][mem[p9]] = mem[p3]
-   
-        return new_pc + 1, weight +1
-    
+        
+    '''
 
-    # -1. terminal
-    elif instr.opcode == -1:
+    mem[s_des][p4] = mux(instr.opcode == 8,
+                            mux(imm == 0, mem[p3], mem[s_des][p4]), 
+                     mem[s_des][p4])
 
-        return new_pc, weight
+    mem[s_des][mem[p9]] = mux(instr.opcode == 8,
+                                mux(imm == 1, mem[p3], mem[s_des][mem[p9]]), 
+                          mem[s_des][mem[p9]])
 
+    return new_pc + step, weight +1
 
-def make_program(prog): #TODO: ZKListify
-    length = len(prog)
-    opcode = [0 for _ in range(length)]
-    src1 = [0 for _ in range(length)]
-    src2 = [0 for _ in range(length)]
-    src3 = [0 for _ in range(length)]
-    src4 = [0 for _ in range(length)]
-    src5 = [0 for _ in range(length)]
-    src6 = [0 for _ in range(length)]
-    src7 = [0 for _ in range(length)]
-    src8 = [0 for _ in range(length)]
-    src9 = [0 for _ in range(length)]
-    src10 = [0 for _ in range(length)]
-    dest = [0 for _ in range(length)]
-    s_dest = [0 for _ in range(length)]
-    t_dest = [0 for _ in range(length)]
-    imm = [0 for _ in range(length)]
-
-    for i, instr in enumerate(prog):
-        opcode[i] = instr.opcode
-        src1[i] = instr.src1
-        src2[i] = instr.src2
-        src3[i] = instr.src3
-        src4[i] = instr.src4
-        src5[i] = instr.src5
-        src6[i] = instr.src6
-        src7[i] = instr.src7
-        src8[i] = instr.src8
-        src9[i] = instr.src9
-        src10[i] = instr.src10
-        dest[i] = instr.dest
-        s_dest[i] = instr.s_dest
-        t_dest[i] = instr.t_dest
-        imm[i] = instr.imm
-
-    return Program(opcode, src1, src2, src3, src4, src5, 
-                   src6, src7, src8, src9, src10, 
-                   dest, s_dest, t_dest, 
-                   imm)
-
-
-# Fetch an instruction from a program
-def fetch(prog: Program, pc: int):
-    return Instr(prog.opcode[pc],
-                 prog.src1[pc],
-                 prog.src2[pc],
-                 prog.src3[pc],
-                 prog.src4[pc],
-                 prog.src5[pc],
-                 prog.src6[pc],
-                 prog.src7[pc],
-                 prog.src8[pc],
-                 prog.src9[pc],
-                 prog.src10[pc],
-                 prog.dest[pc],
-                 prog.s_dest[pc],
-                 prog.t_dest[pc],
-                 prog.imm[pc])
 
 def main():
     # The Mad Libs template
@@ -367,7 +367,8 @@ def main():
 
     # The list of potential fill-ins
     nouns = ['dog', 'cat', 'day', 'her', 'park', 'ball', 'cat', 'school', 'like', 'hour', 'tree', 'car', 'house', 'week', 'shoe', 'beach']
-    
+    nouns_list = [string_to_int(_str) for _str in nouns]
+
     X = make_X(madlibs, nouns)
     print('X: ', X)
     print('')
@@ -383,10 +384,10 @@ def main():
 
         # Producer
         madlibs = madlibs #0
-        nouns_list = [string_to_int(_str) for _str in nouns] #1
+        nouns_list = nouns_list #1
         X = X #2 TODO: Secrefy
-
         madlibs_words = madlibs_words #3
+
         X_words = ZKList([0] * 16) #4
         assembled_list = ZKList([0] * 16) #5
         result = "" #6
@@ -520,7 +521,7 @@ def main():
         print('prod_Y:', prod_Y)
         print('')
         res = mux("I have a dog and cat , and every day I walk her to the park" == prod_Y, 
-                  mux(weight < n_iter, SecretInt(0), SecretInt(1))
+                  mux(weight <= n_iter, SecretInt(0), SecretInt(1))
                   , SecretInt(1))
         assert0(res)
         assert(val_of(res)==0)
@@ -528,7 +529,7 @@ def main():
 
         # Reproducer
         madlibs = madlibs #0
-        nouns_list = [string_to_int(_str) for _str in nouns] #1
+        nouns_list = nouns_list #1
         X = None #2 Not available for reproducer
 
         madlibs_words = madlibs_words #3
@@ -631,7 +632,7 @@ def main():
         print('reprod_Y: ', reprod_Y)
         print('')
         res = mux("I have a dog and cat , and every day I walk her to the park" == reprod_Y, 
-                  mux(weight < n_iter, SecretInt(0), SecretInt(1))
+                  mux(weight <= n_iter, SecretInt(0), SecretInt(1))
                   , SecretInt(1))
         assert0(res)
         assert(val_of(res)==0)
