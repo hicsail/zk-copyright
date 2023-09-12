@@ -122,7 +122,6 @@ def int_to_string(n):
     return ''.join([chr(int(s[i:i+3])) for i in range(0, len(s), 3)])
 
 
-
 def make_X(madlibs, nouns):
     X = madlibs.split()
     i = 0

@@ -334,7 +334,6 @@ def main():
             # END
                     Instr(-1, 9, 10, 9, 0, 0, 9, 9, 9, 10, 0),          ## Step17  #-1: Terminal
                     ]
-
         pro_prog = make_program(program)
 
         pc = 0
