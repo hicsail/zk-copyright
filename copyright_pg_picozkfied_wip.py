@@ -6,7 +6,7 @@ from picozk import *
 @dataclass
 class Instr:
     def __init__(self, opcode: int, src1: int, src2: int, src3: int, src4: int, src5: int, 
-                 src9: int, src10: int, 
+                 src6: int, src7: int, 
                  dest: int, s_dest: int,
                  imm: int):
         self.opcode = opcode
@@ -15,8 +15,8 @@ class Instr:
         self.src3 = src3
         self.src4 = src4
         self.src5 = src5
-        self.src9 = src9
-        self.src10 = src10
+        self.src6 = src6
+        self.src7 = src7
         self.dest = dest
         self.s_dest = s_dest
         self.imm = imm
@@ -26,7 +26,7 @@ class Instr:
 @dataclass
 class Program:
     def __init__(self, opcode: List[int], src1: List[int], src2: List[int], src3: List[int], src4: List[int], src5: List[int], 
-                 src9: List[int], src10: List[int], 
+                 src6: List[int], src7: List[int], 
                  dest: List[int], s_dest: List[int], imm: List[int]):
         self.opcode: List[int] = opcode
         self.src1: List[int] = src1
@@ -34,8 +34,8 @@ class Program:
         self.src3: List[int] = src3
         self.src4: List[int] = src4
         self.src5: List[int] = src5
-        self.src9: List[int] = src9
-        self.src10: List[int] = src10
+        self.src6: List[int] = src6
+        self.src7: List[int] = src7
         self.dest: List[int] = dest
         self.s_dest: List[int] = s_dest
         self.imm: List[int] = imm
@@ -51,8 +51,8 @@ def make_program(prog): #TODO: ZKListify
     src3 = [0 for _ in range(length)]
     src4 = [0 for _ in range(length)]
     src5 = [0 for _ in range(length)]
-    src9 = [0 for _ in range(length)]
-    src10 = [0 for _ in range(length)]
+    src6 = [0 for _ in range(length)]
+    src7 = [0 for _ in range(length)]
     dest = [0 for _ in range(length)]
     s_dest = [0 for _ in range(length)]
     imm = [0 for _ in range(length)]
@@ -64,14 +64,14 @@ def make_program(prog): #TODO: ZKListify
         src3[i] = instr.src3
         src4[i] = instr.src4
         src5[i] = instr.src5
-        src9[i] = instr.src9
-        src10[i] = instr.src10
+        src6[i] = instr.src6
+        src7[i] = instr.src7
         dest[i] = instr.dest
         s_dest[i] = instr.s_dest
         imm[i] = instr.imm
 
     return Program(opcode, src1, src2, src3, src4, src5, 
-                   src9, src10, 
+                   src6, src7, 
                    dest, s_dest,
                    imm)
 
@@ -84,8 +84,8 @@ def fetch(prog: Program, pc: SecretInt):
                  prog.src3[pc],
                  prog.src4[pc],
                  prog.src5[pc],
-                 prog.src9[pc],
-                 prog.src10[pc],
+                 prog.src6[pc],
+                 prog.src7[pc],
                  prog.dest[pc],
                  prog.s_dest[pc],
                  prog.imm[pc])
@@ -139,8 +139,8 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     p3 = instr.src3
     p4 = instr.src4
     p5 = instr.src5
-    p9 = instr.src9
-    p10 = instr.src10
+    p6 = instr.src6
+    p7 = instr.src7
     des = instr.dest
     s_des = instr.s_dest
     imm =  instr.imm
@@ -177,10 +177,10 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     # 3. compare value in one index with const
     '''
         des: target
-        p10: element 1 to compare
         p3 mem[val](imm==1) to compare
         p4: operation (0: equal, 1:not equal, 2: p1 is smaller than p2, 3: p1 is greater than p2)
         p5: const(imm==0) 
+        p7: element 1 to compare
 
         Below is for int
         if imm == 0:
@@ -190,17 +190,17 @@ def step(prog: Program, pc: int, mem: list, weight: int):
 
         Below is for str
         if p4 ==0:
-            mem[des] = (mem[p10] == comp)
+            mem[des] = (mem[p7] == comp)
         elif p4 ==2:
-            mem[des] = (mem[p10] < comp)
+            mem[des] = (mem[p7] < comp)
 
     '''
         
     comp = mux(instr.opcode == 3, mux(imm == 0, p5, mux(imm == 1, mem[p3], 500000)), 500000)
     
     mem[des] = mux(instr.opcode == 3,
-                   mux(p4 == 0, (mem[p10] == comp), 
-                            mux(p4 == 2, (mem[p10] < comp),
+                   mux(p4 == 0, (mem[p7] == comp), 
+                            mux(p4 == 2, (mem[p7] < comp),
                                     mem[des])), mem[des])
                                     
 
@@ -260,11 +260,11 @@ def step(prog: Program, pc: int, mem: list, weight: int):
         if imm == 0:
             mem[s_des][p4] = mem[p3]
         elif imm == 1:
-            mem[s_des][mem[p9]] = mem[p3]
+            mem[s_des][mem[p6]] = mem[p3]
         
     '''
 
-    mem[s_des][mem[p9]] = mux(instr.opcode == 8, mem[p3], mem[s_des][mem[p9]])
+    mem[s_des][mem[p6]] = mux(instr.opcode == 8, mem[p3], mem[s_des][mem[p6]])
 
     return new_pc + step, weight +1
 
