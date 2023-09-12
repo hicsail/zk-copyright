@@ -247,7 +247,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
         mem[des] = mem[p2][mem[p1]]
     '''
 
-    mem[des] = mux(instr.opcode == 7, mem[p2][mem[p1]], mem[des])
+    mem[des] = mux(instr.opcode == 6, mem[p2][mem[p1]], mem[des])
 
 
     # 7. Set Value to list
@@ -264,7 +264,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
         
     '''
 
-    mem[s_des][mem[p6]] = mux(instr.opcode == 8, mem[p3], mem[s_des][mem[p6]])
+    mem[s_des][mem[p6]] = mux(instr.opcode == 7, mem[p3], mem[s_des][mem[p6]])
 
     return new_pc + step, weight +1
 
@@ -317,7 +317,7 @@ def main():
             # Take the first three nouns from X and hard-code the rest from the fill list
             
                 ## FIRST IF curr madlibs_words is equal to "_"
-                    Instr(6, 6, 1, 9, 0, 0, 9, 9, 5, 10, 1),       ## Step1  #7: Assign idx6 (idx-i) of idx1 (madlibs_words) to idx5 (reg1)
+                    Instr(6, 6, 1, 9, 0, 0, 9, 9, 5, 10, 1),       ## Step1  #6: Set idx6 (idx-i) of idx1 (madlibs_words) to idx5 (reg1)
                     Instr(3, 9, 10, 9, 0, under, 9, 5, 5, 10, 0),     ## Step2  #3: Compare idx5 (reg1) and "_" and assign result to idx5 (reg1)
                     Instr(4, 9, 10, 5, 1, 8, 9, 9, 9, 10, 1),       ## Step3  #4: Cond jump to +1/+8 if true/false
 
@@ -326,19 +326,19 @@ def main():
                     Instr(4, 9, 10, 5, 1, 3, 9, 9, 9, 10, 1),       ## Step5  #4: Cond jump to +1/+3 if true/false
 
                 ## IF Both TRUE (Append from X_Words)
-                    Instr(6, 6, 2, 9, 0, 0, 9, 9, 5, 10, 1),       ## Step6  #7: Set idx6 (idx-i) of idx2 (X_words) to idx5 (reg1)
+                    Instr(6, 6, 2, 9, 0, 0, 9, 9, 5, 10, 1),       ## Step6  #6: Set idx6 (idx-i) of idx2 (X_words) to idx5 (reg1)
                     Instr(4, 9, 10, 9, 5, 0, 9, 9, 9, 10, 0),       ## Step7  #4: jump to +5
 
                 ## IF only the former TRUE (Append from fill/consts)
-                    Instr(6, 7, 4, 9, 0, 0, 9, 9, 5, 10, 1),      ## Step8  #7: Assign idx7 (idx-k) of idx4 (X_nouns) to idx5 (reg1)
+                    Instr(6, 7, 4, 9, 0, 0, 9, 9, 5, 10, 1),      ## Step8  #6: Assign idx7 (idx-k) of idx4 (X_nouns) to idx5 (reg1)
                     Instr(2, 9, 10, 9, 1, 0, 9, 9, 7, 10, 0),      ## Step9  #2: add 1 to idx7 (idx-k)
                     Instr(4, 9, 10, 9, 2, 0, 9, 9, 9, 10, 0),       ## Step10  #4: jump to +2
 
                 ## ELSE (Append from madlibs_words)
-                    Instr(6, 6, 1, 9, 0, 0, 9, 9, 5, 10, 1),       ## Step11  #7: Assign idx6 (idx-i) of idx1 (madlibs_words) to idx5 (reg1)
+                    Instr(6, 6, 1, 9, 0, 0, 9, 9, 5, 10, 1),       ## Step11  #6: Assign idx6 (idx-i) of idx1 (madlibs_words) to idx5 (reg1)
 
                 ## APPEND and INCREMENT
-                    Instr(7, 9, 10, 5, 0, 0, 6, 9, 9, 3, 1),       ## Step12  #8: set idx5 (reg1) to idx6 (idx-i) of idx3 (assembled_list)
+                    Instr(7, 9, 10, 5, 0, 0, 6, 9, 9, 3, 1),       ## Step12  #7: set idx5 (reg1) to idx6 (idx-i) of idx3 (assembled_list)
                     Instr(2, 9, 10, 9, 1, 0, 9, 9, 6, 10, 0),       ## Step13  #2: add 1 to idx 6 (idx-i)
                     
                 ## CHECK IF ITERATE OR NEXT
@@ -371,20 +371,20 @@ def main():
 
 
         # Reproducer
-        nouns_list = nouns_list #1
-        madlibs_words = madlibs_words #2
+        nouns_list = nouns_list #0
+        madlibs_words = madlibs_words #1
 
-        X_words = None #4 Not available for reproducer
-        assembled_list = ZKList([0] * 16) #4
-        X_nouns = ZKList([nouns_list[0], nouns_list[1],nouns_list[2],  nouns_list[3], nouns_list[4]]) #5
+        X_words = None #2 Not available for reproducer
+        assembled_list = ZKList([0] * 16) #3
+        X_nouns = ZKList([nouns_list[0], nouns_list[1],nouns_list[2],  nouns_list[3], nouns_list[4]]) #4
 
-        reg1 = 0 #6
-        reg2 = 0 #7
-        reg3 = 0 #8
-        reg4 = 0 #9
+        reg1 = 0 #5
+        reg2 = 0 #6
+        reg3 = 0 #7
+        reg4 = 0 #8
 
-        dummy_int = 0 #10
-        dummy_list = ZKList([0] * 100) #11
+        dummy_int = 0 #9
+        dummy_list = ZKList([0] * 100) #10
 
         madlibs_len = len(madlibs_words)
 
@@ -396,28 +396,28 @@ def main():
             # Hard-Code all blanks from the nouns list
                 
                 ## IF madlibs_words[curr] == "_"
-                    Instr(6, 6, 1, 9, 0, 0, 9, 9, 5, 10, 1),       ## Step1  #7: Assign idx6 (idx-i) of idx 1 (madlibs_words) to idx 5(reg1)
-                    Instr(3, 9, 10, 9, 0, under, 9, 5, 5, 10, 0),     ## Step2  #3: Compare idx 10(reg1) and "_" and assign result to idx 10(reg1)
+                    Instr(6, 6, 1, 9, 0, 0, 9, 9, 5, 10, 1),       ## Step1  #6: Assign idx6 (idx-i) of idx 1 (madlibs_words) to idx5 (reg1)
+                    Instr(3, 9, 10, 9, 0, under, 9, 5, 5, 10, 0),     ## Step2  #3: Compare idx5 (reg1) and "_" and assign result to idx5 (reg1)
                     Instr(4, 9, 10, 5, 1, 4, 9, 9, 9, 10, 1),       ## Step3  #4: Cond jump to +1/+4 if true/false
 
-                    ## TRUE: Append from fill[idx-k] to assembled_list
-                    Instr(6, 7, 4, 9, 0, 0, 9, 9, 5, 10, 1),      ## Step4  #7: Assign idx10 (idx-k) of idx 7 (fill) to idx 8(reg1)
-                    Instr(2, 9, 10, 9, 1, 0, 9, 9, 7, 10, 0),      ## Step5  #2: add 1 to idx 10 (idx-k)
+                    ## TRUE: Append from X_nouns[idx-k] to assembled_list
+                    Instr(6, 7, 4, 9, 0, 0, 9, 9, 5, 10, 1),      ## Step4  #6: Assign idx7 (idx-k) of idx5 (X_nouns) to idx5 (reg1)
+                    Instr(2, 9, 10, 9, 1, 0, 9, 9, 7, 10, 0),      ## Step5  #2: add 1 to idx7 (idx-k)
                     Instr(4, 9, 10, 9, 2, 0, 9, 9, 9, 10, 0),       ## Step6  #4: jump to +2
 
                     ## ELSE: Append from madlibs_words[idx-k] to assembled_list
-                    Instr(6, 6, 1, 9, 0, 0, 9, 9, 5, 10, 1),       ## Step7  #7: Assign idx9 (idx-i) of idx 3 (madlibs_words) to idx 8(reg1)
+                    Instr(6, 6, 1, 9, 0, 0, 9, 9, 5, 10, 1),       ## Step7  #6: Assign idx6 (idx-i) of idx1 (madlibs_words) to idx5 (reg1)
                     
                 ## Append ops based on above
-                    Instr(7, 9, 10, 5, 0, 0, 6, 9, 9, 3, 1),       ## Step8  #14: append idx 8(reg1) to idx 5 (assembled_list)
-                    Instr(2, 9, 10, 9, 1, 0, 9, 9, 6, 10, 0),       ## Step9  #2: add 1 to idx 9 (idx-i)
+                    Instr(7, 9, 10, 5, 0, 0, 6, 9, 9, 3, 1),       ## Step8  #14: append idx5 (reg1) to idx3 (assembled_list)
+                    Instr(2, 9, 10, 9, 1, 0, 9, 9, 6, 10, 0),       ## Step9  #2: add 1 to idx6 (idx-i)
 
                 ## Determine whether or not to iterate over again depending idx-i< len(madlibs_words)
-                    Instr(3, 9, 10, 9, 2, madlibs_len, 9, 6, 5, 10, 0),  ## Step10  #3: Compare idx 9(idx-i) < len(madlibs_words) and assign result to idx 8(reg1)
+                    Instr(3, 9, 10, 9, 2, madlibs_len, 9, 6, 5, 10, 0),  ## Step10  #3: Compare idx6 (idx-i) < len(madlibs_words) and assign result to idx5 (reg1)
                     Instr(4, 9, 10, 5, -10, 1, 9, 9, 9, 10, 1),     ## Step11  #4: Cond jump to -10/+1 if true/false
 
-                    Instr(1, 9, 10, 9, 0, 0, 9, 9, 6, 10, 0),       ## Step12  #1: Set index i to 0
-                    Instr(1, 9, 10, 9, 0, 0, 9, 9, 7, 10, 0),      ## Step13  #1: Set index k to 0
+                    Instr(1, 9, 10, 9, 0, 0, 9, 9, 6, 10, 0),       ## Step12  #1: Set idx6 (idx-i) to 0
+                    Instr(1, 9, 10, 9, 0, 0, 9, 9, 7, 10, 0),      ## Step13  #1: Set idx7 (idx-k) to 0
 
             # END
                     Instr(-1, 9, 10, 9, 0, 0, 9, 9, 9, 10, 0),      ## Step14  #-1: Terminal
