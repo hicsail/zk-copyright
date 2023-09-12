@@ -25,37 +25,38 @@ class Instr:
 # Class to hold a program as multiple lists of instructions
 @dataclass
 class Program:
-    def __init__(self, opcode: List[int], src1: List[int], src2: List[int], src3: List[int], src4: List[int], src5: List[int], 
-                 src6: List[int], src7: List[int], 
-                 dest: List[int], s_dest: List[int], imm: List[int]):
-        self.opcode: List[int] = opcode
-        self.src1: List[int] = src1
-        self.src2: List[int] = src2
-        self.src3: List[int] = src3
-        self.src4: List[int] = src4
-        self.src5: List[int] = src5
-        self.src6: List[int] = src6
-        self.src7: List[int] = src7
-        self.dest: List[int] = dest
-        self.s_dest: List[int] = s_dest
-        self.imm: List[int] = imm
+    def __init__(self, opcode: ZKList, src1: ZKList, src2: ZKList, src3: ZKList, src4: ZKList, src5: ZKList, 
+             src6: ZKList, src7: ZKList,
+             dest: ZKList, s_dest: ZKList, imm: ZKList):
+        
+        self.opcode: ZKList = opcode
+        self.src1: ZKList = src1
+        self.src2: ZKList = src2
+        self.src3: ZKList = src3
+        self.src4: ZKList = src4
+        self.src5: ZKList = src5
+        self.src6: ZKList = src6
+        self.src7: ZKList = src7
+        self.dest: ZKList = dest
+        self.s_dest: ZKList = s_dest
+        self.imm: ZKList = imm
 
 
 
 
 def make_program(prog): #TODO: ZKListify
     length = len(prog)
-    opcode = [0 for _ in range(length)]
-    src1 = [0 for _ in range(length)]
-    src2 = [0 for _ in range(length)]
-    src3 = [0 for _ in range(length)]
-    src4 = [0 for _ in range(length)]
-    src5 = [0 for _ in range(length)]
-    src6 = [0 for _ in range(length)]
-    src7 = [0 for _ in range(length)]
-    dest = [0 for _ in range(length)]
-    s_dest = [0 for _ in range(length)]
-    imm = [0 for _ in range(length)]
+    opcode = ZKList([0 for _ in range(length)])
+    src1 = ZKList([0 for _ in range(length)])
+    src2 = ZKList([0 for _ in range(length)])
+    src3 = ZKList([0 for _ in range(length)])
+    src4 = ZKList([0 for _ in range(length)])
+    src5 = ZKList([0 for _ in range(length)])
+    src6 = ZKList([0 for _ in range(length)])
+    src7 = ZKList([0 for _ in range(length)])
+    dest = ZKList([0 for _ in range(length)])
+    s_dest = ZKList([0 for _ in range(length)])
+    imm = ZKList([0 for _ in range(length)])
 
     for i, instr in enumerate(prog):
         opcode[i] = instr.opcode
@@ -102,10 +103,10 @@ def int_to_string(n):
     return ''.join([chr(int(s[i:i+3])) for i in range(0, len(s), 3)])
 
 
-def reveal(list):
+def reveal(list, st, end):
             res = ""
-            for l in list:
-                res += int_to_string(val_of(l)) + " "
+            for i in range(st, end):
+                res += int_to_string(val_of(list[i])) + " "
             return res[:-1].replace('\x00', '') #TODO: FIXME
         
 
@@ -146,10 +147,9 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     imm =  instr.imm
     new_pc = pc
 
-
-    # 1. Set a const/mem[val] to dest
+        
     '''
-        p4: const to set (imm==0)
+        p4: const to set
 
         ops: mem[des] = p4
             #This does not support list to list assignment or string/char to string/char
@@ -191,8 +191,8 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     comp = mux(instr.opcode == 3, mux(imm == 0, p5, mux(imm == 1, mem[p3], 500000)), 500000)
     
     mem[des] = mux(instr.opcode == 3,
-                   mux(p4 == 0, (mem[p7] == comp), 
-                            mux(p4 == 2, (mem[p7] < comp),
+                   mux(p4 == 0, mux(mem[p7] == comp, 1, 0),
+                            mux(p4 == 2, mux(mem[p7] < comp, 1, 0),
                                     mem[des])), mem[des])
                                     
 
@@ -213,46 +213,39 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     '''
     step = mux(instr.opcode == -1, 0,
                 mux(instr.opcode == 4,
-                    mux(imm == 0 or mem[p3]==True, p4, p5), 
+                    mux(imm == 0, p4, 
+                        mux(mem[p3]==True, p4, p5)), 
                 1))
 
 
-    # 5. length of 
+    # 5. Copy val to register
     '''
-        p2: address of a list to measure length of
+        p1: address of index of memory
 
-        ops: mem[des] = len(mem[p2])
-    '''
-
-    mem[des] = mux(instr.opcode == 5, len(mem[p2]), mem[des])
-    
-
-    # 6. Access nested list by constant/pointer
-    '''
-        p1: index of a list
-        p2: constant/pointer
-
-        ops: mem[des] = mem[p2][mem[p1]]
+        ops: mem[des] = mem[mem[p2]]
     '''
 
-    mem[des] = mux(instr.opcode == 6, mem[p2][mem[p1]], mem[des])
+    mem[des] = mux(instr.opcode == 5, mem[p2], mem[des])
 
 
-    # 7. Set Value to list
-
+    # 6. Access list by pointer saved in register
     '''
-        p3: any memory address
-        p6: index of target memory
-        
-        ops: 
-        if imm == 0:
-            mem[s_des][p4] = mem[p3]
-        elif imm == 1:
-            mem[s_des][mem[p6]] = mem[p3]
-        
+        p1: address of index of memory
+
+        ops: mem[des] = mem[mem[p2]]
     '''
 
-    mem[s_des][mem[p6]] = mux(instr.opcode == 7, mem[p3], mem[s_des][mem[p6]])
+    mem[des] = mux(instr.opcode == 6, mem[mem[p2]], mem[des])
+
+
+    # 7. Set Value by const pointer
+
+    '''
+        p1: any memory address
+                
+    '''
+
+    mem[mem[s_des]] = mux(instr.opcode == 7, mem[p1], mem[mem[s_des]])
 
     return new_pc + step, weight +1
 
@@ -266,73 +259,80 @@ def main():
     print('X: ', X)
     print('')
 
-    X_words = [string_to_int(_str) for _str in X.split()]
+    X_list = [string_to_int(_str) for _str in X.split()]
     nouns_list = [string_to_int(_str) for _str in nouns]
-    madlibs_words = [string_to_int(_str) for _str in madlibs.split()]
+    madlibs_list = [string_to_int(_str) for _str in madlibs.split()]
 
     n_iter = 1500
-    fillupto = 10
+    lim = 10
 
-    under = string_to_int("_")
+    us = string_to_int("_")
     
     with PicoZKCompiler('irs/picozk_test', options=['ram']):
 
         # Producer
-        nouns_list = nouns_list #0
-        madlibs_words = madlibs_words #1
+        nouns_list = nouns_list #0-15
+        madlibs_list = madlibs_list #17 - 32
+        X_list = X_list #34 - 49
+        res_list = [0] * 16 #51 - 66
 
-        X_words = ZKList(X_words) #2
-        assembled_list = ZKList([0] * 16) #3
-        X_nouns = ZKList([nouns_list[3], nouns_list[4]]) #4
-
-        reg1 = 0 #5
-        reg2 = 0 #6
-        reg3 = 0 #7
-        reg4 = 0 #8
-
-        dummy_int = 0 #9
-        dummy_list = ZKList([0] * 100) #10
-
-        X_words_len = len(X_words)
-
-        mem = [nouns_list, madlibs_words, X_words, assembled_list, X_nouns,
-                reg1, reg2, reg3, reg4, dummy_int, dummy_list]
+        reg1 = 0 #68
+        reg2 = 0 #70
+        reg3 = 0 #72
+        reg4 = 0 #74
+        dummy_int = 0 #76
         
+        bot = 0
+
+        mem = ZKList(nouns_list + [bot] + madlibs_list + [bot] + X_list + [bot] + res_list + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [dummy_int])
+
+        X_len = len(X_list)
+
         program = [ 
 
             # Take the first three nouns from X and hard-code the rest from the fill list
             
                 ## FIRST IF curr madlibs_words is equal to "_"
-                    Instr(6, 6, 1, 9, 0, 0, 9, 9, 5, 10, 1),            ## Step1  #6: Set idx6 (idx-i) of idx1 (madlibs_words) to idx5 (reg1)
-                    Instr(3, 9, 10, 9, 0, under, 9, 5, 5, 10, 0),       ## Step2  #3: Compare idx5 (reg1) and "_" and assign result to idx5 (reg1)
-                    Instr(4, 9, 10, 5, 1, 8, 9, 9, 9, 10, 1),           ## Step3  #4: Cond jump to +1/+8 if true/false
+                    Instr(5, 76, 68, 76, 76, 76, 76, 76, 72, 76, 0),    ## Step0   #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
+                    Instr(2, 76, 76, 76, 17, 76, 76, 76, 72, 76, 0),    ## Step1   #2: Add 17 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to madlibs list by 17
+                    Instr(6, 76, 72, 76, 76, 76, 76, 76, 70, 76, 0),    ## Step2   #6: Set idx72 (temp-idx/reg3) of madlibs list to idx70 (reg2)
+                    Instr(3, 76, 76, 76,  0, us, 76, 70, 70, 76, 0),    ## Step3   #3: Compare idx70 (reg2) and "_" and assign result to idx70 (reg2)
+                    Instr(4, 76, 76, 70,  1, 12, 76, 76, 76, 76, 1),    ## Step4   #4: Cond jump to +1/+12 if true/false
 
                 ## SECOND IF index of madlibs_words is less than fill_upto (upto idx of third fill)
-                    Instr(3, 9, 10, 9, 2, fillupto, 9, 6, 5, 10, 0),    ## Step4  #3: Compare idx 6(idx-i) < fill_upto (10 for now) and set the result to idx5 (reg1)
-                    Instr(4, 9, 10, 5, 1, 3, 9, 9, 9, 10, 1),           ## Step5  #4: Cond jump to +1/+3 if true/false
+                    Instr(3, 76, 76, 76,  2,lim, 76, 68, 70, 76, 0),    ## Step5   #3: Compare idx 68(idx-i/reg1) < fill_upto (10 for now) and set the result to idx70 (reg2)
+                    Instr(4, 76, 76, 70,  1,  5, 76, 76, 76, 76, 1),    ## Step6   #4: Cond jump to +1/+5 if true/false
 
-                ## IF Both TRUE (Append from X_Words)
-                    Instr(6, 6, 2, 9, 0, 0, 9, 9, 5, 10, 1),            ## Step6  #6: Set idx6 (idx-i) of idx2 (X_words) to idx5 (reg1)
-                    Instr(4, 9, 10, 9, 5, 0, 9, 9, 9, 10, 0),           ## Step7  #4: jump to +5
+                ## IF Both TRUE (Append from X list)
+                    Instr(5, 76, 68, 76, 76, 76, 76, 76, 72, 76, 0),    ## Step7   #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
+                    Instr(2, 76, 76, 76, 34, 76, 76, 76, 72, 76, 0),    ## Step8   #2: Add 34 to idx72 (temp-idx/reg3) = Shifting pointer to X_list idx-i by 34
+                    Instr(6, 76, 72, 76, 76, 76, 76, 76, 70, 76, 0),    ## Step9   #6: Set idx72 (temp-idx/reg3) of X_words to idx70 (reg2)
+                    Instr(4, 76, 76, 76,  9, 76, 76, 76, 76, 76, 0),    ## Step10  #4: jump to +9
 
-                ## IF only the former TRUE (Append from fill/consts)
-                    Instr(6, 7, 4, 9, 0, 0, 9, 9, 5, 10, 1),            ## Step8  #6: Assign idx7 (idx-k) of idx4 (X_nouns) to idx5 (reg1)
-                    Instr(2, 9, 10, 9, 1, 0, 9, 9, 7, 10, 0),           ## Step9  #2: add 1 to idx7 (idx-k)
-                    Instr(4, 9, 10, 9, 2, 0, 9, 9, 9, 10, 0),           ## Step10  #4: jump to +2
+                ## IF only the former TRUE (Append from nouns list)
+                    Instr(5, 76, 74, 76, 76, 76, 76, 76, 72, 76, 0),    ## Step11  #5: Copy idx74 (idx-k/reg2) to idx72 (temp-idx/reg3)
+                    Instr(2, 76, 76, 76,  3, 76, 76, 76, 72, 76, 0),    ## Step12  #2: Add 3 to idx72 (temp-idx/reg3) = Shifting pointer idx-k to nouns list by 3
+                    Instr(6, 76, 72, 76, 76, 76, 76, 76, 70, 76, 1),    ## Step13  #6: Set idx72 (temp-idx/reg3) of nouns list to idx70 (reg2)
+                    Instr(2, 76, 76, 76,  1, 76, 76, 76, 74, 76, 0),    ## Step14  #2: Add 1 to idx74 (idx-k/reg3)
+                    Instr(4, 76, 76, 76,  4, 76, 76, 76, 76, 76, 0),    ## Step15  #4: jump to +4
 
-                ## ELSE (Append from madlibs_words)
-                    Instr(6, 6, 1, 9, 0, 0, 9, 9, 5, 10, 1),            ## Step11  #6: Assign idx6 (idx-i) of idx1 (madlibs_words) to idx5 (reg1)
+                ## ELSE (Append from madlibs list)
+                    Instr(5, 76, 68, 76, 76, 76, 76, 76, 72, 76, 0),    ## Step16  #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
+                    Instr(2, 76, 76, 76, 17, 76, 76, 76, 72, 76, 0),    ## Step17  #2: Add 17 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to madlibs list by 17
+                    Instr(6, 76, 72, 76, 76, 76, 76, 76, 70, 76, 0),    ## Step18  #6: Set idx72 (temp-idx/reg3) of madlibs list to idx70 (reg2)
 
                 ## APPEND and INCREMENT
-                    Instr(7, 9, 10, 5, 0, 0, 6, 9, 9, 3, 1),            ## Step12  #7: set idx5 (reg1) to idx6 (idx-i) of idx3 (assembled_list)
-                    Instr(2, 9, 10, 9, 1, 0, 9, 9, 6, 10, 0),           ## Step13  #2: add 1 to idx 6 (idx-i)
+                    Instr(5, 76, 68, 76, 76, 76, 76, 76, 72, 76, 0),    ## Step19  #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
+                    Instr(2, 76, 76, 76, 51, 76, 76, 76, 72, 76, 0),    ## Step20  #2: Add 51 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to res list by 51
+                    Instr(7, 70, 76, 76, 76, 76, 76, 76, 76, 72, 1),    ## Step21  #6: Set idx70 (reg2) to idx72 (temp-idx/reg3) of res list
+                    Instr(2, 76, 76, 76,  1, 76, 76, 76, 68, 76, 0),    ## Step22  #2: Add 1 to idx 68 (idx-i)
                     
                 ## CHECK IF ITERATE OR NEXT
-                    Instr(3, 9, 10, 9, 2, X_words_len, 9, 6, 5, 10, 0), ## Step14  #3: Compare idx6 (idx-i) < idx5 (reg1) and assign result to idx5 (reg1)
-                    Instr(4, 9, 10, 5, -14, 1, 9, 9, 9, 10, 1),         ## Step15  #4: Cond jump to -14/+1 if true/false
+                    Instr(3, 76, 76, 76, 2, X_len, 76, 68, 72, 76, 0),  ## Step23  #3: Compare idx68 (idx-i) < p5 (X_len) and assign result to idx72 (reg3)
+                    Instr(4, 76, 76, 72, -24, 1, 76, 76, 76, 76, 1),    ## Step24  #4: Cond jump to -24/+1 if true/false
 
             # END
-                    Instr(-1, 9, 10, 9, 0, 0, 9, 9, 9, 10, 0),          ## Step17  #-1: Terminal
+                    Instr(-1, 76, 76, 76, 76, 76, 76, 76, 76, 76, 0),   ## Step25  #-1: Terminal
                     ]
         pro_prog = make_program(program)
 
@@ -341,10 +341,11 @@ def main():
         for i in range(n_iter):
             pc, weight = step(pro_prog, pc, mem, weight)
         
-        prod_Y = reveal(mem[3])
+        prod_Y = reveal(mem, 51, 67)
 
         print('prod_Y:', prod_Y)
         print('')
+
 
         res = mux("I have a dog and cat , and every day I walk her to the park" == prod_Y, 
                   mux(weight <= n_iter, SecretInt(0), SecretInt(1))
@@ -369,18 +370,18 @@ def main():
         dummy_int = 0 #9
         dummy_list = ZKList([0] * 100) #10
 
-        madlibs_len = len(madlibs_words)
-
         repro_mem = [nouns_list, madlibs_words, X_words, assembled_list, X_nouns,
                 reg1, reg2, reg3, reg4, dummy_int, dummy_list]
+
+        madlibs_len = len(madlibs_words)
 
         program = [
 
             # Hard-Code all blanks from the nouns list
                 
                 ## IF madlibs_words[curr] == "_"
-                    Instr(6, 6, 1, 9, 0, 0, 9, 9, 5, 10, 1),             ## Step1  #6: Assign idx6 (idx-i) of idx 1 (madlibs_words) to idx5 (reg1)
-                    Instr(3, 9, 10, 9, 0, under, 9, 5, 5, 10, 0),        ## Step2  #3: Compare idx5 (reg1) and "_" and assign result to idx5 (reg1)
+                    Instr(6, 6, 1, 9, 0, 0, 9, 9, 5, 10, 1),          ## Step1  #6: Assign idx6 (idx-i) of idx 1 (madlibs_words) to idx5 (reg1)
+                    Instr(3, 9, 10, 9, 0, us, 9, 5, 5, 10, 0),        ## Step2  #3: Compare idx5 (reg1) and "_" and assign result to idx5 (reg1)
                     Instr(4, 9, 10, 5, 1, 4, 9, 9, 9, 10, 1),            ## Step3  #4: Cond jump to +1/+4 if true/false
 
                     ## TRUE: Append from X_nouns[idx-k] to assembled_list
