@@ -113,10 +113,11 @@ def reveal(list, st, end):
 def make_X(madlibs, nouns):
     X = madlibs.split()
     i = 0
+    idx = [0,1,2,5,6]
 
     for k in range(len(X)):
         if X[k] == '_':
-            X[k] = nouns[i]
+            X[k] = nouns[idx[i]]
             i+=1
 
     X = ' '.join(X) # This is the madlibs text with all blanks are filled
@@ -253,7 +254,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
 def main():
 
     madlibs = "I have a _ and _ , and every _ I walk _ to the _"
-    nouns = ['dog', 'cat', 'day', 'her', 'park', 'ball', 'cat', 'school', 'like', 'hour', 'tree', 'car', 'house', 'week', 'shoe', 'beach']
+    nouns = ['dog', 'cat', 'day', 'her', 'park', 'them', 'beach', 'school', 'like', 'hour', 'tree', 'car', 'house', 'week', 'shoe', 'beach']
     exp_Y = "I have a dog and cat , and every day I walk her to the park"
     print('Y: ', exp_Y) #TODO: Change to differ from X
     print('')
