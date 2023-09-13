@@ -288,7 +288,7 @@ def main():
 
         X_len = len(X_list)
 
-        program = [ 
+        program = [
 
             # Take the first three nouns from X and hard-code the rest from the fill list
             
@@ -355,25 +355,23 @@ def main():
 
 
         # Reproducer
-        nouns_list = nouns_list #0
-        madlibs_words = madlibs_words #1
+        nouns_list = nouns_list #0-15
+        madlibs_list = madlibs_list #17 - 32
+        bots_list = [0] * 16 #34 - 49
+        res_list = [0] * 16 #51 - 66
 
-        X_words = None #2 Not available for reproducer
-        assembled_list = ZKList([0] * 16) #3
-        X_nouns = ZKList([nouns_list[0], nouns_list[1],nouns_list[2],  nouns_list[3], nouns_list[4]]) #4
+        reg1 = 0 #68
+        reg2 = 0 #70
+        reg3 = 0 #72
+        reg4 = 0 #74
+        dummy_int = 0 #76
+        
+        bot = 0
 
-        reg1 = 0 #5
-        reg2 = 0 #6
-        reg3 = 0 #7
-        reg4 = 0 #8
+        repro_mem = ZKList(nouns_list + [bot] + madlibs_list + [bot] + bots_list + [bot] + res_list + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [dummy_int])
 
-        dummy_int = 0 #9
-        dummy_list = ZKList([0] * 100) #10
 
-        repro_mem = [nouns_list, madlibs_words, X_words, assembled_list, X_nouns,
-                reg1, reg2, reg3, reg4, dummy_int, dummy_list]
-
-        madlibs_len = len(madlibs_words)
+        lim = len(madlibs_list)
 
         program = [
 
@@ -397,7 +395,7 @@ def main():
                     Instr(2, 9, 10, 9, 1, 0, 9, 9, 6, 10, 0),            ## Step9  #2: add 1 to idx6 (idx-i)
 
                 ## Determine whether or not to iterate over again depending idx-i< len(madlibs_words)
-                    Instr(3, 9, 10, 9, 2, madlibs_len, 9, 6, 5, 10, 0),  ## Step10  #3: Compare idx6 (idx-i) < len(madlibs_words) and assign result to idx5 (reg1)
+                    Instr(3, 9, 10, 9, 2, lim, 9, 6, 5, 10, 0),  ## Step10  #3: Compare idx6 (idx-i) < len(madlibs_words) and assign result to idx5 (reg1)
                     Instr(4, 9, 10, 5, -10, 1, 9, 9, 9, 10, 1),          ## Step11  #4: Cond jump to -10/+1 if true/false
 
             # END
