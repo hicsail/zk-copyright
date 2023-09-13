@@ -353,7 +353,8 @@ def main():
         # Reproducer
         nouns_list = nouns_list #0-15
         madlibs_list = madlibs_list #17 - 32
-        bots_list = [0] * 16 #34 - 49
+        hardcode_idx = [0, 1, 2, 3, 4] #34 - 38 TODO: Might need fix
+        bots_list = [0] * (16 - 6) #40 - 49
         res_list = [0] * 16 #51 - 66
 
         reg1 = 0 #68
@@ -364,7 +365,7 @@ def main():
         
         bot = 0
 
-        repro_mem = ZKList(nouns_list + [bot] + madlibs_list + [bot] + bots_list + [bot] + res_list + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [dummy_int])
+        repro_mem = ZKList(nouns_list + [bot] + madlibs_list + [bot] + hardcode_idx + [bot] + bots_list + [bot] + res_list + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [dummy_int])
 
 
         lim = len(madlibs_list)
