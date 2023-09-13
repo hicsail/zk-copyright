@@ -44,7 +44,7 @@ class Program:
 
 
 
-def make_program(prog): #TODO: ZKListify
+def make_program(prog):
     length = len(prog)
     opcode = ZKList([0 for _ in range(length)])
     src1 = ZKList([0 for _ in range(length)])
@@ -98,7 +98,6 @@ def string_to_int(s):
 
 def int_to_string(n):
     binary_str = format(n, 'b')
-    # Pad the binary string with leading zeros to ensure groups of 8 bits
     binary_str = '0' * ((8 - len(binary_str) % 8) % 8) + binary_str
     return ''.join(chr(int(binary_str[i:i+8], 2)) for i in range(0, len(binary_str), 8))
 
@@ -107,7 +106,7 @@ def reveal(list, st, end):
             res = ""
             for i in range(st, end):
                 res += int_to_string(val_of(list[i])) + " "
-            return res[:-1].replace('\x00', '') #TODO: FIXME
+            return res[:-1]
         
 
 def make_X(madlibs, nouns):
@@ -256,7 +255,7 @@ def main():
     madlibs = "I have a _ and _ , and every _ I walk _ to the _"
     nouns = ['dog', 'cat', 'day', 'her', 'park', 'them', 'beach', 'school', 'like', 'hour', 'tree', 'car', 'house', 'week', 'shoe', 'beach']
     exp_Y = "I have a dog and cat , and every day I walk her to the park"
-    print('Y: ', exp_Y) #TODO: Change to differ from X
+    print('Y: ', exp_Y)
     print('')
     X = make_X(madlibs, nouns)
     print('X: ', X)
@@ -314,7 +313,7 @@ def main():
 
                 ## IF only the former TRUE (Append from nouns list)
                     Instr(5, 76, 74, 76, 76, 76, 76, 76, 72, 76, 0),    ## Step11  #5: Copy idx74 (idx-k/reg2) to idx72 (temp-idx/reg3)
-                    Instr(2, 76, 76, 76,  3, 76, 76, 76, 72, 76, 0),    ## Step12  #2: Add 3 to idx72 (temp-idx/reg3) = Shifting pointer idx-k to nouns list by 3  #TODO: Change to match Y
+                    Instr(2, 76, 76, 76,  3, 76, 76, 76, 72, 76, 0),    ## Step12  #2: Add 3 to idx72 (temp-idx/reg3) = Shifting pointer idx-k to nouns list by 3
                     Instr(6, 76, 72, 76, 76, 76, 76, 76, 70, 76, 1),    ## Step13  #6: Set idx72 (temp-idx/reg3) of nouns list to idx70 (reg2)
                     Instr(2, 76, 76, 76,  1, 76, 76, 76, 74, 76, 0),    ## Step14  #2: Add 1 to idx74 (idx-k/reg3)
                     Instr(4, 76, 76, 76,  4, 76, 76, 76, 76, 76, 0),    ## Step15  #4: jump to +4
