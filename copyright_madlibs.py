@@ -251,11 +251,9 @@ def main():
     madlibs = "I have a _ and _ , and every _ I walk _ to the _"
     nouns = ['dog', 'cat', 'day', 'her', 'park', 'them', 'beach', 'school', 'like', 'hour', 'tree', 'car', 'house', 'week', 'shoe', 'beach']
     exp_Y = "I have a dog and cat , and every day I walk her to the park"
-    print('Y: ', exp_Y)
-    print('')
+    print('Y: ', exp_Y, '\n')
     X = make_X(madlibs, nouns)
-    print('X: ', X)
-    print('')
+    print('X: ', X, '\n')
 
     X_list = [string_to_int(_str) for _str in X.split()]
     nouns_list = [string_to_int(_str) for _str in nouns]
@@ -342,8 +340,7 @@ def main():
         
         prod_Y = reveal(mem, 51, 67)
 
-        print('prod_Y:', prod_Y)
-        print('')
+        print('prod_Y:', prod_Y, '\n')
 
         res = mux(exp_Y == prod_Y,
                   mux(weight <= threshold, SecretInt(0), SecretInt(1))
@@ -415,8 +412,7 @@ def main():
             pc, weight = step(repro_prog, pc, repro_mem, weight)
 
         reprod_Y = reveal(repro_mem, 51, 67)
-        print('reprod_Y: ', reprod_Y)
-        print('')
+        print('reprod_Y: ', reprod_Y, '\n')
         res = mux(exp_Y == reprod_Y, 
                   mux(weight <= threshold, SecretInt(0), SecretInt(1))
                   , SecretInt(1))

@@ -237,44 +237,43 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     return new_pc, weight + w
 
 
-def sort_by(mem, sort_by):
-    # Sort the List of Tuples
-    n = len(mem)
-    i = sort_by
+def producer_func(mem):
+    n = 14
+    i = 0
     while i < n:
-        j = sort_by
-        if sort_by==0:
-            while j < n-i-2:
-                # Compare the first element of each tuple
-                if mem[j] > mem[j+2]:
-                    temp1 = mem[j]
-                    temp2 = mem[j+1]
-                    mem[j] = mem[j+2]
-                    mem[j+1] = mem[j+3]
-                    mem[j+2] = temp1
-                    mem[j+2] = temp2
-                j += 2
-        else:
-            while j < n-i-1:
-                if mem[j] > mem[j+2]:
-                    temp1 = mem[j]
-                    temp2 = mem[j-1]
-                    mem[j] = mem[j+2]
-                    mem[j-1] = mem[j+1]
-                    mem[j+2] = temp1
-                    mem[j+1] = temp2
-                j += 2
+        j = 0
+        while j < n-i-2:
+            # Compare the first element of each tuple
+            if mem[j] > mem[j+2]:
+                temp1 = mem[j]
+                temp2 = mem[j+1]
+                mem[j] = mem[j+2]
+                mem[j+1] = mem[j+3]
+                mem[j+2] = temp1
+                mem[j+2] = temp2
+            j += 2
         i += 2
     return mem
 
 
-def producer_func(mem):
-    return sort_by(mem[0:14], 0)
-
-
 def reproducer_func(repro_mem):
-    res = repro_mem[0:10] + repro_mem[11:]
-    return sort_by(res, 1)
+    mem = repro_mem[0:10] + repro_mem[11:]
+        # Sort the List of Tuples
+    n = 14
+    i = 1
+    while i < n:
+        j = 1
+        while j < n-i-1:
+            if mem[j] > mem[j+2]:
+                temp1 = mem[j]
+                temp2 = mem[j-1]
+                mem[j] = mem[j+2]
+                mem[j-1] = mem[j+1]
+                mem[j+2] = temp1
+                mem[j+1] = temp2
+            j += 2
+        i += 2
+    return mem
 
 
 def main():
@@ -293,40 +292,39 @@ def main():
         }
 
     X = make_X(bg, honey_entries)
-    print('X', X)
-    print('')
 
     exp_pro_Y = "('1', '111-111-1111'), ('2', '222-222-2222'), ('3', '333-333-3333'), ('4', '444-444-4444'), ('5', '555-555-5555'), ('6', '111-666-6666'), ('7', '222-777-7777')"
-    print('exp_pro_Y', exp_pro_Y)
-    print('')
+    print('exp_pro_Y', exp_pro_Y, '\n')
     exp_repro_Y = "('1', '111-111-1111'), ('6', '111-666-6666'), ('2', '222-222-2222'), ('7', '222-777-7777'), ('3', '333-333-3333'), ('4', '444-444-4444'), ('5', '555-555-5555')"
-    print('exp_repro_Y', exp_repro_Y)
-    print('')
+    print('exp_repro_Y', exp_repro_Y, '\n')
+
 
     # with PicoZKCompiler('irs/picozk_test', options=['ram']):
-
-    bot = [0]
 
     # Producer
     X_list = [i for k, v in X.items() for i in (k, v)]
     bots_list = [0] *4
 
-    mem = X_list + bot + bots_list
-    pro_Y = list_to_string(producer_func(mem))
-    print("pro_Y", pro_Y)
-    print('')
-    assert(exp_pro_Y == pro_Y)
+    bot = 0
+    mem = X_list + [bot] + bots_list
 
+
+    pro_Y = list_to_string(producer_func(mem)[0:14])
+    print("pro_Y", pro_Y, '\n')
+    assert(exp_pro_Y == pro_Y)
     
+
     # Reproducer
     bg_list = [i for k, v in bg.items() for i in (k, v)]
     honey_entries = [string_to_int('6'), string_to_int('111-666-6666'), 
                     string_to_int('7'), string_to_int('222-777-7777')]
+    
+    bot = 0
+    repro_mem = bg_list + [bot] + honey_entries
 
-    repro_mem = bg_list + bot + honey_entries
-    repro_Y = list_to_string(reproducer_func(repro_mem))
-    print("repro_y", repro_Y)
-    print('')
+
+    repro_Y = list_to_string(reproducer_func(repro_mem)[0:14])
+    print("repro_y", repro_Y, '\n')
     assert(exp_repro_Y == repro_Y)
 
 if __name__ == "__main__":
