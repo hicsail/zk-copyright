@@ -100,7 +100,6 @@ def int_to_string(n):
 
 
 def list_to_string(res_list):
-    print(res_list)
     # Convert the List to a String
     result_str = ""
     idx = 0
@@ -241,12 +240,12 @@ def step(prog: Program, pc: int, mem: list, weight: int):
 def sort_by(mem, sort_by):
     # Sort the List of Tuples
     n = len(mem)
-    i = 0
+    i = sort_by
     while i < n:
         j = sort_by
-        while j < n-i-2:
-            # Compare the first element of each tuple
-            if sort_by==0:
+        if sort_by==0:
+            while j < n-i-2:
+                # Compare the first element of each tuple
                 if mem[j] > mem[j+2]:
                     temp1 = mem[j]
                     temp2 = mem[j+1]
@@ -254,18 +253,28 @@ def sort_by(mem, sort_by):
                     mem[j+1] = mem[j+3]
                     mem[j+2] = temp1
                     mem[j+2] = temp2
-            j += 2
+                j += 2
+        else:
+            while j < n-i-1:
+                if mem[j] > mem[j+2]:
+                    temp1 = mem[j]
+                    temp2 = mem[j-1]
+                    mem[j] = mem[j+2]
+                    mem[j-1] = mem[j+1]
+                    mem[j+2] = temp1
+                    mem[j+1] = temp2
+                j += 2
         i += 2
     return mem
 
 
-def producer_func(X_list):
-    return sort_by(X_list[0:14], 0)
+def producer_func(mem):
+    return sort_by(mem[0:14], 0)
 
 
-def reproducer_func(bg_list, honey_entries):
-    bg_list += honey_entries
-    return sort_by(bg_list, 1)
+def reproducer_func(repro_mem):
+    res = repro_mem[0:10] + repro_mem[11:]
+    return sort_by(res, 1)
 
 
 def main():
@@ -297,10 +306,11 @@ def main():
     # with PicoZKCompiler('irs/picozk_test', options=['ram']):
 
     bot = [0]
-    
+
     # Producer
     X_list = [i for k, v in X.items() for i in (k, v)]
     bots_list = [0] *4
+
     mem = X_list + bot + bots_list
     pro_Y = list_to_string(producer_func(mem))
     print("pro_Y", pro_Y)
@@ -313,7 +323,8 @@ def main():
     honey_entries = [string_to_int('6'), string_to_int('111-666-6666'), 
                     string_to_int('7'), string_to_int('222-777-7777')]
 
-    repro_Y = list_to_string(reproducer_func(bg_list, honey_entries))
+    repro_mem = bg_list + bot + honey_entries
+    repro_Y = list_to_string(reproducer_func(repro_mem))
     print("repro_y", repro_Y)
     print('')
     assert(exp_repro_Y == repro_Y)
