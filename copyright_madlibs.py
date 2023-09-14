@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import List
 from picozk import *
 
 # Class to hold a single instruction
@@ -119,7 +118,7 @@ def make_X(madlibs, nouns):
 def reveal_string(input):
     res = ""
     for elm in input:
-        elm = int_to_string(val_of(elm)).rstrip('\x00')
+        elm = int_to_string(val_of(elm))
         res += elm + " "
     return res[:-1]
         

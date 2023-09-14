@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import List
 from picozk import *
 
 # Class to hold a single instruction
