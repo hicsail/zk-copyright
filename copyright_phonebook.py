@@ -297,6 +297,7 @@ def main():
     # with PicoZKCompiler('irs/picozk_test', options=['ram']):
 
     bot = [0]
+    
     # Producer
     X_list = [i for k, v in X.items() for i in (k, v)]
     bots_list = [0] *4
@@ -309,7 +310,6 @@ def main():
     
     # Reproducer
     bg_list = [i for k, v in bg.items() for i in (k, v)]
-    print(bg_list)
     honey_entries = [string_to_int('6'), string_to_int('111-666-6666'), 
                     string_to_int('7'), string_to_int('222-777-7777')]
 
