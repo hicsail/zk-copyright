@@ -61,7 +61,8 @@ mkdir -p irs/wit
 mkdir -p irs/ins
 
 # Run firealarm test
-cd irs && wtk-firealarm $dirlist && cd ..
+cd irs && wtk-firealarm $dirlist
+cd ..
 
 echo "wtk-firealarm successfully completed"
 
