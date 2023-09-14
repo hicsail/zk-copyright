@@ -22,7 +22,7 @@ def list_to_string(res_list):
     res_list_size = len(res_list)
     while idx < res_list_size:
         # Convert each tuple to a string and add to result_str
-        item_str = "(" + "'" + res_list[idx][0] + "'" + ", " + "'" + res_list[idx][1] + "'" + ")"
+        item_str = "(" + "'" + int_to_string(res_list[idx][0]) + "'" + ", " + "'" + int_to_string(res_list[idx][1]) + "'" + ")"
         if result_str:
             result_str += ", " + item_str
         else:
@@ -53,32 +53,32 @@ def producer_func(X):
     return sort_by(temp_list, 0)
 
 
-def reproducer_func(bg):
+def reproducer_func(bg, honey_entries):
     temp_list = [(k,v) for k,v in bg.items()]
-    temp_list += [('Honey Person1', '111-666-6666'), ('Honey Person2', '222-777-7777')]
+    temp_list += honey_entries
     return sort_by(temp_list, 1)
 
 
 def main():
 
     bg = {
-        'John Keller': '111-111-1111',
-        'Jane Doe': '222-222-2222',
-        'Alice Smith': '333-333-3333',
-        'Bob Brown': '444-444-4444',
-        'Charlie Clark': '555-555-5555'
-    }
+        string_to_int('1'): string_to_int('111-111-1111'),
+        string_to_int('2'): string_to_int('222-222-2222'),
+        string_to_int('3'): string_to_int('333-333-3333'),
+        string_to_int('4'): string_to_int('444-444-4444'),
+        string_to_int('5'): string_to_int('555-555-5555')
+        }
 
     honey_entries = {
-        'Honey Person1': '111-666-6666',
-        'Honey Person2': '222-777-7777'
-    }
+        string_to_int('6'): string_to_int('111-666-6666'),
+        string_to_int('7'): string_to_int('222-777-7777')
+        }
 
     X = make_X(bg, honey_entries)
     print('X', X)
     print('')
 
-    exp_pro_Y = "('Alice Smith', '333-333-3333'), ('Bob Brown', '444-444-4444'), ('Charlie Clark', '555-555-5555'), ('Honey Person1', '111-666-6666'), ('Honey Person2', '222-777-7777'), ('Jane Doe', '222-222-2222'), ('John Keller', '111-111-1111')"
+    exp_pro_Y = "('1', '111-111-1111'), ('2', '222-222-2222'), ('3', '333-333-3333'), ('4', '444-444-4444'), ('5', '555-555-5555'), ('6', '111-666-6666'), ('7', '222-777-7777')"
     print('exp_pro_Y', exp_pro_Y)
     print('')
 
@@ -87,11 +87,12 @@ def main():
     print('')
     assert(exp_pro_Y == pro_Y)
     
-    exp_repro_Y = "('John Keller', '111-111-1111'), ('Honey Person1', '111-666-6666'), ('Jane Doe', '222-222-2222'), ('Honey Person2', '222-777-7777'), ('Alice Smith', '333-333-3333'), ('Bob Brown', '444-444-4444'), ('Charlie Clark', '555-555-5555')"
-    print('repro_Y', exp_repro_Y)
+    exp_repro_Y = "('1', '111-111-1111'), ('6', '111-666-6666'), ('2', '222-222-2222'), ('7', '222-777-7777'), ('3', '333-333-3333'), ('4', '444-444-4444'), ('5', '555-555-5555')"
+    print('exp_repro_Y', exp_repro_Y)
     print('')
-
-    repro_Y = list_to_string(reproducer_func(bg))
+    honey_entries = [(string_to_int('6'), string_to_int('111-666-6666')), 
+                     (string_to_int('7'), string_to_int('222-777-7777'))]
+    repro_Y = list_to_string(reproducer_func(bg, honey_entries))
     print("repro_y", repro_Y)
     print('')
     assert(exp_repro_Y == repro_Y)
