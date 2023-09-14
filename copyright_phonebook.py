@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import List
 from picozk import *
 
 # Class to hold a single instruction
@@ -101,6 +100,7 @@ def int_to_string(n):
 
 
 def list_to_string(res_list):
+    print(res_list)
     # Convert the List to a String
     result_str = ""
     idx = 0
@@ -116,32 +116,156 @@ def list_to_string(res_list):
     return result_str
 
 
-def sort_by(input_list, sort_key):
+def step(prog: Program, pc: int, mem: list, weight: int):
+    
+    instr = fetch(prog, pc)
+    p1 = instr.src1
+    p2 = instr.src2
+    p3 = instr.src3
+    p4 = instr.src4
+    p5 = instr.src5
+    p6 = instr.src6
+    des = instr.dest
+    s_des = instr.s_dest
+    imm =  instr.imm
+    new_pc = pc
+
+
+    # 1. set p4 at mem[des]
+    '''
+        p4: const to set
+
+        ops: mem[des] = p4
+            #This does not support list to list assignment or string/char to string/char
+    '''
+
+    mem[des] = mux(instr.opcode == 1, p4, mem[des])
+        
+
+    # 2. add const/mem[val] to des
+    '''
+        p4: value to increment by
+
+        ops: mem[des] += p4
+    '''
+
+    mem[des] =  mux(instr.opcode == 2, mem[des] + p4, mem[des])
+
+    # 3. compare value in one index with const
+    '''
+        p3 mem address to compare (imm==1)
+        p4: comparison type
+        p5: const to compare (imm==0) 
+        p6: element to compare
+
+        ops: 
+            # Below is for int
+            if imm == 0:
+                comp = p5
+            elif imm == 1:
+                comp = mem[p3]
+
+            # Below is for str
+            if p4 ==0:
+                mem[des] = (mem[p6] == comp)
+            elif p4 ==2:
+                mem[des] = (mem[p6] < comp)
+    '''
+        
+    comp = mux(instr.opcode == 3, mux(imm == 0, p5, mux(imm == 1, mem[p3], 500000)), 500000)
+    
+    mem[des] = mux(instr.opcode == 3,
+                   mux(p4 == 0, mux(mem[p6] == comp, 1, 0),
+                            mux(p4 == 2, mux(mem[p6] < comp, 1, 0),
+                                    mem[des])), mem[des])
+                                    
+
+
+    # 4/100. jump or cond-jump/terminal
+    '''
+        p3: where condition is saved (im==1)
+        p4: pc shift always (imm==0)/if True(imm==1)
+        p5: pc shift if False
+
+        ops: 
+            if imm == 0:
+                return new_pc + p4, weight +1
+            elif mem[p3]==True:
+                return new_pc + p4, weight +1
+            elif imm == 1:
+                return new_pc + p5, weight +1
+    '''
+    new_pc = mux(instr.opcode == 100, new_pc,
+                mux(instr.opcode == 4,
+                    mux(imm == 0, p4,
+                        mux(mem[p3]==True, p4, p5)),
+                new_pc+1))
+
+
+    # 5. Copy val to register
+    '''
+        p1: address of index of memory
+
+        ops: mem[des] = mem[mem[p2]]
+    '''
+
+    mem[des] = mux(instr.opcode == 5, mem[p2], mem[des])
+
+
+    # 6. Access list by pointer saved in register
+    '''
+        p1: address of index of memory
+
+        ops: mem[des] = mem[mem[p2]]
+    '''
+
+    mem[des] = mux(instr.opcode == 6, mem[mem[p2]], mem[des])
+
+
+    # 7. Set Value by const pointer
+
+    '''
+        p4: any memory address
+                
+    '''
+
+    mem[mem[s_des]] = mux(instr.opcode == 7, mem[p4], mem[mem[s_des]])
+
+
+    # 100. Terminal
+    w = mux(instr.opcode == 100, 0, 1)
+
+    return new_pc, weight + w
+
+
+def sort_by(mem, sort_by):
     # Sort the List of Tuples
-    n = len(input_list)
+    n = len(mem)
     i = 0
     while i < n:
-        j = 0
-        while j < n-i-1:
+        j = sort_by
+        while j < n-i-2:
             # Compare the first element of each tuple
-            if input_list[j][sort_key] > input_list[j+1][sort_key]:
-                temp = input_list[j]
-                input_list[j] = input_list[j+1]
-                input_list[j+1] = temp
-            j += 1
-        i += 1
-    return input_list
+            if sort_by==0:
+                if mem[j] > mem[j+2]:
+                    temp1 = mem[j]
+                    temp2 = mem[j+1]
+                    mem[j] = mem[j+2]
+                    mem[j+1] = mem[j+3]
+                    mem[j+2] = temp1
+                    mem[j+2] = temp2
+            j += 2
+        i += 2
+    return mem
 
 
-def producer_func(X):
-    temp_list = [(k,v) for k,v in X.items()]
-    return sort_by(temp_list, 0)
+def producer_func(X_list):
+    return sort_by(X_list[0:14], 0)
 
 
-def reproducer_func(bg, honey_entries):
-    temp_list = [(k,v) for k,v in bg.items()]
-    temp_list += honey_entries
-    return sort_by(temp_list, 1)
+def reproducer_func(bg_list, honey_entries):
+    bg_list += honey_entries
+    return sort_by(bg_list, 1)
 
 
 def main():
@@ -166,18 +290,30 @@ def main():
     exp_pro_Y = "('1', '111-111-1111'), ('2', '222-222-2222'), ('3', '333-333-3333'), ('4', '444-444-4444'), ('5', '555-555-5555'), ('6', '111-666-6666'), ('7', '222-777-7777')"
     print('exp_pro_Y', exp_pro_Y)
     print('')
-
-    pro_Y = list_to_string(producer_func(X))
-    print("pro_Y", pro_Y)
-    print('')
-    assert(exp_pro_Y == pro_Y)
-    
     exp_repro_Y = "('1', '111-111-1111'), ('6', '111-666-6666'), ('2', '222-222-2222'), ('7', '222-777-7777'), ('3', '333-333-3333'), ('4', '444-444-4444'), ('5', '555-555-5555')"
     print('exp_repro_Y', exp_repro_Y)
     print('')
-    honey_entries = [(string_to_int('6'), string_to_int('111-666-6666')), 
-                     (string_to_int('7'), string_to_int('222-777-7777'))]
-    repro_Y = list_to_string(reproducer_func(bg, honey_entries))
+
+    # with PicoZKCompiler('irs/picozk_test', options=['ram']):
+
+    bot = [0]
+    # Producer
+    X_list = [i for k, v in X.items() for i in (k, v)]
+    bots_list = [0] *4
+    mem = X_list + bot + bots_list
+    pro_Y = list_to_string(producer_func(mem))
+    print("pro_Y", pro_Y)
+    print('')
+    assert(exp_pro_Y == pro_Y)
+
+    
+    # Reproducer
+    bg_list = [i for k, v in bg.items() for i in (k, v)]
+    print(bg_list)
+    honey_entries = [string_to_int('6'), string_to_int('111-666-6666'), 
+                    string_to_int('7'), string_to_int('222-777-7777')]
+
+    repro_Y = list_to_string(reproducer_func(bg_list, honey_entries))
     print("repro_y", repro_Y)
     print('')
     assert(exp_repro_Y == repro_Y)
