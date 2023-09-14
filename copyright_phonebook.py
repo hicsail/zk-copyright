@@ -307,7 +307,6 @@ def main():
 
         # Producer
         X_list = [i for k, v in X.items() for i in (k, v)] #0-13
-        print(X_list)
         bots_list = [0] *4 #15-18
         reg1 = 0 #20
         reg2 = 0 #22
