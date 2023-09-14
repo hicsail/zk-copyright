@@ -279,8 +279,8 @@ def reproducer_func(repro_mem):
 def main():
 
     bg = {
-        string_to_int('1'): string_to_int('111-111-1111'),
         string_to_int('2'): string_to_int('222-222-2222'),
+        string_to_int('1'): string_to_int('111-111-1111'),
         string_to_int('3'): string_to_int('333-333-3333'),
         string_to_int('4'): string_to_int('444-444-4444'),
         string_to_int('5'): string_to_int('555-555-5555')
@@ -294,38 +294,106 @@ def main():
     X = make_X(bg, honey_entries)
 
     exp_pro_Y = "('1', '111-111-1111'), ('2', '222-222-2222'), ('3', '333-333-3333'), ('4', '444-444-4444'), ('5', '555-555-5555'), ('6', '111-666-6666'), ('7', '222-777-7777')"
-    print('exp_pro_Y', exp_pro_Y, '\n')
     exp_repro_Y = "('1', '111-111-1111'), ('6', '111-666-6666'), ('2', '222-222-2222'), ('7', '222-777-7777'), ('3', '333-333-3333'), ('4', '444-444-4444'), ('5', '555-555-5555')"
+    print('exp_pro_Y', exp_pro_Y, '\n')
     print('exp_repro_Y', exp_repro_Y, '\n')
 
+    p = pow(2,256) - pow(2,32) - pow(2,9) - pow(2,8) - pow(2,7) - pow(2,6) - pow(2,4) - 1
+    n_iter = 1500
+    lim = 10
+    threshold = 300 # The program has to be performed within this (weight < )
 
-    # with PicoZKCompiler('irs/picozk_test', options=['ram']):
+    with PicoZKCompiler('irs/picozk_test', field=[p], options=['ram']):
 
-    # Producer
-    X_list = [i for k, v in X.items() for i in (k, v)]
-    bots_list = [0] *4
+        # Producer
+        X_list = [i for k, v in X.items() for i in (k, v)] #0-13
+        print(X_list)
+        bots_list = [0] *4 #15-18
+        reg1 = 0 #20
+        reg2 = 0 #22
+        reg3 = 0 #24
+        reg4 = 0 #26
+        dummy_int = 0 #28
 
-    bot = 0
-    mem = X_list + [bot] + bots_list
+        bot = 0
+        
+        mem = ZKList(X_list + [bot] + bots_list + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [dummy_int])
+        
+        program = [
+
+                # Take the first three nouns from X and hard-code the rest from the fill list
+                
+                    # ## FIRST IF curr madlibs_words is equal to "_"
+                    #     Instr(5, 76, 68, 76, 76, 76, 76, 72, 76, 0),    ## Step0   #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
+                    #     Instr(2, 76, 76, 76, 17, 76, 76, 72, 76, 0),    ## Step1   #2: Add 17 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to madlibs list by 17
+                    #     Instr(6, 76, 72, 76, 76, 76, 76, 70, 76, 0),    ## Step2   #6: Set idx72 (temp-idx/reg3) of madlibs list to idx70 (reg2)
+                    #     Instr(3, 76, 76, 76,  0, us, 70, 70, 76, 0),    ## Step3   #3: Compare idx70 (reg2) and "_" and assign result to idx70 (reg2)
+                    #     Instr(4, 76, 76, 70,  5, 16, 76, 76, 76, 1),    ## Step4   #4: Cond jump to Step5/Step16 if true/false
+
+                    # ## SECOND IF index of madlibs_words is less than lim (upto idx of third)
+                    #     Instr(3, 76, 76, 76,  2,lim, 68, 70, 76, 0),    ## Step5   #3: Compare idx 68(idx-i/reg1) < fill_upto (10 for now) and set the result to idx70 (reg2)
+                    #     Instr(4, 76, 76, 70,  7, 11, 76, 76, 76, 1),    ## Step6   #4: Cond jump to Step7/Step11 if true/false
+
+                    # ## IF Both TRUE (Append from X list)
+                    #     Instr(5, 76, 68, 76, 76, 76, 76, 72, 76, 0),    ## Step7   #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
+                    #     Instr(2, 76, 76, 76, 34, 76, 76, 72, 76, 0),    ## Step8   #2: Add 34 to idx72 (temp-idx/reg3) = Shifting pointer to X_list idx-i by 34
+                    #     Instr(6, 76, 72, 76, 76, 76, 76, 70, 76, 0),    ## Step9   #6: Set idx72 (temp-idx/reg3) of X_words to idx70 (reg2)
+                    #     Instr(4, 76, 76, 76, 19, 76, 76, 76, 76, 0),    ## Step10  #4: jump to Step19
+
+                    # ## IF only the former TRUE (Append from nouns list)
+                    #     Instr(5, 76, 74, 76, 76, 76, 76, 72, 76, 0),    ## Step11  #5: Copy idx74 (idx-k/reg2) to idx72 (temp-idx/reg3)
+                    #     Instr(2, 76, 76, 76,  3, 76, 76, 72, 76, 0),    ## Step12  #2: Add 3 to idx72 (temp-idx/reg3) = Shifting pointer idx-k to nouns list by 3
+                    #     Instr(6, 76, 72, 76, 76, 76, 76, 70, 76, 1),    ## Step13  #6: Set idx72 (temp-idx/reg3) of nouns list to idx70 (reg2)
+                    #     Instr(2, 76, 76, 76,  1, 76, 76, 74, 76, 0),    ## Step14  #2: Add 1 to idx74 (idx-k/reg3)
+                    #     Instr(4, 76, 76, 76, 19, 76, 76, 76, 76, 0),    ## Step15  #4: jump to Step19
+
+                    # ## ELSE (Append from madlibs list)
+                    #     Instr(5, 76, 68, 76, 76, 76, 76, 72, 76, 0),    ## Step16  #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
+                    #     Instr(2, 76, 76, 76, 17, 76, 76, 72, 76, 0),    ## Step17  #2: Add 17 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to madlibs list by 17
+                    #     Instr(6, 76, 72, 76, 76, 76, 76, 70, 76, 0),    ## Step18  #6: Set idx72 (temp-idx/reg3) of madlibs list to idx70 (reg2)
+
+                    # ## APPEND and INCREMENT
+                    #     Instr(5, 76, 68, 76, 76, 76, 76, 72, 76, 0),    ## Step19  #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
+                    #     Instr(2, 76, 76, 76, 51, 76, 76, 72, 76, 0),    ## Step20  #2: Add 51 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to res list by 51
+                    #     Instr(7, 76, 76, 76, 70, 76, 76, 76, 72, 1),    ## Step21  #6: Set idx70 (reg2) to idx72 (temp-idx/reg3) of res list
+                    #     Instr(2, 76, 76, 76,  1, 76, 76, 68, 76, 0),    ## Step22  #2: Add 1 to idx 68 (idx-i)
+                        
+                    # ## CHECK IF ITERATE OR NEXT
+                    #     Instr(3, 76, 76, 76, 2, X_len, 68, 72, 76, 0),  ## Step23  #3: Compare idx68 (idx-i) < p5 (X_len) and assign result to idx72 (reg3)
+                    #     Instr(4, 76, 76, 72, 0, 25, 76, 76, 76, 1),     ## Step24  #4: Cond jump to Step0/25 if true/false
+
+                # END
+                        Instr(100, 28, 28, 28, 28, 28, 28, 28, 28, 0),   ## Step25  #-1: Terminal
+        ]
+        pro_prog = make_program(program)
+
+        pc = 0
+        weight = 0
+        for i in range(n_iter):
+            pc, weight = step(pro_prog, pc, mem, weight)
+
+        prod_Y = list_to_string(mem)
+        print('prod_Y:', prod_Y, '\n')
+
+        res = mux(exp_pro_Y == prod_Y,
+                    mux(weight <= threshold, SecretInt(0), SecretInt(1))
+                    , SecretInt(1))
+        assert0(res)
+        assert(val_of(res)==0)
 
 
-    pro_Y = list_to_string(producer_func(mem)[0:14])
-    print("pro_Y", pro_Y, '\n')
-    assert(exp_pro_Y == pro_Y)
-    
-
-    # Reproducer
-    bg_list = [i for k, v in bg.items() for i in (k, v)]
-    honey_entries = [string_to_int('6'), string_to_int('111-666-6666'), 
-                    string_to_int('7'), string_to_int('222-777-7777')]
-    
-    bot = 0
-    repro_mem = bg_list + [bot] + honey_entries
+        # Reproducer
+        bg_list = [i for k, v in bg.items() for i in (k, v)]
+        honey_entries = [string_to_int('6'), string_to_int('111-666-6666'), 
+                        string_to_int('7'), string_to_int('222-777-7777')]
+        
+        bot = 0
+        repro_mem = bg_list + [bot] + honey_entries
 
 
-    repro_Y = list_to_string(reproducer_func(repro_mem)[0:14])
-    print("repro_y", repro_Y, '\n')
-    assert(exp_repro_Y == repro_Y)
+        repro_Y = list_to_string(reproducer_func(repro_mem)[0:14])
+        print("repro_y", repro_Y, '\n')
+        assert(exp_repro_Y == repro_Y)
 
 if __name__ == "__main__":
     main()
