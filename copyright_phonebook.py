@@ -243,7 +243,6 @@ def producer_func(mem):
     while i < n:
         j = 0
         while j < n-i-2:
-            # Compare the first element of each tuple
             if mem[j] > mem[j+2]:
                 temp1 = mem[j]
                 temp2 = mem[j+1]
@@ -258,7 +257,6 @@ def producer_func(mem):
 
 def reproducer_func(repro_mem):
     mem = repro_mem[0:10] + repro_mem[11:]
-        # Sort the List of Tuples
     n = 14
     i = 1
     while i < n:
