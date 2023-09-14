@@ -104,15 +104,15 @@ def list_to_string(res_list):
     # Convert the List to a String
     result_str = ""
     idx = 0
-    res_list_size = len(res_list)
+    res_list_size = 14
     while idx < res_list_size:
         # Convert each tuple to a string and add to result_str
-        item_str = "(" + "'" + int_to_string(val_of(res_list[idx][0])) + "'" + ", " + "'" + int_to_string(val_of(res_list[idx][1])) + "'" + ")"
+        item_str = "(" + "'" + int_to_string(val_of(res_list[idx])) + "'" + ", " + "'" + int_to_string(val_of(res_list[idx+1])) + "'" + ")"
         if result_str:
             result_str += ", " + item_str
         else:
             result_str = item_str
-        idx += 1
+        idx += 2
     return result_str
 
 
