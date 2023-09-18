@@ -329,7 +329,7 @@ def main():
                     Instr(4, 76, 76, 72, 0, 25, 76, 76, 76, 1),     ## Step24  #4: Cond jump to Step0/25 if true/false
 
             # END
-                    Instr(100, 76, 76, 76, 76, 76, 76, 76, 76, 0),   ## Step25  #-1: Terminal
+                    Instr(100, 76, 76, 76, 76, 76, 76, 76, 76, 0),   ## Step25  #100: Terminal
                     ]
         pro_prog = make_program(program)
 
@@ -401,7 +401,7 @@ def main():
                     Instr(4, 76, 76, 72, 0, 17, 76, 76, 76, 1),    ## Step16  #4: Cond jump to -16/+1 if true/false
 
             # END
-                    Instr(100, 76, 76, 76, 76, 76, 76, 76, 76, 0),   ## Step17  #-1: Terminal
+                    Instr(100, 76, 76, 76, 76, 76, 76, 76, 76, 0),   ## Step17  #100: Terminal
                     ]
         repro_prog = make_program(program)
 

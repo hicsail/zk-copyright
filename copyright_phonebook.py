@@ -141,14 +141,17 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     mem[des] = mux(instr.opcode == 1, p4, mem[des])
         
 
-    # 2. add const/mem[val] to des
+    # 2. add/subract const/mem[val] to des
     '''
         p4: value to increment by
 
         ops: mem[des] += p4
     '''
 
-    mem[des] =  mux(instr.opcode == 2, mem[des] + p4, mem[des])
+    mem[des] =  mux(instr.opcode == 2, mux(imm==0, mem[des] + p4,  
+                                           mux(imm==1, mem[des] - p4, 
+                                               mux(imm==2, mem[des] - mem[p4], mem[des]))), 
+                                       mem[des])
 
     # 3. compare value in one index with const
     '''
@@ -243,13 +246,14 @@ def producer_func(mem):
     while i < n:
         j = 0
         while j < n-i-2:
-            if mem[j] > mem[j+2]:
+            if  mem[j+2] < mem[j]:
                 temp1 = mem[j]
-                temp2 = mem[j+1]
                 mem[j] = mem[j+2]
-                mem[j+1] = mem[j+3]
                 mem[j+2] = temp1
-                mem[j+2] = temp2
+
+                temp2 = mem[j+1]
+                mem[j+1] = mem[j+3]
+                mem[j+3] = temp2
             j += 2
         i += 2
     return mem
@@ -262,12 +266,13 @@ def reproducer_func(repro_mem):
     while i < n:
         j = 1
         while j < n-i-1:
-            if mem[j] > mem[j+2]:
+            if mem[j+2] < mem[j]:
                 temp1 = mem[j]
-                temp2 = mem[j-1]
                 mem[j] = mem[j+2]
-                mem[j-1] = mem[j+1]
                 mem[j+2] = temp1
+
+                temp2 = mem[j-1]
+                mem[j-1] = mem[j+1]
                 mem[j+1] = temp2
             j += 2
         i += 2
@@ -298,69 +303,77 @@ def main():
 
     p = pow(2,256) - pow(2,32) - pow(2,9) - pow(2,8) - pow(2,7) - pow(2,6) - pow(2,4) - 1
     n_iter = 1500
-    lim = 10
-    threshold = 300 # The program has to be performed within this (weight < )
+    n = 14
+    threshold = 350 # The program has to be performed within this (weight < )
 
     with PicoZKCompiler('irs/picozk_test', field=[p], options=['ram']):
 
         # Producer
         X_list = [i for k, v in X.items() for i in (k, v)] #0-13
         bots_list = [0] *4 #15-18
-        reg1 = 0 #20
-        reg2 = 0 #22
-        reg3 = 0 #24
-        reg4 = 0 #26
-        dummy_int = 0 #28
+        reg1 = 0 #20 i
+        reg2 = 0 #22 j
+        reg3 = 0 #24 temp index
+        reg4 = 0 #26 res etc..
+        reg5 = 0 #28 temp
+        reg6 = 0 #30 temp
+        dummy_int = 0 #32
 
         bot = 0
         
-        mem = ZKList(X_list + [bot] + bots_list + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [dummy_int])
+        mem = ZKList(X_list + [bot] + bots_list + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [reg5] + [bot] + [reg6] + [bot] + [dummy_int])
         
         program = [
 
-                # Take the first three nouns from X and hard-code the rest from the fill list
-                
-                    # ## FIRST IF curr madlibs_words is equal to "_"
-                    #     Instr(5, 76, 68, 76, 76, 76, 76, 72, 76, 0),    ## Step0   #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
-                    #     Instr(2, 76, 76, 76, 17, 76, 76, 72, 76, 0),    ## Step1   #2: Add 17 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to madlibs list by 17
-                    #     Instr(6, 76, 72, 76, 76, 76, 76, 70, 76, 0),    ## Step2   #6: Set idx72 (temp-idx/reg3) of madlibs list to idx70 (reg2)
-                    #     Instr(3, 76, 76, 76,  0, us, 70, 70, 76, 0),    ## Step3   #3: Compare idx70 (reg2) and "_" and assign result to idx70 (reg2)
-                    #     Instr(4, 76, 76, 70,  5, 16, 76, 76, 76, 1),    ## Step4   #4: Cond jump to Step5/Step16 if true/false
 
-                    # ## SECOND IF index of madlibs_words is less than lim (upto idx of third)
-                    #     Instr(3, 76, 76, 76,  2,lim, 68, 70, 76, 0),    ## Step5   #3: Compare idx 68(idx-i/reg1) < fill_upto (10 for now) and set the result to idx70 (reg2)
-                    #     Instr(4, 76, 76, 70,  7, 11, 76, 76, 76, 1),    ## Step6   #4: Cond jump to Step7/Step11 if true/false
+            ## Set j = 0
+            Instr(1, 32, 32, 32,  0, 32, 32, 22, 32, 0),    ## Step0   #6: Set 0 idx22 (idx-j/reg2)
 
-                    # ## IF Both TRUE (Append from X list)
-                    #     Instr(5, 76, 68, 76, 76, 76, 76, 72, 76, 0),    ## Step7   #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
-                    #     Instr(2, 76, 76, 76, 34, 76, 76, 72, 76, 0),    ## Step8   #2: Add 34 to idx72 (temp-idx/reg3) = Shifting pointer to X_list idx-i by 34
-                    #     Instr(6, 76, 72, 76, 76, 76, 76, 70, 76, 0),    ## Step9   #6: Set idx72 (temp-idx/reg3) of X_words to idx70 (reg2)
-                    #     Instr(4, 76, 76, 76, 19, 76, 76, 76, 76, 0),    ## Step10  #4: jump to Step19
+            ## Check if  mem[j+2] < mem[j] 
+            Instr(5, 32, 22, 32, 32, 32, 32, 24, 32, 0),    ## Step1   #5: Copy idx22 (idx-j/reg2) to idx24 (temp-idx/reg3)
+            Instr(2, 32, 32, 32,  2, 32, 32, 24, 32, 0),    ## Step2   #2: Add 2 to idx24 (temp-idx/reg3) = j+2
+            Instr(6, 32, 24, 32, 32, 32, 32, 28, 32, 0),    ## Step3   #6: Set mem[mem[24]] (mem[j+2]) to idx28 (reg5)
+            Instr(6, 32, 22, 32, 32, 32, 32, 30, 32, 0),    ## Step4   #6: Set mem[mem[22]] (mem[j]) to idx30 (temp1/reg6)
+            Instr(3, 32, 32, 30,  2, 32, 28, 26, 32, 1),    ## Step5   #3: Compare mem[28] (reg5/mem[j+2]) < mem[30] (reg6/mem[j]) and assign result to idx26 (reg4)
+            Instr(4, 32, 32, 26,  7, 17, 32, 32, 32, 1),    ## Step6   #4: Cond jump to Step7/17 if true/false
 
-                    # ## IF only the former TRUE (Append from nouns list)
-                    #     Instr(5, 76, 74, 76, 76, 76, 76, 72, 76, 0),    ## Step11  #5: Copy idx74 (idx-k/reg2) to idx72 (temp-idx/reg3)
-                    #     Instr(2, 76, 76, 76,  3, 76, 76, 72, 76, 0),    ## Step12  #2: Add 3 to idx72 (temp-idx/reg3) = Shifting pointer idx-k to nouns list by 3
-                    #     Instr(6, 76, 72, 76, 76, 76, 76, 70, 76, 1),    ## Step13  #6: Set idx72 (temp-idx/reg3) of nouns list to idx70 (reg2)
-                    #     Instr(2, 76, 76, 76,  1, 76, 76, 74, 76, 0),    ## Step14  #2: Add 1 to idx74 (idx-k/reg3)
-                    #     Instr(4, 76, 76, 76, 19, 76, 76, 76, 76, 0),    ## Step15  #4: jump to Step19
+            ## Set mem[j] = mem[j+2] *Set temp1/reg6 = mem[j] is done at Step3
+            Instr(7, 32, 32, 32, 28, 32, 32, 32, 22, 0),    ## Step7   #6: Set mem[idx28/reg5] (mem[j+2]) to mem[mem[idx22](=j)]
+            
+            ## Set mem[j+2] = temp1
+            Instr(7, 32, 32, 32, 30, 32, 32, 32, 24, 0),    ## Step8   #6: Set mem[idx30](temp1/reg6) to mem[mem[idx24]] (mem[j+2])
+            
 
-                    # ## ELSE (Append from madlibs list)
-                    #     Instr(5, 76, 68, 76, 76, 76, 76, 72, 76, 0),    ## Step16  #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
-                    #     Instr(2, 76, 76, 76, 17, 76, 76, 72, 76, 0),    ## Step17  #2: Add 17 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to madlibs list by 17
-                    #     Instr(6, 76, 72, 76, 76, 76, 76, 70, 76, 0),    ## Step18  #6: Set idx72 (temp-idx/reg3) of madlibs list to idx70 (reg2)
+            ## Set temp2 = mem[j+1]
+            Instr(5, 32, 22, 32, 32, 32, 32, 24, 32, 0),    ## Step9   #5: Copy idx22 (idx-j/reg2) to idx24 (temp-idx/reg3)
+            Instr(2, 32, 32, 32,  1, 32, 32, 24, 32, 0),    ## Step10  #2: Add 1 to idx24 (temp-idx/reg3) = j+1
+            Instr(6, 32, 24, 32, 32, 32, 32, 28, 32, 0),    ## Step11  #6: Set mem[mem[24]] (mem[j+1]) to idx28 (temp2/reg5)
 
-                    # ## APPEND and INCREMENT
-                    #     Instr(5, 76, 68, 76, 76, 76, 76, 72, 76, 0),    ## Step19  #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
-                    #     Instr(2, 76, 76, 76, 51, 76, 76, 72, 76, 0),    ## Step20  #2: Add 51 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to res list by 51
-                    #     Instr(7, 76, 76, 76, 70, 76, 76, 76, 72, 1),    ## Step21  #6: Set idx70 (reg2) to idx72 (temp-idx/reg3) of res list
-                    #     Instr(2, 76, 76, 76,  1, 76, 76, 68, 76, 0),    ## Step22  #2: Add 1 to idx 68 (idx-i)
-                        
-                    # ## CHECK IF ITERATE OR NEXT
-                    #     Instr(3, 76, 76, 76, 2, X_len, 68, 72, 76, 0),  ## Step23  #3: Compare idx68 (idx-i) < p5 (X_len) and assign result to idx72 (reg3)
-                    #     Instr(4, 76, 76, 72, 0, 25, 76, 76, 76, 1),     ## Step24  #4: Cond jump to Step0/25 if true/false
+            ## Set mem[j+1] = mem[j+3]
+            Instr(5, 32, 22, 32, 32, 32, 32, 30, 32, 0),    ## Step12  #5: Copy idx22 (idx-j/reg2) to idx30 (temp-idx2/reg6)
+            Instr(2, 32, 32, 32,  3, 32, 32, 30, 32, 0),    ## Step13  #2: Add 3 to idx30 (temp-idx2/reg6) = j+3
+            Instr(6, 32, 30, 32, 32, 32, 32, 26, 32, 0),    ## Step14  #6: Set mem[mem[30]] (mem[j+3]) to idx26
+            Instr(7, 32, 32, 32, 26, 32, 32, 32, 24, 0),    ## Step15  #7: Set mem[idx26] (mem[j+3]) to mem[mem[idx24](=j+1)]
+            
+            ## Set mem[j+3] = temp2
+            Instr(7, 32, 32, 32, 28, 32, 32, 32, 30, 0),    ## Step16  #7: Set mem[idx28/reg5] to mem[mem[idx30](=j+3)]
 
-                # END
-                        Instr(100, 28, 28, 28, 28, 28, 28, 28, 28, 0),   ## Step25  #-1: Terminal
+            ## Check if j < n-i-2 and determine to loop or end
+            Instr(2, 32, 32, 32,  2, 32, 32, 22, 32, 0),    ## Step17  #2: Add 2 to idx 22 (idx-j/reg2)
+            Instr(1, 32, 32, 32,  n, 32, 32, 26, 32, 0),    ## Step18  #1: Set 14 to idx 26 (reg4)
+            Instr(2, 32, 32, 32,  2, 32, 32, 26, 32, 1),    ## Step19  #2: Subtract 2 from idx26 (reg4)
+            Instr(2, 32, 32, 32, 20, 32, 32, 26, 32, 2),    ## Step20  #2: Subtract idx-i(idx20/reg1) from idx26 (reg4)
+            Instr(3, 32, 32, 26,  2, 32, 22, 24, 32, 1),    ## Step21  #3: Compare idx22 (idx-j/reg2) < mem[p3] (n-i-2) and assign result to idx24 (reg3)
+            Instr(4, 32, 32, 24,  1, 23, 32, 32, 32, 1),    ## Step22  #4: Cond jump to Step1/23 if true/false
+
+            ## Check if i < n
+            Instr(2, 32, 32, 32, 2, 32, 32, 20, 32, 0),     ## Step23  #2: Add 2 to idx 20 (idx-i/reg1)
+            Instr(3, 32, 32, 32, 2,  n, 20, 24, 32, 0),     ## Step24  #3: Compare idx20 (idx-i/reg1) < n)(=14) and assign result to idx24 (reg3)
+            Instr(4, 32, 32, 24, 0, 26, 32, 32, 32, 1),     ## Step25  #4: Cond jump to Step0/27 if true/false
+                    
+
+            # END
+            Instr(100, 32, 32, 32, 32, 32, 32, 32, 32, 0),   ## Step26  #100: Terminal
         ]
         pro_prog = make_program(program)
 
