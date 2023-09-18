@@ -240,25 +240,6 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     return new_pc, weight + w
 
 
-def producer_func(mem):
-    n = 14
-    i = 0
-    while i < n:
-        j = 0
-        while j < n-i-2:
-            if  mem[j+2] < mem[j]:
-                temp1 = mem[j]
-                mem[j] = mem[j+2]
-                mem[j+2] = temp1
-
-                temp2 = mem[j+1]
-                mem[j+1] = mem[j+3]
-                mem[j+3] = temp2
-            j += 2
-        i += 2
-    return mem
-
-
 def reproducer_func(repro_mem):
     mem = repro_mem[0:10] + repro_mem[11:]
     n = 14
