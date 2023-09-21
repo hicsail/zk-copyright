@@ -10,6 +10,7 @@ def fetch(prog: Program, pc: SecretInt):
                  prog.src3[pc],
                  prog.src4[pc],
                  prog.src5[pc],
+                 prog.src6[pc],
                  prog.dest[pc],
                  prog.s_dest[pc],
                  prog.imm[pc])
@@ -23,6 +24,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     p3 = instr.src3
     p4 = instr.src4
     p5 = instr.src5
+    p6 = instr.src6
     des = instr.dest
     s_des = instr.s_dest
     imm =  instr.imm
@@ -31,13 +33,13 @@ def step(prog: Program, pc: int, mem: list, weight: int):
 
     # 1. set p3 at mem[des]
     '''
-        p3: const to set
+        p6: const to set
 
-        ops: mem[des] = p3
+        ops: mem[des] = p6
             #This does not support list to list assignment or string/char to string/char
     '''
 
-    mem[des] = mux(instr.opcode == 1, p3, mem[des])
+    mem[des] = mux(instr.opcode == 1, p6, mem[des])
         
 
     # 2. add/subract const/mem[val] to des
