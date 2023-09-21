@@ -58,70 +58,69 @@ def main():
 
         # Producer
         X_list = [i for k, v in X.items() for i in (k, v)] #0-13
-        bots_list = [0] *4 #15-18 #TODO: Delete
-        reg1 = 0 #20 i
-        reg2 = 0 #22 j
-        reg3 = 0 #24 temp index
-        reg4 = 0 #26 res etc..
-        reg5 = 0 #28 temp
-        reg6 = 0 #30 temp
-        dummy_int = 0 #32
+        reg1 = 0 #15 i
+        reg2 = 0 #17 j
+        reg3 = 0 #19 temp index
+        reg4 = 0 #21 res etc..
+        reg5 = 0 #23 temp
+        reg6 = 0 #25 temp
+        dummy_int = 0 #27
 
         bot = 0
         
-        mem = ZKList(X_list + [bot] + bots_list + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [reg5] + [bot] + [reg6] + [bot] + [dummy_int])
+        mem = ZKList(X_list + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [reg5] + [bot] + [reg6] + [bot] + [dummy_int])
         
         program = [
 
 
             ## Set j = 0
-            Instr(1, 32, 32, 32,  0, 32, 32, 22, 32, 0),    ## Step0   #6: Set 0 idx22 (idx-j/reg2)
+            Instr(1, 27, 27, 27,  0, 27, 27, 17, 27, 0),    ## Step0   #6: Set 0 idx17 (idx-j/reg2)
 
             ## Check if  mem[j+2] < mem[j]
-            Instr(5, 32, 22, 32, 32, 32, 32, 24, 32, 0),    ## Step1   #5: Copy idx22 (idx-j/reg2) to idx24 (temp-idx/reg3)
-            Instr(2, 32, 32, 32,  2, 32, 32, 24, 32, 0),    ## Step2   #2: Add 2 to idx24 (temp-idx/reg3) = j+2
-            Instr(6, 32, 24, 32, 32, 32, 32, 28, 32, 0),    ## Step3   #6: Set mem[mem[24]] (mem[j+2]) to idx28 (reg5)
-            Instr(6, 32, 22, 32, 32, 32, 32, 30, 32, 0),    ## Step4   #6: Set mem[mem[22]] (mem[j]) to idx30 (temp1/reg6)
-            Instr(3, 32, 32, 30,  2, 32, 28, 26, 32, 1),    ## Step5   #3: Compare mem[28] (reg5/mem[j+2]) < mem[30] (reg6/mem[j]) and assign result to idx26 (reg4)
-            Instr(4, 32, 32, 26,  7, 17, 32, 32, 32, 1),    ## Step6   #4: Cond jump to Step7/17 if true/false
+            Instr(5, 27, 17, 27, 27, 27, 27, 19, 27, 0),    ## Step1   #5: Copy idx17 (idx-j/reg2) to idx19 (temp-idx/reg3)
+            Instr(2, 27, 27, 27,  2, 27, 27, 19, 27, 0),    ## Step2   #2: Add 2 to idx19 (temp-idx/reg3) = j+2
+            Instr(6, 27, 19, 27, 27, 27, 27, 23, 27, 0),    ## Step3   #6: Set mem[mem[19]] (mem[j+2]) to idx23 (reg5)
+            Instr(6, 27, 17, 27, 27, 27, 27, 25, 27, 0),    ## Step4   #6: Set mem[mem[17]] (mem[j]) to idx25 (temp1/reg6)
+            Instr(3, 27, 27, 25,  2, 27, 23, 21, 27, 1),    ## Step5   #3: Compare mem[23] (reg5/mem[j+2]) < mem[25] (reg6/mem[j]) and assign result to idx21 (reg4)
+            Instr(4, 27, 27, 21,  7, 17, 27, 27, 27, 1),    ## Step6   #4: Cond jump to Step7/17 if true/false
 
             ## Set mem[j] = mem[j+2] *Set temp1/reg6 = mem[j] is done at Step3
-            Instr(7, 32, 32, 32, 28, 32, 32, 32, 22, 0),    ## Step7   #6: Set mem[idx28/reg5] (mem[j+2]) to mem[mem[idx22](=j)]
+            Instr(7, 27, 27, 27, 23, 27, 27, 27, 17, 0),    ## Step7   #6: Set mem[idx23/reg5] (mem[j+2]) to mem[mem[idx17](=j)]
             
             ## Set mem[j+2] = temp1
-            Instr(7, 32, 32, 32, 30, 32, 32, 32, 24, 0),    ## Step8   #6: Set mem[idx30](temp1/reg6) to mem[mem[idx24]] (mem[j+2])
+            Instr(7, 27, 27, 27, 25, 27, 27, 27, 19, 0),    ## Step8   #6: Set mem[idx25](temp1/reg6) to mem[mem[idx19]] (mem[j+2])
             
 
             ## Set temp2 = mem[j+1]
-            Instr(5, 32, 22, 32, 32, 32, 32, 24, 32, 0),    ## Step9   #5: Copy idx22 (idx-j/reg2) to idx24 (temp-idx/reg3)
-            Instr(2, 32, 32, 32,  1, 32, 32, 24, 32, 0),    ## Step10  #2: Add 1 to idx24 (temp-idx/reg3) = j+1
-            Instr(6, 32, 24, 32, 32, 32, 32, 28, 32, 0),    ## Step11  #6: Set mem[mem[24]] (mem[j+1]) to idx28 (temp2/reg5)
+            Instr(5, 27, 17, 27, 27, 27, 27, 19, 27, 0),    ## Step9   #5: Copy idx17 (idx-j/reg2) to idx19 (temp-idx/reg3)
+            Instr(2, 27, 27, 27,  1, 27, 27, 19, 27, 0),    ## Step10  #2: Add 1 to idx19 (temp-idx/reg3) = j+1
+            Instr(6, 27, 19, 27, 27, 27, 27, 23, 27, 0),    ## Step11  #6: Set mem[mem[19]] (mem[j+1]) to idx23 (temp2/reg5)
 
             ## Set mem[j+1] = mem[j+3]
-            Instr(5, 32, 22, 32, 32, 32, 32, 30, 32, 0),    ## Step12  #5: Copy idx22 (idx-j/reg2) to idx30 (temp-idx2/reg6)
-            Instr(2, 32, 32, 32,  3, 32, 32, 30, 32, 0),    ## Step13  #2: Add 3 to idx30 (temp-idx2/reg6) = j+3
-            Instr(6, 32, 30, 32, 32, 32, 32, 26, 32, 0),    ## Step14  #6: Set mem[mem[30]] (mem[j+3]) to idx26
-            Instr(7, 32, 32, 32, 26, 32, 32, 32, 24, 0),    ## Step15  #7: Set mem[idx26] (mem[j+3]) to mem[mem[idx24](=j+1)]
+            Instr(5, 27, 17, 27, 27, 27, 27, 25, 27, 0),    ## Step12  #5: Copy idx17 (idx-j/reg2) to idx25 (temp-idx2/reg6)
+            Instr(2, 27, 27, 27,  3, 27, 27, 25, 27, 0),    ## Step13  #2: Add 3 to idx25 (temp-idx2/reg6) = j+3
+            Instr(6, 27, 25, 27, 27, 27, 27, 21, 27, 0),    ## Step14  #6: Set mem[mem[25]] (mem[j+3]) to idx21
+            Instr(7, 27, 27, 27, 21, 27, 27, 27, 19, 0),    ## Step15  #7: Set mem[idx21] (mem[j+3]) to mem[mem[idx19](=j+1)]
             
             ## Set mem[j+3] = temp2
-            Instr(7, 32, 32, 32, 28, 32, 32, 32, 30, 0),    ## Step16  #7: Set mem[idx28/reg5] to mem[mem[idx30](=j+3)]
+            Instr(7, 27, 27, 27, 23, 27, 27, 27, 25, 0),    ## Step16  #7: Set mem[idx23/reg5] to mem[mem[idx25](=j+3)]
 
             ## Check if j < n-i-2 and determine to loop or end
-            Instr(2, 32, 32, 32,  2, 32, 32, 22, 32, 0),    ## Step17  #2: Add 2 to idx 22 (idx-j/reg2)
-            Instr(1, 32, 32, 32,  n, 32, 32, 26, 32, 0),    ## Step18  #1: Set 14 to idx 26 (reg4)
-            Instr(2, 32, 32, 32,  2, 32, 32, 26, 32, 1),    ## Step19  #2: Subtract 2 from idx26 (reg4)
-            Instr(2, 32, 32, 32, 20, 32, 32, 26, 32, 2),    ## Step20  #2: Subtract idx-i(idx20/reg1) from idx26 (reg4)
-            Instr(3, 32, 32, 26,  2, 32, 22, 24, 32, 1),    ## Step21  #3: Compare idx22 (idx-j/reg2) < mem[p3] (n-i-2) and assign result to idx24 (reg3)
-            Instr(4, 32, 32, 24,  1, 23, 32, 32, 32, 1),    ## Step22  #4: Cond jump to Step1/23 if true/false
+            Instr(2, 27, 27, 27,  2, 27, 27, 17, 27, 0),    ## Step17  #2: Add 2 to idx 17 (idx-j/reg2)
+            Instr(1, 27, 27, 27,  n, 27, 27, 21, 27, 0),    ## Step18  #1: Set 14 to idx 21 (reg4)
+            Instr(2, 27, 27, 27,  2, 27, 27, 21, 27, 1),    ## Step19  #2: Subtract 2 from idx21 (reg4)
+            Instr(2, 27, 27, 27, 15, 27, 27, 21, 27, 2),    ## Step20  #2: Subtract idx-i(idx15/reg1) from idx21 (reg4)
+            Instr(3, 27, 27, 26,  2, 27, 17, 19, 27, 1),    ## Step21  #3: Compare idx17 (idx-j/reg2) < mem[p3] (n-i-2) and assign result to idx19 (reg3)
+            Instr(4, 27, 27, 19,  1, 23, 27, 27, 27, 1),    ## Step22  #4: Cond jump to Step1/23 if true/false
 
             ## Check if i < n
-            Instr(2, 32, 32, 32, 2, 32, 32, 20, 32, 0),     ## Step23  #2: Add 2 to idx 20 (idx-i/reg1)
-            Instr(3, 32, 32, 32, 2,  n, 20, 24, 32, 0),     ## Step24  #3: Compare idx20 (idx-i/reg1) < n)(=14) and assign result to idx24 (reg3)
-            Instr(4, 32, 32, 24, 0, 26, 32, 32, 32, 1),     ## Step25  #4: Cond jump to Step0/27 if true/false
+            Instr(2, 27, 27, 27, 2, 27, 27, 15, 27, 0),     ## Step23  #2: Add 2 to idx 15 (idx-i/reg1)
+            Instr(3, 27, 27, 27, 2,  n, 15, 19, 27, 0),     ## Step24  #3: Compare idx15 (idx-i/reg1) < n)(=14) and assign result to idx19 (reg3)
+            Instr(4, 27, 27, 19, 0, 26, 27, 27, 27, 1),     ## Step25  #4: Cond jump to Step0/26 if true/false
                     
 
             # END
-            Instr(100, 32, 32, 32, 32, 32, 32, 32, 32, 0),   ## Step26  #100: Terminal
+            Instr(100, 27, 27, 27, 27, 27, 27, 27, 27, 0),   ## Step26  #100: Terminal
         ]
         pro_prog = make_program(program)
 
@@ -146,69 +145,69 @@ def main():
                         string_to_int('7'), string_to_int('222-777-7777')]
         
     
-        reg1 = 1 #20 i
-        reg2 = 0 #22 j
-        reg3 = 0 #24 temp index
-        reg4 = 0 #26 res etc..
-        reg5 = 0 #28 temp
-        reg6 = 0 #30 temp
-        dummy_int = 0 #32
+        reg1 = 1 #15 i
+        reg2 = 0 #17 j
+        reg3 = 0 #19 temp index
+        reg4 = 0 #21 res etc..
+        reg5 = 0 #23 temp
+        reg6 = 0 #25 temp
+        dummy_int = 0 #27
         
         bot = 0
 
-        repro_mem = ZKList(bg_list + honey_entries + [bot] + bots_list + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [reg5] + [bot] + [reg6] + [bot] + [dummy_int])
+        repro_mem = ZKList(bg_list + honey_entries + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [reg5] + [bot] + [reg6] + [bot] + [dummy_int])
 
         program = [
 
 
             ## Set j = 1
-            Instr(1, 32, 32, 32,  1, 32, 32, 22, 32, 0),    ## Step0   #6: Set 1 idx22 (idx-j/reg2)
+            Instr(1, 27, 27, 27,  1, 27, 27, 17, 27, 0),    ## Step0   #6: Set 1 idx17 (idx-j/reg2)
 
             ## Check if  mem[j+2] < mem[j] 
-            Instr(5, 32, 22, 32, 32, 32, 32, 24, 32, 0),    ## Step1   #5: Copy idx22 (idx-j/reg2) to idx24 (temp-idx/reg3)
-            Instr(2, 32, 32, 32,  2, 32, 32, 24, 32, 0),    ## Step2   #2: Add 2 to idx24 (temp-idx/reg3) = j+2
-            Instr(6, 32, 24, 32, 32, 32, 32, 28, 32, 0),    ## Step3   #6: Set mem[mem[24]] (mem[j+2]) to idx28 (reg5)
-            Instr(6, 32, 22, 32, 32, 32, 32, 30, 32, 0),    ## Step4   #6: Set mem[mem[22]] (mem[j]) to idx30 (temp1/reg6)
-            Instr(3, 32, 32, 30,  2, 32, 28, 26, 32, 1),    ## Step5   #3: Compare mem[28] (reg5/mem[j+2]) < mem[30] (reg6/mem[j]) and assign result to idx26 (reg4)
-            Instr(4, 32, 32, 26,  7, 17, 32, 32, 32, 1),    ## Step6   #4: Cond jump to Step7/17 if true/false
+            Instr(5, 27, 17, 27, 27, 27, 27, 19, 27, 0),    ## Step1   #5: Copy idx17 (idx-j/reg2) to idx19 (temp-idx/reg3)
+            Instr(2, 27, 27, 27,  2, 27, 27, 19, 27, 0),    ## Step2   #2: Add 2 to idx19 (temp-idx/reg3) = j+2
+            Instr(6, 27, 19, 27, 27, 27, 27, 23, 27, 0),    ## Step3   #6: Set mem[mem[19]] (mem[j+2]) to idx23 (reg5)
+            Instr(6, 27, 17, 27, 27, 27, 27, 25, 27, 0),    ## Step4   #6: Set mem[mem[17]] (mem[j]) to idx25 (temp1/reg6)
+            Instr(3, 27, 27, 25,  2, 27, 23, 21, 27, 1),    ## Step5   #3: Compare mem[23] (reg5/mem[j+2]) < mem[25] (reg6/mem[j]) and assign result to idx21 (reg4)
+            Instr(4, 27, 27, 21,  7, 17, 27, 27, 27, 1),    ## Step6   #4: Cond jump to Step7/17 if true/false
 
             ## Set mem[j] = mem[j+2] *Set temp1/reg6 = mem[j] is done at Step3
-            Instr(7, 32, 32, 32, 28, 32, 32, 32, 22, 0),    ## Step7   #6: Set mem[idx28/reg5] (mem[j+2]) to mem[mem[idx22](=j)]
+            Instr(7, 27, 27, 27, 23, 27, 27, 27, 17, 0),    ## Step7   #6: Set mem[idx23/reg5] (mem[j+2]) to mem[mem[idx17](=j)]
             
             ## Set mem[j+2] = temp1
-            Instr(7, 32, 32, 32, 30, 32, 32, 32, 24, 0),    ## Step8   #6: Set mem[idx30](temp1/reg6) to mem[mem[idx24]] (mem[j+2])
+            Instr(7, 27, 27, 27, 25, 27, 27, 27, 19, 0),    ## Step8   #6: Set mem[idx25](temp1/reg6) to mem[mem[idx19]] (mem[j+2])
             
 
             ## Set temp2 = mem[j-1]
-            Instr(5, 32, 22, 32, 32, 32, 32, 24, 32, 0),    ## Step9   #5: Copy idx22 (idx-j/reg2) to idx24 (temp-idx/reg3)
-            Instr(2, 32, 32, 32,  1, 32, 32, 24, 32, 1),    ## Step10  #2: Subtract 1 from idx24 (temp-idx/reg3) = j-1
-            Instr(6, 32, 24, 32, 32, 32, 32, 28, 32, 0),    ## Step11  #6: Set mem[mem[24]] (mem[j-1]) to idx28 (temp2/reg5)
+            Instr(5, 27, 17, 27, 27, 27, 27, 19, 27, 0),    ## Step9   #5: Copy idx17 (idx-j/reg2) to idx19 (temp-idx/reg3)
+            Instr(2, 27, 27, 27,  1, 27, 27, 19, 27, 1),    ## Step10  #2: Subtract 1 from idx19 (temp-idx/reg3) = j-1
+            Instr(6, 27, 19, 27, 27, 27, 27, 23, 27, 0),    ## Step11  #6: Set mem[mem[19]] (mem[j-1]) to idx23 (temp2/reg5)
 
             ## Set mem[j-1] = mem[j+1]
-            Instr(5, 32, 22, 32, 32, 32, 32, 30, 32, 0),    ## Step12  #5: Copy idx22 (idx-j/reg2) to idx30 (temp-idx2/reg6)
-            Instr(2, 32, 32, 32,  1, 32, 32, 30, 32, 0),    ## Step13  #2: Add 1 to idx30 (temp-idx2/reg6) = j+1
-            Instr(6, 32, 30, 32, 32, 32, 32, 26, 32, 0),    ## Step14  #6: Set mem[mem[30]] (mem[j+1]) to idx26
-            Instr(7, 32, 32, 32, 26, 32, 32, 32, 24, 0),    ## Step15  #7: Set mem[idx26] (mem[j+1]) to mem[mem[idx24](=j-1)]
+            Instr(5, 27, 17, 27, 27, 27, 27, 25, 27, 0),    ## Step12  #5: Copy idx17 (idx-j/reg2) to idx25 (temp-idx2/reg6)
+            Instr(2, 27, 27, 27,  1, 27, 27, 25, 27, 0),    ## Step13  #2: Add 1 to idx25 (temp-idx2/reg6) = j+1
+            Instr(6, 27, 25, 27, 27, 27, 27, 21, 27, 0),    ## Step14  #6: Set mem[mem[25]] (mem[j+1]) to idx21
+            Instr(7, 27, 27, 27, 21, 27, 27, 27, 19, 0),    ## Step15  #7: Set mem[idx21] (mem[j+1]) to mem[mem[idx19](=j-1)]
             
             ## Set mem[j+1] = temp2
-            Instr(7, 32, 32, 32, 28, 32, 32, 32, 30, 0),    ## Step16  #7: Set mem[idx28/reg5] to mem[mem[idx30](=j+1)]
+            Instr(7, 27, 27, 27, 23, 27, 27, 27, 25, 0),    ## Step16  #7: Set mem[idx23/reg5] to mem[mem[idx25](=j+1)]
 
             ## Check if j < n-i-2 and determine to loop or end
-            Instr(2, 32, 32, 32,  2, 32, 32, 22, 32, 0),    ## Step17  #2: Add 2 to idx 22 (idx-j/reg2)
-            Instr(1, 32, 32, 32,  n, 32, 32, 26, 32, 0),    ## Step18  #1: Set 14 to idx 26 (reg4)
-            Instr(2, 32, 32, 32,  1, 32, 32, 26, 32, 1),    ## Step19  #2: Subtract 1 from idx26 (reg4)
-            Instr(2, 32, 32, 32, 20, 32, 32, 26, 32, 2),    ## Step20  #2: Subtract idx-i(idx20/reg1) from idx26 (reg4)
-            Instr(3, 32, 32, 26,  2, 32, 22, 24, 32, 1),    ## Step21  #3: Compare idx22 (idx-j/reg2) < mem[p3] (n-i-1) and assign result to idx24 (reg3)
-            Instr(4, 32, 32, 24,  1, 23, 32, 32, 32, 1),    ## Step22  #4: Cond jump to Step1/23 if true/false
+            Instr(2, 27, 27, 27,  2, 27, 27, 17, 27, 0),    ## Step17  #2: Add 2 to idx17 (idx-j/reg2)
+            Instr(1, 27, 27, 27,  n, 27, 27, 21, 27, 0),    ## Step18  #1: Set 14 to idx 21 (reg4)
+            Instr(2, 27, 27, 27,  1, 27, 27, 21, 27, 1),    ## Step19  #2: Subtract 1 from idx21 (reg4)
+            Instr(2, 27, 27, 27, 15, 27, 27, 21, 27, 2),    ## Step20  #2: Subtract idx-i(idx15/reg1) from idx21 (reg4)
+            Instr(3, 27, 27, 21,  2, 27, 17, 19, 27, 1),    ## Step21  #3: Compare idx17 (idx-j/reg2) < mem[p3] (n-i-1) and assign result to idx19 (reg3)
+            Instr(4, 27, 27, 19,  1, 23, 27, 27, 27, 1),    ## Step22  #4: Cond jump to Step1/23 if true/false
 
             ## Check if i < n
-            Instr(2, 32, 32, 32, 2, 32, 32, 20, 32, 0),     ## Step23  #2: Add 2 to idx 20 (idx-i/reg1)
-            Instr(3, 32, 32, 32, 2,  n, 20, 24, 32, 0),     ## Step24  #3: Compare idx20 (idx-i/reg1) < n)(=14) and assign result to idx24 (reg3)
-            Instr(4, 32, 32, 24, 0, 26, 32, 32, 32, 1),     ## Step25  #4: Cond jump to Step0/27 if true/false
+            Instr(2, 27, 27, 27, 2, 27, 27, 15, 27, 0),     ## Step23  #2: Add 2 to idx15 (idx-i/reg1)
+            Instr(3, 27, 27, 27, 2,  n, 15, 19, 27, 0),     ## Step24  #3: Compare idx15 (idx-i/reg1) < n)(=14) and assign result to idx19 (reg3)
+            Instr(4, 27, 27, 19, 0, 26, 27, 27, 27, 1),     ## Step25  #4: Cond jump to Step0/26 if true/false
                     
 
             # END
-            Instr(100, 32, 32, 32, 32, 32, 32, 32, 32, 0),   ## Step26  #100: Terminal
+            Instr(100, 27, 27, 27, 27, 27, 27, 27, 27, 0),   ## Step26  #100: Terminal
         ]
 
         repro_prog = make_program(program)
