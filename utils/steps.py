@@ -10,7 +10,6 @@ def fetch(prog: Program, pc: SecretInt):
                  prog.src3[pc],
                  prog.src4[pc],
                  prog.src5[pc],
-                 prog.src6[pc],
                  prog.dest[pc],
                  prog.s_dest[pc],
                  prog.imm[pc])
@@ -24,84 +23,83 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     p3 = instr.src3
     p4 = instr.src4
     p5 = instr.src5
-    p6 = instr.src6
     des = instr.dest
     s_des = instr.s_dest
     imm =  instr.imm
     new_pc = pc
 
 
-    # 1. set p4 at mem[des]
+    # 1. set p3 at mem[des]
     '''
-        p4: const to set
+        p3: const to set
 
-        ops: mem[des] = p4
+        ops: mem[des] = p3
             #This does not support list to list assignment or string/char to string/char
     '''
 
-    mem[des] = mux(instr.opcode == 1, p4, mem[des])
+    mem[des] = mux(instr.opcode == 1, p3, mem[des])
         
 
     # 2. add/subract const/mem[val] to des
     '''
-        p4: value to increment by
+        p3: value to increment by
 
-        ops: mem[des] += p4
+        ops: mem[des] += p3
     '''
 
-    mem[des] =  mux(instr.opcode == 2, mux(imm==0, mem[des] + p4,  
-                                           mux(imm==1, mem[des] - p4, 
-                                               mux(imm==2, mem[des] - mem[p4], mem[des]))), 
+    mem[des] =  mux(instr.opcode == 2, mux(imm==0, mem[des] + p3,  
+                                           mux(imm==1, mem[des] - p3, 
+                                               mux(imm==2, mem[des] - mem[p3], mem[des]))), 
                                        mem[des])
 
     # 3. compare value in one index with const
     '''
-        p3 mem address to compare (imm==1)
-        p4: comparison type
-        p5: const to compare (imm==0) 
-        p6: element to compare
+        p2 mem address to compare (imm==1)
+        p3: comparison type
+        p4: const to compare (imm==0) 
+        p5: element to compare
 
         ops: 
             # Below is for int
             if imm == 0:
-                comp = p5
+                comp = p4
             elif imm == 1:
-                comp = mem[p3]
+                comp = mem[p2]
 
             # Below is for str
-            if p4 ==0:
-                mem[des] = (mem[p6] == comp)
-            elif p4 ==2:
-                mem[des] = (mem[p6] < comp)
+            if p3 ==0:
+                mem[des] = (mem[p5] == comp)
+            elif p3 ==2:
+                mem[des] = (mem[p5] < comp)
     '''
         
-    comp = mux(instr.opcode == 3, mux(imm == 0, p5, mux(imm == 1, mem[p3], 500000)), 500000)
+    comp = mux(instr.opcode == 3, mux(imm == 0, p4, mux(imm == 1, mem[p2], 500000)), 500000)
     
     mem[des] = mux(instr.opcode == 3,
-                   mux(p4 == 0, mux(mem[p6] == comp, 1, 0),
-                            mux(p4 == 2, mux(mem[p6] < comp, 1, 0),
+                   mux(p3 == 0, mux(mem[p5] == comp, 1, 0),
+                            mux(p3 == 2, mux(mem[p5] < comp, 1, 0),
                                     mem[des])), mem[des])
                                     
 
 
     # 4/100. jump or cond-jump/terminal
     '''
-        p3: where condition is saved (im==1)
-        p4: pc shift always (imm==0)/if True(imm==1)
-        p5: pc shift if False
+        p2: where condition is saved (im==1)
+        p3: pc shift always (imm==0)/if True(imm==1)
+        p4: pc shift if False
 
         ops: 
             if imm == 0:
-                return new_pc + p4, weight +1
-            elif mem[p3]==True:
-                return new_pc + p4, weight +1
+                return new_pc + p3, weight +1
+            elif mem[p2]==True:
+                return new_pc + p3, weight +1
             elif imm == 1:
-                return new_pc + p5, weight +1
+                return new_pc + p4, weight +1
     '''
     new_pc = mux(instr.opcode == 100, new_pc,
                 mux(instr.opcode == 4,
-                    mux(imm == 0, p4,
-                        mux(mem[p3]==True, p4, p5)),
+                    mux(imm == 0, p3,
+                        mux(mem[p2]==True, p3, p4)),
                 new_pc+1))
 
 
@@ -109,30 +107,30 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     '''
         p1: address of index of memory
 
-        ops: mem[des] = mem[mem[p2]]
+        ops: mem[des] = mem[mem[p1]]
     '''
 
-    mem[des] = mux(instr.opcode == 5, mem[p2], mem[des])
+    mem[des] = mux(instr.opcode == 5, mem[p1], mem[des])
 
 
     # 6. Access list by pointer saved in register
     '''
         p1: address of index of memory
 
-        ops: mem[des] = mem[mem[p2]]
+        ops: mem[des] = mem[mem[p1]]
     '''
 
-    mem[des] = mux(instr.opcode == 6, mem[mem[p2]], mem[des])
+    mem[des] = mux(instr.opcode == 6, mem[mem[p1]], mem[des])
 
 
     # 7. Set Value by const pointer
 
     '''
-        p4: any memory address
+        p3: any memory address
                 
     '''
 
-    mem[mem[s_des]] = mux(instr.opcode == 7, mem[p4], mem[mem[s_des]])
+    mem[mem[s_des]] = mux(instr.opcode == 7, mem[p3], mem[mem[s_des]])
 
 
     # 100. Terminal

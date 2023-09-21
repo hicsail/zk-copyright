@@ -9,7 +9,6 @@ def make_program(prog):
     src3 = ZKList([0 for _ in range(length)])
     src4 = ZKList([0 for _ in range(length)])
     src5 = ZKList([0 for _ in range(length)])
-    src6 = ZKList([0 for _ in range(length)])
     dest = ZKList([0 for _ in range(length)])
     s_dest = ZKList([0 for _ in range(length)])
     imm = ZKList([0 for _ in range(length)])
@@ -21,12 +20,11 @@ def make_program(prog):
         src3[i] = instr.src3
         src4[i] = instr.src4
         src5[i] = instr.src5
-        src6[i] = instr.src6
         dest[i] = instr.dest
         s_dest[i] = instr.s_dest
         imm[i] = instr.imm
 
-    return Program(opcode, src1, src2, src3, src4, src5, src6,
+    return Program(opcode, src1, src2, src3, src4, src5,
                    dest, s_dest,
                    imm)
 

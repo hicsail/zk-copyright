@@ -9,7 +9,6 @@ class Instr:
     src3: int
     src4: int
     src5: int
-    src6: int
     dest: int
     s_dest: int
     imm: int
@@ -22,7 +21,6 @@ class Program:
     src3: ZKList
     src4: ZKList
     src5: ZKList
-    src6: ZKList
     dest: ZKList
     s_dest: ZKList
     imm: ZKList
