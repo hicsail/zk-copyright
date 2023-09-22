@@ -2,3 +2,4 @@ picozk
 venv
 assembly_ex.asm
 picozk_test*
+*.pyc
