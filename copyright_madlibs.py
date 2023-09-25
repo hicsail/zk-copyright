@@ -76,24 +76,24 @@ def main():
                     Instr(2, 76, 76, 17, 76, 76, 76, 72, 76, 0),    ## Step1   #2: Add 17 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to madlibs list by 17
                     Instr(6, 72, 76, 76, 76, 76, 76, 70, 76, 0),    ## Step2   #6: Set idx72 (temp-idx/reg3) of madlibs list to idx70 (reg2)
                     Instr(3, 76, 76,  0, us, 70, 76, 70, 76, 0),    ## Step3   #3: Compare idx70 (reg2) and "_" and assign result to idx70 (reg2)
-                    Instr(4, 76, 70,  5, 16, 76, 76, 76, 76, 1),    ## Step4   #4: Cond jump to Step5/Step16 if true/false
+                    Instr(4, 76, 70,  1, 12, 76, 76, 76, 76, 2),    ## Step4   #4: Cond jump to Step5/Step16 if true/false
 
                 ## SECOND IF index of madlibs_words is less than lim (upto idx of third)
                     Instr(3, 76, 76,  2,lim, 68, 76, 70, 76, 0),    ## Step5   #3: Compare idx 68(idx-i/reg1) < fill_upto (10 for now) and set the result to idx70 (reg2)
-                    Instr(4, 76, 70,  7, 11, 76, 76, 76, 76, 1),    ## Step6   #4: Cond jump to Step7/Step11 if true/false
+                    Instr(4, 76, 70,  1,  5, 76, 76, 76, 76, 2),    ## Step6   #4: Cond jump to Step7/Step11 if true/false
 
                 ## IF Both TRUE (Append from X list)
                     Instr(5, 68, 76, 76, 76, 76, 76, 72, 76, 0),    ## Step7   #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
                     Instr(2, 76, 76, 34, 76, 76, 76, 72, 76, 0),    ## Step8   #2: Add 34 to idx72 (temp-idx/reg3) = Shifting pointer to X_list idx-i by 34
                     Instr(6, 72, 76, 76, 76, 76, 76, 70, 76, 0),    ## Step9   #6: Set idx72 (temp-idx/reg3) of X_words to idx70 (reg2)
-                    Instr(4, 76, 76, 19, 76, 76, 76, 76, 76, 0),    ## Step10  #4: jump to Step19
+                    Instr(4, 76, 76,  9, 76, 76, 76, 76, 76, 0),    ## Step10  #4: jump to Step19
 
                 ## IF only the former TRUE (Append from nouns list)
                     Instr(5, 74, 76, 76, 76, 76, 76, 72, 76, 0),    ## Step11  #5: Copy idx74 (idx-k/reg2) to idx72 (temp-idx/reg3)
                     Instr(2, 76, 76,  3, 76, 76, 76, 72, 76, 0),    ## Step12  #2: Add 3 to idx72 (temp-idx/reg3) = Shifting pointer idx-k to nouns list by 3
                     Instr(6, 72, 76, 76, 76, 76, 76, 70, 76, 1),    ## Step13  #6: Set idx72 (temp-idx/reg3) of nouns list to idx70 (reg2)
                     Instr(2, 76, 76,  1, 76, 76, 76, 74, 76, 0),    ## Step14  #2: Add 1 to idx74 (idx-k/reg3)
-                    Instr(4, 76, 76, 19, 76, 76, 76, 76, 76, 0),    ## Step15  #4: jump to Step19
+                    Instr(4, 76, 76,  4, 76, 76, 76, 76, 76, 0),    ## Step15  #4: jump to Step19
 
                 ## ELSE (Append from madlibs list)
                     Instr(5, 68, 76, 76, 76, 76, 76, 72, 76, 0),    ## Step16  #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
@@ -108,7 +108,7 @@ def main():
                     
                 ## CHECK IF ITERATE OR NEXT
                     Instr(3, 76, 76, 2, X_len, 68, 76, 72, 76, 0),  ## Step23  #3: Compare idx68 (idx-i) < p5 (X_len) and assign result to idx72 (reg3)
-                    Instr(4, 76, 72, 0, 25, 76, 76, 76, 76, 1),     ## Step24  #4: Cond jump to Step0/25 if true/false
+                    Instr(4, 76, 72, 24,  1, 76, 76, 76, 76, 1),     ## Step24  #4: Cond jump to Step0/25 if true/false
 
             # END
                     Instr(100, 76, 76, 76, 76, 76, 76, 76, 76, 0),   ## Step25  #100: Terminal
@@ -160,12 +160,12 @@ def main():
                     Instr(2, 76, 76, 17, 76, 76, 76, 72, 76, 0),    ## Step1   #2: Add 17 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to madlibs list by 17
                     Instr(6, 72, 76, 76, 76, 76, 76, 70, 76, 0),    ## Step2   #6: Set idx72 (temp-idx/reg3) of madlibs list to idx70 (reg2)
                     Instr(3, 76, 76,  0, us, 70, 76, 70, 76, 0),    ## Step3   #3: Compare idx70 (reg2) and "_" and assign result to idx70 (reg2)
-                    Instr(4, 76, 70,  5, 8, 76, 76, 76, 76, 1),     ## Step4   #4: Cond jump to Step5/Step8 if true/false
+                    Instr(4, 76, 70,  1,  4, 76, 76, 76, 76, 2),    ## Step4   #4: Cond jump to Step5/Step8 if true/false
 
                     ## TRUE: Append from nouns_list[idx-k] to res_list
                     Instr(6, 74, 76, 76, 76, 76, 76, 70, 76, 0),    ## Step5   #6: Set idx74 (idx-k/reg4) of nouns list to idx70 (reg2)
                     Instr(2, 76, 76,  1, 76, 76, 76, 74, 76, 0),    ## Step6   #2: add 1 to idx74 (idx-k)
-                    Instr(4, 76, 76, 11, 76, 76, 76, 76, 76, 0),    ## Step7   #4: jump to Step11
+                    Instr(4, 76, 76,  4, 76, 76, 76, 76, 76, 0),    ## Step7   #4: jump to Step11
 
                     ## ELSE: Append from madlibs_list[idx-k] to res_list
                     Instr(5, 68, 76, 76, 76, 76, 76, 72, 76, 0),    ## Step8   #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
@@ -180,7 +180,7 @@ def main():
 
                 ## Determine whether or not to iterate over again depending idx-i< len(madlibs_words)
                     Instr(3, 76, 76, 2, lim, 68, 76, 72, 76, 0),    ## Step15  #3: Compare idx68 (idx-i) < p5 (X_len) and assign result to idx72 (reg3)
-                    Instr(4, 76, 72, 0, 17, 76, 76, 76, 76, 1),    ## Step16  #4: Cond jump to -16/+1 if true/false
+                    Instr(4, 76, 72, 16,  1, 76, 76, 76, 76, 1),    ## Step16  #4: Cond jump to -16/+1 if true/false
 
             # END
                     Instr(100, 76, 76, 76, 76, 76, 76, 76, 76, 0),   ## Step17  #100: Terminal

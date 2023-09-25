@@ -83,7 +83,7 @@ def main():
             Instr(6, 19, 27, 27, 27, 27, 27, 23, 27, 0),    ## Step3   #6: Set mem[mem[19]] (mem[j+2]) to idx23 (reg5)
             Instr(6, 17, 27, 27, 27, 27, 27, 25, 27, 0),    ## Step4   #6: Set mem[mem[17]] (mem[j]) to idx25 (temp1/reg6)
             Instr(3, 27, 25,  2, 27, 23, 27, 21, 27, 1),    ## Step5   #3: Compare mem[23] (reg5/mem[j+2]) < mem[25] (reg6/mem[j]) and assign result to idx21 (reg4)
-            Instr(4, 27, 21,  7, 17, 27, 27, 27, 27, 1),    ## Step6   #4: Cond jump to Step7/17 if true/false
+            Instr(4, 27, 21,  1, 11, 27, 27, 27, 27, 2),    ## Step6   #4: Cond jump to Step7/17 if true/false
 
             ## Set mem[j] = mem[j+2] *Set temp1/reg6 = mem[j] is done at Step3
             Instr(7, 27, 27, 23, 27, 27, 27, 27, 17, 0),    ## Step7   #6: Set mem[idx23/reg5] (mem[j+2]) to mem[mem[idx17](=j)]
@@ -112,12 +112,12 @@ def main():
             Instr(2, 27, 27,  1, 27, 27, 27, 21, 27, 1),    ## Step19  #2: Subtract 1 from idx21 (reg4)
             Instr(2, 27, 27, 15, 27, 27, 27, 21, 27, 2),    ## Step20  #2: Subtract idx-i(idx15/reg1) from idx21 (reg4)
             Instr(3, 27, 21,  2, 27, 17, 27, 19, 27, 1),    ## Step21  #3: Compare idx17 (idx-j/reg2) < mem[p3] (n-i-1) and assign result to idx19 (reg3)
-            Instr(4, 27, 19,  1, 23, 27, 27, 27, 27, 1),    ## Step22  #4: Cond jump to Step4/27 if true/false
+            Instr(4, 27, 19, 21,  1, 27, 27, 27, 27, 1),    ## Step22  #4: Cond jump to Step1/23 if true/false
 
             ## Check if i < n
-            Instr(2, 27, 27, 2, 27, 27, 27, 15, 27, 0),     ## Step23  #2: Add 2 to idx15 (idx-i/reg1)
-            Instr(3, 27, 27, 2,  n, 15, 27, 19, 27, 0),     ## Step24  #3: Compare idx15 (idx-i/reg1) < n)(=14) and assign result to idx19 (reg3)
-            Instr(4, 27, 19, 0, 26, 27, 27, 27, 27, 1),     ## Step25  #4: Cond jump to Step4/30 if true/false
+            Instr(2, 27, 27,  2, 27, 27, 27, 15, 27, 0),    ## Step23  #2: Add 2 to idx15 (idx-i/reg1)
+            Instr(3, 27, 27,  2,  n, 15, 27, 19, 27, 0),    ## Step24  #3: Compare idx15 (idx-i/reg1) < n)(=14) and assign result to idx19 (reg3)
+            Instr(4, 27, 19, 25,  1, 27, 27, 27, 27, 1),    ## Step25  #4: Cond jump to Step0/26 if true/false
                     
 
             # END
@@ -179,7 +179,7 @@ def main():
             Instr(6, 19, 27, 27, 27, 27, 27, 23, 27, 0),    ## Step7   #6: Set mem[mem[19]] (mem[j+2]) to idx23 (reg5)
             Instr(6, 17, 27, 27, 27, 27, 27, 25, 27, 0),    ## Step8   #6: Set mem[mem[17]] (mem[j]) to idx25 (temp1/reg6)
             Instr(3, 27, 25,  2, 27, 23, 27, 21, 27, 1),    ## Step9   #3: Compare mem[23] (reg5/mem[j+2]) < mem[25] (reg6/mem[j]) and assign result to idx21 (reg4)
-            Instr(4, 27, 21, 11, 21, 27, 27, 27, 27, 1),    ## Step10  #4: Cond jump to Step7/17 if true/false
+            Instr(4, 27, 21,  1, 11, 27, 27, 27, 27, 2),    ## Step10  #4: Cond jump to Step11/21 if true/false
 
             ## Set mem[j] = mem[j+2] *Set temp1/reg6 = mem[j] is done at Step3
             Instr(7, 27, 27, 23, 27, 27, 27, 27, 17, 0),    ## Step11   #6: Set mem[idx23/reg5] (mem[j+2]) to mem[mem[idx17](=j)]
@@ -208,12 +208,12 @@ def main():
             Instr(2, 27, 27,  1, 27, 27, 27, 21, 27, 1),    ## Step23  #2: Subtract 1 from idx21 (reg4)
             Instr(2, 27, 27, 15, 27, 27, 27, 21, 27, 2),    ## Step24  #2: Subtract idx-i(idx15/reg1) from idx21 (reg4)
             Instr(3, 27, 21,  2, 27, 17, 27, 19, 27, 1),    ## Step25  #3: Compare idx17 (idx-j/reg2) < mem[p3] (n-i-1) and assign result to idx19 (reg3)
-            Instr(4, 27, 19,  5, 27, 27, 27, 27, 27, 1),    ## Step26  #4: Cond jump to Step4/27 if true/false
+            Instr(4, 27, 19, 21,  1, 27, 27, 27, 27, 1),    ## Step26  #4: Cond jump to Step5/27 if true/false
 
             ## Check if i < n
-            Instr(2, 27, 27, 2, 27, 27, 27, 15, 27, 0),     ## Step27  #2: Add 2 to idx15 (idx-i/reg1)
-            Instr(3, 27, 27, 2,  n, 15, 27, 19, 27, 0),     ## Step28  #3: Compare idx15 (idx-i/reg1) < n)(=14) and assign result to idx19 (reg3)
-            Instr(4, 27, 19, 4, 30, 27, 27, 27, 27, 1),     ## Step29  #4: Cond jump to Step4/30 if true/false
+            Instr(2, 27, 27,  2, 27, 27, 27, 15, 27, 0),     ## Step27  #2: Add 2 to idx15 (idx-i/reg1)
+            Instr(3, 27, 27,  2,  n, 15, 27, 19, 27, 0),     ## Step28  #3: Compare idx15 (idx-i/reg1) < n)(=14) and assign result to idx19 (reg3)
+            Instr(4, 27, 19, 25,  1, 27, 27, 27, 27, 1),     ## Step29  #4: Cond jump to Step4/30 if true/false
                     
 
             # END
