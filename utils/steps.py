@@ -93,15 +93,25 @@ def step(prog: Program, pc: int, mem: list, weight: int):
         ops: 
             if imm == 0:
                 return new_pc + p3, weight +1
-            elif mem[p2]==True:
-                return new_pc + p3, weight +1
             elif imm == 1:
-                return new_pc + p4, weight +1
+                mem[p2]==True:
+                    return new_pc - p3, weight +1
+                else:
+                    return new_pc + p4, weight +1
+            elif imm == 2:
+                mem[p2]==True:
+                    return new_pc + p3, weight +1
+                else:
+                    return new_pc + p4, weight +1
     '''
     new_pc = mux(instr.opcode == 100, new_pc,
                 mux(instr.opcode == 4,
-                    mux(imm == 0, p3,
-                        mux(mem[p2]==True, p3, p4)),
+                    mux(imm == 0, new_pc + p3,
+                        mux(imm == 1,
+                            mux(mem[p2]==True, new_pc - p3, new_pc + p4), 
+                            mux(mem[p2]==True, new_pc + p3, new_pc + p4) #if imm == 2
+                            )
+                        ),
                 new_pc+1))
 
 
