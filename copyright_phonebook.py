@@ -13,11 +13,11 @@ def make_X(bg, honey_entries):
     return res
 
 
-def reveal(res_list):
+def reveal(res_list, start, end):
     # Convert the List to a String
     result_str = ""
-    idx = 0
-    res_list_size = 14
+    idx = start
+    res_list_size = end
     while idx < res_list_size:
         # Convert each tuple to a string and add to result_str
         item_str = "(" + "'" + int_to_string(val_of(res_list[idx])) + "'" + ", " + "'" + int_to_string(val_of(res_list[idx+1])) + "'" + ")"
@@ -52,8 +52,7 @@ def main():
 
     p = pow(2,256) - pow(2,32) - pow(2,9) - pow(2,8) - pow(2,7) - pow(2,6) - pow(2,4) - 1
     n_iter = 1500
-    n = 14
-    threshold = 400 # The program has to be performed within this (weight < )
+    threshold = 500 # The program has to be performed within this (weight < )
 
     with PicoZKCompiler('irs/picozk_test', field=[p], options=['ram']):
 
@@ -68,6 +67,7 @@ def main():
         dummy_int = 0 #27
 
         bot = 0
+        n = 14
         
         mem = ZKList(X_list + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [reg5] + [bot] + [reg6] + [bot] + [dummy_int])
         
@@ -106,7 +106,7 @@ def main():
             ## Set mem[j+1] = temp2
             Instr(7, 27, 27, 23, 27, 27, 27, 27, 25, 0),    ## Step16  #7: Set mem[idx23/reg5] to mem[mem[idx25](=j+1)]
 
-            ## Check if j < n-i-2 and determine to loop or end
+            ## Check if j < n-i-1 and determine to loop or end
             Instr(2, 27, 27,  2, 27, 27, 27, 17, 27, 0),    ## Step17  #2: Add 2 to idx17 (idx-j/reg2)
             Instr(1, 27, 27, 27, 27, 27,  n, 21, 27, 0),    ## Step18  #1: Set 14 to idx 21 (reg4)
             Instr(2, 27, 27,  1, 27, 27, 27, 21, 27, 1),    ## Step19  #2: Subtract 1 from idx21 (reg4)
@@ -130,7 +130,7 @@ def main():
         for i in range(n_iter):
             pc, weight = step(pro_prog, pc, mem, weight)
 
-        prod_Y = reveal(mem)
+        prod_Y = reveal(mem, 0, 14)
         print('prod_Y:', prod_Y, '\n')
 
         res = mux(exp_Y == prod_Y,
@@ -141,83 +141,83 @@ def main():
 
 
         # Reproducer
-        bg_list = [string_to_int(i) for k, v in bg.items() for i in (k, v)] #0-9
-        honey_entries = [0] * 4 #10-13
-        
-        reg1 = 1 #15 i
-        reg2 = 0 #17 j
-        reg3 = 0 #19 temp index
-        reg4 = 0 #21 res etc..
-        reg5 = 0 #23 temp
-        reg6 = 0 #25 temp
-        dummy_int = 0 #27
+        reg1 = 1 #0 i
+        reg2 = 0 #2 j
+        reg3 = 0 #4 temp index
+        reg4 = 0 #6 res etc..
+        reg5 = 0 #8 temp
+        reg6 = 0 #10 temp
+        dummy_int = 0 #12
+        bg_list = [string_to_int(i) for k, v in bg.items() for i in (k, v)] #14-23
+        honey_entries = [0] * 4 #24-27
         
         bot = 0
+        n = 28
 
-        repro_mem = ZKList(bg_list + honey_entries + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [reg5] + [bot] + [reg6] + [bot] + [dummy_int])
+        repro_mem = ZKList([reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [reg5] + [bot] + [reg6] + [bot] + [dummy_int] + [bot] + bg_list + honey_entries)
 
-        hc1 = string_to_int('6')
-        hc2 = string_to_int('111-666-6666')
-        hc3 = string_to_int('7')
-        hc4 = string_to_int('222-777-7777')
+        hc0 = string_to_int('6')
+        hc1 = string_to_int('111-666-6666')
+        hc2 = string_to_int('7')
+        hc3 = string_to_int('222-777-7777')
 
         program = [
 
             ## Hard-code Honey Entries
-            Instr(1, 27, 27, 27, 27, 27,hc1, 10, 27, 0),    ## Step0   #6: Set hc1 to mem[10]
-            Instr(1, 27, 27, 27, 27, 27,hc2, 11, 27, 0),    ## Step1   #6: Set hc2 to mem[11]
-            Instr(1, 27, 27, 27, 27, 27,hc3, 12, 27, 0),    ## Step2   #6: Set hc3 to mem[12]
-            Instr(1, 27, 27, 27, 27, 27,hc4, 13, 27, 0),    ## Step3   #6: Set hc4 to mem[13]
+            Instr(1, 12, 12, 12, 12, 12,hc0, 24, 12, 0),    ## Step0   #6: Set hc1 to mem[24]
+            Instr(1, 12, 12, 12, 12, 12,hc1, 25, 12, 0),    ## Step1   #6: Set hc2 to mem[25]
+            Instr(1, 12, 12, 12, 12, 12,hc2, 26, 12, 0),    ## Step2   #6: Set hc3 to mem[26]
+            Instr(1, 12, 12, 12, 12, 12,hc3, 27, 12, 0),    ## Step3   #6: Set hc4 to mem[27]
 
 
             ## Set j = 1
-            Instr(1, 27, 27, 27, 27, 27,  1, 17, 27, 0),    ## Step4   #6: Set 1 idx17 (idx-j/reg2)
+            Instr(1, 12, 12, 12, 12, 12,  15, 2, 12, 0),    ## Step4   #6: Set 15 to idx2 (idx-j/reg2)
 
             ## Check if  mem[j+2] < mem[j] 
-            Instr(5, 17, 27, 27, 27, 27, 27, 19, 27, 0),    ## Step5   #5: Copy idx17 (idx-j/reg2) to idx19 (temp-idx/reg3)
-            Instr(2, 27, 27,  2, 27, 27, 27, 19, 27, 0),    ## Step6   #2: Add 2 to idx19 (temp-idx/reg3) = j+2
-            Instr(6, 19, 27, 27, 27, 27, 27, 23, 27, 0),    ## Step7   #6: Set mem[mem[19]] (mem[j+2]) to idx23 (reg5)
-            Instr(6, 17, 27, 27, 27, 27, 27, 25, 27, 0),    ## Step8   #6: Set mem[mem[17]] (mem[j]) to idx25 (temp1/reg6)
-            Instr(3, 27, 25,  2, 27, 23, 27, 21, 27, 1),    ## Step9   #3: Compare mem[23] (reg5/mem[j+2]) < mem[25] (reg6/mem[j]) and assign result to idx21 (reg4)
-            Instr(4, 27, 21,  1, 11, 27, 27, 27, 27, 2),    ## Step10  #4: Cond jump to Step11/21 if true/false
+            Instr(5,  2, 12, 12, 12, 12, 12,  4, 12, 0),    ## Step5   #5: Copy idx2 (idx-j/reg2) to idx4 (temp-idx/reg3)
+            Instr(2, 12, 12,  2, 12, 12, 12,  4, 12, 0),    ## Step6   #2: Add 2 to idx4 (temp-idx/reg3) = j+2
+            Instr(6,  4, 12, 12, 12, 12, 12,  8, 12, 0),    ## Step7   #6: Set mem[mem[4]] (mem[j+2]) to idx8 (reg5)
+            Instr(6,  2, 12, 12, 12, 12, 12, 10, 12, 0),    ## Step8   #6: Set mem[mem[2]] (mem[j]) to idx10 (temp1/reg6)
+            Instr(3, 12, 10,  2, 12,  8, 12,  6, 12, 1),    ## Step9   #3: Compare mem[8] (reg5/mem[j+2]) < mem[10] (reg6/mem[j]) and assign result to idx6 (reg4)
+            Instr(4, 12,  6,  1, 11, 12, 12, 12, 12, 2),    ## Step10  #4: Cond jump to Step11/21 if true/false
 
             ## Set mem[j] = mem[j+2] *Set temp1/reg6 = mem[j] is done at Step3
-            Instr(7, 27, 27, 23, 27, 27, 27, 27, 17, 0),    ## Step11   #6: Set mem[idx23/reg5] (mem[j+2]) to mem[mem[idx17](=j)]
+            Instr(7, 12, 12,  8, 12, 12, 12, 12,  2, 0),    ## Step11   #6: Set mem[idx8/reg5] (mem[j+2]) to mem[mem[idx2](=j)]
             
             ## Set mem[j+2] = temp1
-            Instr(7, 27, 27, 25, 27, 27, 27, 27, 19, 0),    ## Step12   #6: Set mem[idx25](temp1/reg6) to mem[mem[idx19]] (mem[j+2])
+            Instr(7, 12, 12, 10, 12, 12, 12, 12,  4, 0),    ## Step12   #6: Set mem[idx10](temp1/reg6) to mem[mem[idx4]] (mem[j+2])
             
 
             ## Set temp2 = mem[j-1]
-            Instr(5, 17, 27, 27, 27, 27, 27, 19, 27, 0),    ## Step13  #5: Copy idx17 (idx-j/reg2) to idx19 (temp-idx/reg3)
-            Instr(2, 27, 27,  1, 27, 27, 27, 19, 27, 1),    ## Step14  #2: Subtract 1 from idx19 (temp-idx/reg3) = j-1
-            Instr(6, 19, 27, 27, 27, 27, 27, 23, 27, 0),    ## Step15  #6: Set mem[mem[19]] (mem[j-1]) to idx23 (temp2/reg5)
+            Instr(5,  2, 12, 12, 12, 12, 12,  4, 12, 0),    ## Step13  #5: Copy idx2 (idx-j/reg2) to idx4 (temp-idx/reg3)
+            Instr(2, 12, 12,  1, 12, 12, 12,  4, 12, 1),    ## Step14  #2: Subtract 1 from idx4 (temp-idx/reg3) = j-1
+            Instr(6,  4, 12, 12, 12, 12, 12,  8, 12, 0),    ## Step15  #6: Set mem[mem[4]] (mem[j-1]) to idx8 (temp2/reg5)
 
             ## Set mem[j-1] = mem[j+1]
-            Instr(5, 17, 27, 27, 27, 27, 27, 25, 27, 0),    ## Step16  #5: Copy idx17 (idx-j/reg2) to idx25 (temp-idx2/reg6)
-            Instr(2, 27, 27,  1, 27, 27, 27, 25, 27, 0),    ## Step17  #2: Add 1 to idx25 (temp-idx2/reg6) = j+1
-            Instr(6, 25, 27, 27, 27, 27, 27, 21, 27, 0),    ## Step18  #6: Set mem[mem[25]] (mem[j+1]) to idx21
-            Instr(7, 27, 27, 21, 27, 27, 27, 27, 19, 0),    ## Step19  #7: Set mem[idx21] (mem[j+1]) to mem[mem[idx19](=j-1)]
+            Instr(5,  2, 12, 12, 12, 12, 12, 10, 12, 0),    ## Step16  #5: Copy idx2 (idx-j/reg2) to idx10 (temp-idx2/reg6)
+            Instr(2, 12, 12,  1, 12, 12, 12, 10, 12, 0),    ## Step17  #2: Add 1 to idx10 (temp-idx2/reg6) = j+1
+            Instr(6, 10, 12, 12, 12, 12, 12,  6, 12, 0),    ## Step18  #6: Set mem[mem[10]] (mem[j+1]) to idx6
+            Instr(7, 12, 12,  6, 12, 12, 12, 12,  4, 0),    ## Step19  #7: Set mem[idx6] (mem[j+1]) to mem[mem[idx4](=j-1)]
             
             ## Set mem[j+1] = temp2
-            Instr(7, 27, 27, 23, 27, 27, 27, 27, 25, 0),    ## Step20  #7: Set mem[idx23/reg5] to mem[mem[idx25](=j+1)]
+            Instr(7, 12, 12,  8, 12, 12, 12, 12, 10, 0),    ## Step20  #7: Set mem[idx8/reg5] to mem[mem[idx10](=j+1)]
 
-            ## Check if j < n-i-2 and determine to loop or end
-            Instr(2, 27, 27,  2, 27, 27, 27, 17, 27, 0),    ## Step21  #2: Add 2 to idx17 (idx-j/reg2)
-            Instr(1, 27, 27, 27, 27, 27,  n, 21, 27, 0),    ## Step22  #1: Set 14 to idx 21 (reg4)
-            Instr(2, 27, 27,  1, 27, 27, 27, 21, 27, 1),    ## Step23  #2: Subtract 1 from idx21 (reg4)
-            Instr(2, 27, 27, 15, 27, 27, 27, 21, 27, 2),    ## Step24  #2: Subtract idx-i(idx15/reg1) from idx21 (reg4)
-            Instr(3, 27, 21,  2, 27, 17, 27, 19, 27, 1),    ## Step25  #3: Compare idx17 (idx-j/reg2) < mem[p3] (n-i-1) and assign result to idx19 (reg3)
-            Instr(4, 27, 19, 21,  1, 27, 27, 27, 27, 1),    ## Step26  #4: Cond jump to Step5/27 if true/false
+            ## Check if j < n-i-1 and determine to loop or end
+            Instr(2, 12, 12,  2, 12, 12, 12,  2, 12, 0),    ## Step21  #2: Add 2 to idx2 (idx-j/reg2)
+            Instr(1, 12, 12, 12, 12, 12,  n,  6, 12, 0),    ## Step22  #1: Set 28/n to idx 6 (reg4)
+            Instr(2, 12, 12,  1, 12, 12, 12,  6, 12, 1),    ## Step23  #2: Subtract 1 from idx6 (reg4)
+            Instr(2, 12, 12,  0, 12, 12, 12,  6, 12, 2),    ## Step24  #2: Subtract idx-i(idx0/reg1) from idx6 (reg4)
+            Instr(3, 12,  6,  2, 12,  2, 12,  4, 12, 1),    ## Step25  #3: Compare idx6 (idx-j/reg2) < mem[p3] (n-i-1) and assign result to idx4 (reg3)
+            Instr(4, 12,  4, 21,  1, 12, 12, 12, 12, 1),    ## Step26  #4: Cond jump to Step5/27 if true/false
 
             ## Check if i < n
-            Instr(2, 27, 27,  2, 27, 27, 27, 15, 27, 0),     ## Step27  #2: Add 2 to idx15 (idx-i/reg1)
-            Instr(3, 27, 27,  2,  n, 15, 27, 19, 27, 0),     ## Step28  #3: Compare idx15 (idx-i/reg1) < n)(=14) and assign result to idx19 (reg3)
-            Instr(4, 27, 19, 25,  1, 27, 27, 27, 27, 1),     ## Step29  #4: Cond jump to Step4/30 if true/false
+            Instr(2, 12, 12,  2, 12, 12, 12,  0, 12, 0),     ## Step27  #2: Add 2 to idx0 (idx-i/reg1)
+            Instr(3, 12, 12,  2,  n,  0, 12,  4, 12, 0),     ## Step28  #3: Compare idx0 (idx-i/reg1) < n (=28) and assign result to idx4 (reg3)
+            Instr(4, 12,  4, 25,  1, 12, 12, 12, 12, 1),     ## Step29  #4: Cond jump to Step4/30 if true/false
                     
 
             # END
-            Instr(100, 27, 27, 27, 27, 27, 27, 27, 27, 0),   ## Step30  #100: Terminal
+            Instr(100, 12, 12, 12, 12, 12, 12, 12, 12, 0),   ## Step30  #100: Terminal
         ]
 
         repro_prog = make_program(program)
@@ -227,7 +227,7 @@ def main():
         for i in range(n_iter):
             pc, weight = step(repro_prog, pc, repro_mem, weight)
 
-        repro_Y = reveal(repro_mem)
+        repro_Y = reveal(repro_mem, 14, 27)
         print('reprod_Y:', repro_Y, '\n')
 
         res = mux(exp_Y == repro_Y,
