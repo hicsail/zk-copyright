@@ -134,8 +134,7 @@ def main():
         # Reproducer
         nouns_list = nouns_list #0-15
         madlibs_list = madlibs_list #17 - 32
-        hardcode_idx = [0, 1, 2, 3, 4] #34 - 38 TODO: Might need fix
-        bots_list = [0] * (16 - 6) #40 - 49
+        bots_list = [0] * 16 #33 - 49
         res_list = [0] * 16 #51 - 66
 
         reg1 = 0 #68
@@ -144,9 +143,15 @@ def main():
         reg4 = 0 #74
         dummy_int = 0 #76
         
+        hc0 = nouns_list[0]
+        hc1 = nouns_list[1]
+        hc2 = nouns_list[2]
+        hc3 = nouns_list[3]
+        hc4 = nouns_list[4]
+
         bot = 0
 
-        repro_mem = ZKList(nouns_list + [bot] + madlibs_list + [bot] + hardcode_idx + [bot] + bots_list + [bot] + res_list + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [dummy_int])
+        repro_mem = ZKList(nouns_list + [bot] + madlibs_list + [bot] + bots_list + [bot] + res_list + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [dummy_int])
 
 
         lim = len(madlibs_list)
@@ -160,30 +165,61 @@ def main():
                     Instr(2, 76, 76, 17, 76, 76, 76, 72, 76, 0),    ## Step1   #2: Add 17 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to madlibs list by 17
                     Instr(6, 72, 76, 76, 76, 76, 76, 70, 76, 0),    ## Step2   #6: Set idx72 (temp-idx/reg3) of madlibs list to idx70 (reg2)
                     Instr(3, 76, 76,  0, us, 70, 76, 70, 76, 0),    ## Step3   #3: Compare idx70 (reg2) and "_" and assign result to idx70 (reg2)
-                    Instr(4, 76, 70,  1,  4, 76, 76, 76, 76, 2),    ## Step4   #4: Cond jump to Step5/Step8 if true/false
+                    Instr(4, 76, 70,  1, 23, 76, 76, 76, 76, 2),    ## Step4   #4: Cond jump to Step5/Step27 if true/false
 
-                    ## TRUE: Append from nouns_list[idx-k] to res_list
-                    Instr(6, 74, 76, 76, 76, 76, 76, 70, 76, 0),    ## Step5   #6: Set idx74 (idx-k/reg4) of nouns list to idx70 (reg2)
-                    Instr(2, 76, 76,  1, 76, 76, 76, 74, 76, 0),    ## Step6   #2: add 1 to idx74 (idx-k)
-                    Instr(4, 76, 76,  4, 76, 76, 76, 76, 76, 0),    ## Step7   #4: jump to Step11
+                    ## TRUE: Check k and jump to respective step
+                    Instr(3, 76, 76,  0,  0, 74, 76, 72, 76, 0),    ## Step5   #3: Compare idx74 (idx-k) == 0 and assign result to idx72 (reg3)
+                    Instr(4, 76, 72,  9,  1, 76, 76, 76, 76, 2),    ## Step6   #4: Cond jump to  +9/+1 if true/false
+                    Instr(3, 76, 76,  0,  1, 74, 76, 72, 76, 0),    ## Step7   #3: Compare idx74 (idx-k) == 1 and assign result to idx72 (reg3)
+                    Instr(4, 76, 72,  9,  1, 76, 76, 76, 76, 2),    ## Step8   #4: Cond jump to  +9/+1 if true/false
+                    Instr(3, 76, 76,  0,  2, 74, 76, 72, 76, 0),    ## Step9   #3: Compare idx74 (idx-k) == 2 and assign result to idx72 (reg3)
+                    Instr(4, 76, 72,  9,  1, 76, 76, 76, 76, 2),    ## Step10  #4: Cond jump to  +9/+1 if true/false
+                    Instr(3, 76, 76,  0,  3, 74, 76, 72, 76, 0),    ## Step11  #3: Compare idx74 (idx-k) == 3 and assign result to idx72 (reg3)
+                    Instr(4, 76, 72,  9,  1, 76, 76, 76, 76, 2),    ## Step12  #4: Cond jump to  +9/+1 if true/false
+                    Instr(3, 76, 76,  0,  4, 74, 76, 72, 76, 0),    ## Step13  #3: Compare idx74 (idx-k) == 4 and assign result to idx72 (reg3)
+                    Instr(4, 76, 72,  9, 22, 76, 76, 76, 76, 2),    ## Step14  #4: Cond jump to  +9/+22 if true/false (sending to terminal if false as its error)
+
+                    ## k = 0: Set hc0 to reg2
+                    Instr(1, 76, 76, 76, 76, 76,hc0, 70, 76, 0),    ## Step15  #6: Set hc0 to idx70 (reg2)
+                    Instr(4, 76, 76,  9, 76, 76, 76, 76, 76, 0),    ## Step16  #4: jump to Step25
+
+                    ## k = 1: Set hc1 to reg2
+                    Instr(1, 76, 76, 76, 76, 76,hc1, 70, 76, 0),    ## Step17  #6: Set hc1 to idx70 (reg2)
+                    Instr(4, 76, 76,  7, 76, 76, 76, 76, 76, 0),    ## Step18  #4: jump to Step25
+
+                    ## k = 2: Set hc2 to reg2
+                    Instr(1, 76, 76, 76, 76, 76,hc2, 70, 76, 0),    ## Step19  #6: Set hc2 to idx70 (reg2)
+                    Instr(4, 76, 76,  5, 76, 76, 76, 76, 76, 0),    ## Step20  #4: jump to Step25
+
+                    ## k = 3: Set hc3 to reg2
+                    Instr(1, 76, 76, 76, 76, 76,hc3, 70, 76, 0),    ## Step21  #6: Set hc3 to idx70 (reg2)
+                    Instr(4, 76, 76,  3, 76, 76, 76, 76, 76, 0),    ## Step22  #4: jump to Step25
+
+                    ## k = 4: Set hc4 to reg2
+                    Instr(1, 76, 76, 76, 76, 76,hc4, 70, 76, 0),    ## Step23  #6: Set hc4 to idx70 (reg2)
+                    Instr(4, 76, 76,  1, 76, 76, 76, 76, 76, 0),    ## Step24  #4: jump to Step25
+                    
+                    ## (Common) Increment k by 1 and jump to Step30
+                    Instr(2, 76, 76,  1, 76, 76, 76, 74, 76, 0),    ## Step25  #2: add 1 to idx74 (idx-k)
+                    Instr(4, 76, 76,  4, 76, 76, 76, 76, 76, 0),    ## Step26  #4: jump to Step30
 
                     ## ELSE: Append from madlibs_list[idx-k] to res_list
-                    Instr(5, 68, 76, 76, 76, 76, 76, 72, 76, 0),    ## Step8   #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
-                    Instr(2, 76, 76, 17, 76, 76, 76, 72, 76, 0),    ## Step9   #2: Add 17 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to madlibs list by 17
-                    Instr(6, 72, 76, 76, 76, 76, 76, 70, 76, 0),    ## Step10  #6: Set idx72 (temp-idx/reg3) of madlibs list to idx70 (reg2)
+                    Instr(5, 68, 76, 76, 76, 76, 76, 72, 76, 0),    ## Step27  #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
+                    Instr(2, 76, 76, 17, 76, 76, 76, 72, 76, 0),    ## Step28  #2: Add 17 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to madlibs list by 17
+                    Instr(6, 72, 76, 76, 76, 76, 76, 70, 76, 0),    ## Step29  #6: Set idx72 (temp-idx/reg3) of madlibs list to idx70 (reg2)
                     
                 ## APPEND and INCREMENT
-                    Instr(5, 68, 76, 76, 76, 76, 76, 72, 76, 0),    ## Step11  #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
-                    Instr(2, 76, 76, 51, 76, 76, 76, 72, 76, 0),    ## Step12  #2: Add 51 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to res list by 51
-                    Instr(7, 76, 76, 70, 76, 76, 76, 76, 72, 1),    ## Step13  #6: Set idx70 (reg2) to idx72 (temp-idx/reg3) of res list
-                    Instr(2, 76, 76,  1, 76, 76, 76, 68, 76, 0),    ## Step14  #2: Add 1 to idx 68 (idx-i)
+                    Instr(5, 68, 76, 76, 76, 76, 76, 72, 76, 0),    ## Step30  #5: Copy idx68 (idx-i/reg1) to idx72 (temp-idx/reg3)
+                    Instr(2, 76, 76, 51, 76, 76, 76, 72, 76, 0),    ## Step31  #2: Add 51 to idx72 (temp-idx/reg3) = Shifting pointer idx-i to res list by 51
+                    Instr(7, 76, 76, 70, 76, 76, 76, 76, 72, 1),    ## Step32  #6: Set idx70 (reg2) to idx72 (temp-idx/reg3) of res list
+                    Instr(2, 76, 76,  1, 76, 76, 76, 68, 76, 0),    ## Step33  #2: Add 1 to idx 68 (idx-i)
 
                 ## Determine whether or not to iterate over again depending idx-i< len(madlibs_words)
-                    Instr(3, 76, 76, 2, lim, 68, 76, 72, 76, 0),    ## Step15  #3: Compare idx68 (idx-i) < p5 (X_len) and assign result to idx72 (reg3)
-                    Instr(4, 76, 72, 16,  1, 76, 76, 76, 76, 1),    ## Step16  #4: Cond jump to -16/+1 if true/false
+                    Instr(3, 76, 76, 2, lim, 68, 76, 72, 76, 0),    ## Step34  #3: Compare idx68 (idx-i) < p5 (X_len) and assign result to idx72 (reg3)
+                    Instr(4, 76, 72, 35,  1, 76, 76, 76, 76, 1),    ## Step35  #4: Cond jump to -16/+1 if true/false
 
             # END
-                    Instr(100, 76, 76, 76, 76, 76, 76, 76, 76, 0),   ## Step17  #100: Terminal
+                    Instr(100, 76, 76, 76, 76, 76, 76, 76, 76, 0),  ## Step36  #100: Terminal
                     ]
         repro_prog = make_program(program)
 
