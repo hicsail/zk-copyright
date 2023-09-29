@@ -156,7 +156,9 @@ def main():
         bot = 0
         n = 28
 
-        repro_mem = ZKList([reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [reg5] + [bot] + [reg6] + [bot] + [dummy_int] + [bot] + bg_list + honey_entries)
+        repro_mem = ZKList([reg1] + [bot] + [reg2] + [bot] + [reg3] 
+                           + [bot] + [reg4] + [bot] + [reg5] + [bot] 
+                           + [reg6] + [bot] + [dummy_int] + [bot] + bg_list + honey_entries)
 
         hc0 = string_to_int('6')
         hc1 = string_to_int('111-666-6666')

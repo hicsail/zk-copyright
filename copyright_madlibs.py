@@ -153,7 +153,9 @@ def main():
 
         bot = 0
 
-        repro_mem = ZKList(nouns_list + [bot] + madlibs_list + [bot] + bots_list + [bot] + res_list + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [dummy_int])
+        repro_mem = ZKList(nouns_list + [bot] + madlibs_list + [bot] + bots_list + [bot] 
+                           + res_list + [bot] + [reg1] + [bot] + [reg2] + [bot] 
+                           + [reg3] + [bot] + [reg4] + [bot] + [dummy_int])
 
 
         lim = len(madlibs_list)
