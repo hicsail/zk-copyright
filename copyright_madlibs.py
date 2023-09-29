@@ -63,7 +63,9 @@ def main():
         
         bot = 0
 
-        mem = ZKList(nouns_list + [bot] + madlibs_list + [bot] + X_list + [bot] + res_list + [bot] + [reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4] + [bot] + [dummy_int])
+        mem = ZKList(nouns_list + [bot] + madlibs_list + [bot] + X_list + [bot] 
+                     + res_list + [bot] + [reg1] + [bot] + [reg2] + [bot] 
+                     + [reg3] + [bot] + [reg4] + [bot] + [dummy_int])
 
         X_len = len(X_list)
 
