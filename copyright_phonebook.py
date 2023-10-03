@@ -2,13 +2,13 @@ from picozk import *
 from utils.datatypes import Instr
 from utils.steps import step
 from utils.functions import make_program, int_to_string, string_to_int
-
+import random
 
 def make_X(bg, honey_entries):
     res = bg.copy()
     res.update(honey_entries)
     res = dict(sorted(res.items()))
-    print("X", res, "\n")
+    print("\nX", res)
     res = {string_to_int(k): string_to_int(v) for k, v in res.items()}
     return res
 
@@ -29,9 +29,39 @@ def reveal(res_list, start, end):
     return result_str
 
 
+def make_phone_entry(bg):
 
-def main():
+  elem = ''
+  for i in range(10):
+    ent = str(random.randint(0, 9))
+    if i == 3 or i==6:
+      elem+='-'
+    elem += ent
 
+  key = str(random.randint(0, 2**63 - 1))
+
+  bg.update({key:elem})
+  return bg
+
+
+def make_phone_dict(scale):
+  bg = {}
+  for i in range(scale):
+    make_phone_entry(bg)
+  return bg
+
+
+
+def make_Y(bg, honey_entries):
+    res = bg.copy()
+    res.update(honey_entries)
+    res = res = dict(sorted(res.items(), key=lambda x: x[1]))
+    res = {k: v for k, v in res.items()}
+    return res
+
+
+
+def debug():
     bg = {
         '2': '222-222-2222',
         '1': '111-111-1111',
@@ -45,14 +75,33 @@ def main():
         '7': '222-777-7777'
         }
 
-    X = make_X(bg, honey_entries)
-
     exp_Y = "('1', '111-111-1111'), ('6', '111-666-6666'), ('2', '222-222-2222'), ('7', '222-777-7777'), ('3', '333-333-3333'), ('4', '444-444-4444'), ('5', '555-555-5555')"
-    print('exp_Y', exp_Y, '\n')
+       
+    return bg, honey_entries, exp_Y
 
-    p = pow(2,256) - pow(2,32) - pow(2,9) - pow(2,8) - pow(2,7) - pow(2,6) - pow(2,4) - 1
+
+def main():
+    DEBUG=False
+    scale = 5
+
     n_iter = 1500
     threshold = 500 # The program has to be performed within this (weight < )
+
+    if DEBUG==True:
+       bg, honey_entries, exp_Y = debug()
+    else:
+       bg = make_phone_dict(scale)
+       honey_entries = make_phone_dict(int(scale/10))
+       exp_Y = make_Y(bg, honey_entries)
+    print("\nbg", bg)
+    print("\nhoney_entries", honey_entries)
+    print("\nexp_Y", exp_Y)
+
+    X = make_X(bg, honey_entries)
+
+
+    p = pow(2,256) - pow(2,32) - pow(2,9) - pow(2,8) - pow(2,7) - pow(2,6) - pow(2,4) - 1
+
 
     with PicoZKCompiler('irs/picozk_test', field=[p], options=['ram']):
 
