@@ -55,9 +55,9 @@ def make_phone_dict(scale):
 def make_Y(bg, honey_entries):
     res = bg.copy()
     res.update(honey_entries)
-    res = res = dict(sorted(res.items(), key=lambda x: x[1]))
-    res = {k: v for k, v in res.items()}
-    return res
+    res = dict(sorted(res.items(), key=lambda x: x[1]))
+    res = [f"('{k}', '{v}')" for k, v in res.items()]
+    return ", ".join(res)
 
 
 
@@ -84,24 +84,23 @@ def main():
     DEBUG=False
     scale = 5
 
-    n_iter = 1500
+    n_iter = 2000
     threshold = 500 # The program has to be performed within this (weight < )
 
     if DEBUG==True:
        bg, honey_entries, exp_Y = debug()
     else:
        bg = make_phone_dict(scale)
-       honey_entries = make_phone_dict(int(scale/10))
+       honey_entries = make_phone_dict(int(max(1, scale/10)))
        exp_Y = make_Y(bg, honey_entries)
+    
+    X = make_X(bg, honey_entries)
+
     print("\nbg", bg)
     print("\nhoney_entries", honey_entries)
     print("\nexp_Y", exp_Y)
 
-    X = make_X(bg, honey_entries)
-
-
     p = pow(2,256) - pow(2,32) - pow(2,9) - pow(2,8) - pow(2,7) - pow(2,6) - pow(2,4) - 1
-
 
     with PicoZKCompiler('irs/picozk_test', field=[p], options=['ram']):
 
@@ -116,7 +115,7 @@ def main():
         X_list = [i for k, v in X.items() for i in (k, v)] #14-27
 
         bot = 0
-        n = 28
+        n = len(X_list) * 2
         
         mem = ZKList([reg1] + [bot] + [reg2] + [bot] + [reg3] 
                      + [bot] + [reg4] + [bot] + [reg5] + [bot] 
@@ -144,7 +143,7 @@ def main():
             
 
             ## Set temp2 = mem[j-1]
-            Instr(5,  2, 12, 12, 12, 12, 12,  4, 12, 0),    ## Step9  #5: Copy idx2 (idx-j/reg2) to idx4 (temp-idx/reg3)
+            Instr(5,  2, 12, 12, 12, 12, 12,  4, 12, 0),    ## Step9   #5: Copy idx2 (idx-j/reg2) to idx4 (temp-idx/reg3)
             Instr(2, 12, 12,  1, 12, 12, 12,  4, 12, 1),    ## Step10  #2: Subtract 1 from idx4 (temp-idx/reg3) = j-1
             Instr(6,  4, 12, 12, 12, 12, 12,  8, 12, 0),    ## Step11  #6: Set mem[mem[4]] (mem[j-1]) to idx8 (temp2/reg5)
 
@@ -181,8 +180,8 @@ def main():
         for i in range(n_iter):
             pc, weight = step(pro_prog, pc, mem, weight)
 
-        prod_Y = reveal(mem, 14, 27)
-        print('prod_Y:', prod_Y, '\n')
+        prod_Y = reveal(mem, 14, len(mem))
+        print('\nprod_Y:', prod_Y)
 
         res = mux(exp_Y == prod_Y,
                     mux(weight <= threshold, SecretInt(0), SecretInt(1))
@@ -281,7 +280,7 @@ def main():
             pc, weight = step(repro_prog, pc, repro_mem, weight)
 
         repro_Y = reveal(repro_mem, 14, 27)
-        print('reprod_Y:', repro_Y, '\n')
+        print('\nreprod_Y:', repro_Y)
 
         res = mux(exp_Y == repro_Y,
                     mux(weight <= threshold, SecretInt(0), SecretInt(1))
