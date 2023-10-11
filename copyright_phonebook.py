@@ -85,7 +85,7 @@ def main():
     scale = 5
 
     n_iter = 2000
-    threshold = 500 # The program has to be performed within this (weight < )
+    threshold = 2500 # The program has to be performed within this (weight < )
 
     if DEBUG==True:
        bg, honey_entries, exp_Y = debug()
@@ -94,10 +94,9 @@ def main():
        honey_entries = make_phone_dict(int(max(1, scale/10)))
        exp_Y = make_Y(bg, honey_entries)
     
-    X = make_X(bg, honey_entries)
-
     print("\nbg", bg)
     print("\nhoney_entries", honey_entries)
+    X = make_X(bg, honey_entries)
     print("\nexp_Y", exp_Y)
 
     p = pow(2,256) - pow(2,32) - pow(2,9) - pow(2,8) - pow(2,7) - pow(2,6) - pow(2,4) - 1
@@ -105,7 +104,7 @@ def main():
     with PicoZKCompiler('irs/picozk_test', field=[p], options=['ram']):
 
         # Producer
-        reg1 = 1 #0 i
+        reg1 = 0 #0 i
         reg2 = 0 #2 j
         reg3 = 0 #4 temp index
         reg4 = 0 #6 res etc..
@@ -115,16 +114,14 @@ def main():
         X_list = [i for k, v in X.items() for i in (k, v)] #14-27
 
         bot = 0
-        n = len(X_list) * 2
         
         mem = ZKList([reg1] + [bot] + [reg2] + [bot] + [reg3] 
                      + [bot] + [reg4] + [bot] + [reg5] + [bot] 
                      + [reg6] + [bot] + [dummy_int] + [bot] + X_list)
-        
+        n = len(mem)
         program = [
 
-
-            ## Set j = 1
+            ## Set j = 15
             Instr(1, 12, 12, 12, 12, 12,  15, 2, 12, 0),    ## Step0   #6: Set 15 to idx2 (idx-j/reg2)
 
             ## Check if  mem[j+2] < mem[j] 
@@ -156,16 +153,16 @@ def main():
             ## Set mem[j+1] = temp2
             Instr(7, 12, 12,  8, 12, 12, 12, 12, 10, 0),    ## Step16  #7: Set mem[idx8/reg5] to mem[mem[idx10](=j+1)]
 
-            ## Check if j < n-i-1 and determine to loop or end
+            ## Check if j < n-i-2 and determine to loop or end
             Instr(2, 12, 12,  2, 12, 12, 12,  2, 12, 0),    ## Step17  #2: Add 2 to idx2 (idx-j/reg2)
-            Instr(1, 12, 12, 12, 12, 12,  n,  6, 12, 0),    ## Step18  #1: Set 28/n to idx 6 (reg4)
-            Instr(2, 12, 12,  1, 12, 12, 12,  6, 12, 1),    ## Step19  #2: Subtract 1 from idx6 (reg4)
+            Instr(1, 12, 12, 12, 12, 12,  n,  6, 12, 0),    ## Step18  #1: Set n/28 to idx 6 (reg4)
+            Instr(2, 12, 12,  2, 12, 12, 12,  6, 12, 1),    ## Step19  #2: Subtract 1 from idx6 (reg4)
             Instr(2, 12, 12,  0, 12, 12, 12,  6, 12, 2),    ## Step20  #2: Subtract idx-i(idx0/reg1) from idx6 (reg4)
             Instr(3, 12,  6,  2, 12,  2, 12,  4, 12, 1),    ## Step21  #3: Compare idx6 (idx-j/reg2) < mem[p3] (n-i-1) and assign result to idx4 (reg3)
             Instr(4, 12,  4, 21,  1, 12, 12, 12, 12, 1),    ## Step22  #4: Cond jump to Step1/23 if true/false
 
             ## Check if i < n
-            Instr(2, 12, 12,  2, 12, 12, 12,  0, 12, 0),     ## Step23  #2: Add 2 to idx0 (idx-i/reg1)
+            Instr(2, 12, 12,  1, 12, 12, 12,  0, 12, 0),     ## Step23  #2: Add 1 to idx0 (idx-i/reg1)
             Instr(3, 12, 12,  2,  n,  0, 12,  4, 12, 0),     ## Step24  #3: Compare idx0 (idx-i/reg1) < n (=28) and assign result to idx4 (reg3)
             Instr(4, 12,  4, 25,  1, 12, 12, 12, 12, 1),     ## Step25  #4: Cond jump to Step0/26 if true/false
                     
