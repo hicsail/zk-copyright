@@ -168,7 +168,7 @@ def main():
                     
 
             # END
-            Instr(100, 12, 12, 12, 12, 12, 12, 12, 12, 0),   ## Step26  #100: Terminal
+            Instr(0, 12, 12, 12, 12, 12, 12, 12, 12, 0),   ## Step26  #100: Terminal
         ]
         pro_prog = make_program(program)
 
@@ -264,7 +264,7 @@ def main():
                     
 
             # END
-            Instr(100, 12, 12, 12, 12, 12, 12, 12, 12, 0),             #100: Terminal
+            Instr(0, 12, 12, 12, 12, 12, 12, 12, 12, 0),             #100: Terminal
         ]
 
         repro_prog = make_program(program)
