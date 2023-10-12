@@ -62,13 +62,11 @@ def step(prog: Program, pc: int, mem: list, weight: int):
         p5: element to compare
 
         ops: 
-            # Below is for int
             if imm == 0:
                 comp = p4
             elif imm == 1:
                 comp = mem[p2]
 
-            # Below is for str
             if p3 ==0:
                 mem[des] = (mem[p5] == comp)
             elif p3 ==2:
@@ -119,7 +117,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     '''
         p1: address of index of memory
 
-        ops: mem[des] = mem[mem[p1]]
+        ops: mem[des] = mem[p1]
     '''
 
     mem[des] = mux(instr.opcode == 5, mem[p1], mem[des])
@@ -135,10 +133,11 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     mem[des] = mux(instr.opcode == 6, mem[mem[p1]], mem[des])
 
 
-    # 7. Set Value by const pointer
+    # 7. Copy value to a dest at const pointer
 
     '''
         p3: any memory address
+        ops: mem[mem[s_des]] = mem[mem[p3]]
                 
     '''
 
