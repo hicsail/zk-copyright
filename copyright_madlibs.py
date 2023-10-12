@@ -93,8 +93,8 @@ def main():
     
     DEBUG=False
     scale = 5
-    n_iter = scale * 40
-    threshold = scale * 50 # The program has to be performed within this (weight < )
+    n_iter = (scale*26) ** 2
+    threshold = n_iter # The program has to be performed within this (weight < )
 
     if DEBUG==True:
        exp_Y, X, madlibs, nouns, indexes = debug()
@@ -161,42 +161,42 @@ def main():
             # Take the first three nouns from X and hard-code the rest from the fill list
             
                 ## FIRST IF curr madlibs_words is equal to "_"
-                    Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),     ## Step0   #5: Copy idx51 (idx-i/reg1) to idx55 (temp-idx/reg3)
-                    Instr(2, 8, 8, s_ml, 8, 8, 8, 4, 8, 0),  ## Step1   #2: Add 17 to idx55 (temp-idx/reg3) = Shifting pointer idx-i to madlibs list by 17
-                    Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 0),     ## Step2   #6: Set idx55 (temp-idx/reg3) of madlibs list to idx53 (reg2)
-                    Instr(3, 8, 8,  0, us, 2, 8, 2, 8, 0),   ## Step3   #3: Compare idx53 (reg2) and "_" and assign result to idx53 (reg2)
+                    Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),     ## Step0   #5: Copy idx0 (idx-i/reg1) to idx4 (temp-idx/reg3)
+                    Instr(2, 8, 8, s_ml, 8, 8, 8, 4, 8, 0),  ## Step1   #2: Add s_ml to idx4 (temp-idx/reg3) and shift the pointer (temp-idx) to an appropriate position of the madlibs list
+                    Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 0),     ## Step2   #6: Set idx4 (temp-idx/reg3) of madlibs list to idx2 (reg2)
+                    Instr(3, 8, 8,  0, us, 2, 8, 2, 8, 0),   ## Step3   #3: Compare idx2 (reg2) and "_" and assign result to idx2 (reg2)
                     Instr(4, 8, 2,  1, 12, 8, 8, 8, 8, 2),   ## Step4   #4: Cond jump to Step5/Step16 if true/false
 
                 ## SECOND IF index of madlibs_words is less than lim (upto idx of third)
-                    Instr(3, 8, 8,  2,lim, 0, 8, 2, 8, 0),   ## Step5   #3: Compare idx 51(idx-i/reg1) < fill_upto (10 for now) and set the result to idx53 (reg2)
+                    Instr(3, 8, 8,  2,lim, 0, 8, 2, 8, 0),   ## Step5   #3: Compare idx0 (idx-i/reg1) < fill_upto and set the result to idx2 (reg2)
                     Instr(4, 8, 2,  1,  5, 8, 8, 8, 8, 2),   ## Step6   #4: Cond jump to Step7/Step11 if true/false
 
                 ## IF Both TRUE (Append from X list)
-                    Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),     ## Step7   #5: Copy idx51 (idx-i/reg1) to idx55 (temp-idx/reg3)
-                    Instr(2, 8, 8, s_xl, 8, 8, 8, 4, 8, 0),  ## Step8   #2: Add 34 to idx55 (temp-idx/reg3) = Shifting pointer to X_list idx-i by 34
-                    Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 0),     ## Step9   #6: Set idx55 (temp-idx/reg3) of X_words to idx53 (reg2)
+                    Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),     ## Step7   #5: Copy idx0 (idx-i/reg1) to idx4 (temp-idx/reg3)
+                    Instr(2, 8, 8, s_xl, 8, 8, 8, 4, 8, 0),  ## Step8   #2: Add s_xl to idx4 (temp-idx/reg3) and shift the pointer (temp-idx) to an appropriate position of the X_list
+                    Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 0),     ## Step9   #6: Set idx4 (temp-idx/reg3) of X_words to idx2 (reg2)
                     Instr(4, 8, 8,  9, 8, 8, 8, 8, 8, 0),    ## Step10  #4: jump to Step19
 
                 ## IF only the former TRUE (Append from nouns list)
-                    Instr(5, 2, 8, 8, 8, 8, 8, 4, 8, 0),     ## Step11  #5: Copy idx57 (idx-k/reg2) to idx55 (temp-idx/reg3)
-                    Instr(2, 8, 8, s_nn, 8, 8, 8, 4, 8, 0),  ## Step12  #2: Add 3 to idx55 (temp-idx/reg3) = Shifting pointer idx-k to nouns list by 3
-                    Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 1),     ## Step13  #6: Set idx55 (temp-idx/reg3) of nouns list to idx53 (reg2)
-                    Instr(2, 8, 8,  1, 8, 8, 8, 4, 8, 0),    ## Step14  #2: Add 1 to idx57 (idx-k/reg3)
+                    Instr(5, 2, 8, 8, 8, 8, 8, 4, 8, 0),     ## Step11  #5: Copy idx2 (idx-k/reg2) to idx4 (temp-idx/reg3)
+                    Instr(2, 8, 8, s_nn, 8, 8, 8, 4, 8, 0),  ## Step12  #2: Add s_nn to idx4 (temp-idx/reg3) and shift the pointer (idx-k) to an appropriate position of the nouns list
+                    Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 1),     ## Step13  #6: Set idx4 (temp-idx/reg3) of the nouns list to idx2 (reg2)
+                    Instr(2, 8, 8,  1, 8, 8, 8, 4, 8, 0),    ## Step14  #2: Add 1 to idx4 (idx-k/reg3)
                     Instr(4, 8, 8,  4, 8, 8, 8, 8, 8, 0),    ## Step15  #4: jump to Step19
 
                 ## ELSE (Append from madlibs list)
-                    Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),     ## Step16  #5: Copy idx51 (idx-i/reg1) to idx55 (temp-idx/reg3)
-                    Instr(2, 8, 8, s_ml, 8, 8, 8, 4, 8, 0),  ## Step17  #2: Add 17 to idx55 (temp-idx/reg3) = Shifting pointer idx-i to madlibs list by 17
-                    Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 0),     ## Step18  #6: Set idx55 (temp-idx/reg3) of madlibs list to idx53 (reg2)
+                    Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),     ## Step16  #5: Copy idx0 (idx-i/reg1) to idx4 (temp-idx/reg3)
+                    Instr(2, 8, 8, s_ml, 8, 8, 8, 4, 8, 0),  ## Step17  #2: Add s_ml to idx4 (temp-idx/reg3) and shift the pointer (idx-i) to an appropriate position of the madlibs list
+                    Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 0),     ## Step18  #6: Set idx4 (temp-idx/reg3) of the madlibs list to idx2 (reg2)
 
                 ## APPEND and INCREMENT
-                    Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),     ## Step19  #5: Copy idx51 (idx-i/reg1) to idx55 (temp-idx/reg3)
-                    Instr(2, 8, 8, s_rs, 8, 8, 8, 4, 8, 0),  ## Step20  #2: Add 61 to idx55 (temp-idx/reg3) = Shifting pointer idx-i to res list by 61
-                    Instr(7, 8, 8, 2, 8, 8, 8, 8, 4, 1),     ## Step21  #6: Set idx53 (reg2) to idx55 (temp-idx/reg3) of res list
-                    Instr(2, 8, 8,  1, 8, 8, 8, 0, 8, 0),    ## Step22  #2: Add 1 to idx51 (idx-i/reg1)
+                    Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),     ## Step19  #5: Copy idx0 (idx-i/reg1) to idx4 (temp-idx/reg3)
+                    Instr(2, 8, 8, s_rs, 8, 8, 8, 4, 8, 0),  ## Step20  #2: Add s_rs to idx4 (temp-idx/reg3) and shift the pointer (idx-i) to an appropriate position of the res list
+                    Instr(7, 8, 8, 2, 8, 8, 8, 8, 4, 1),     ## Step21  #6: Set idx2 (reg2) to idx4 (temp-idx/reg3) of the res list
+                    Instr(2, 8, 8,  1, 8, 8, 8, 0, 8, 0),    ## Step22  #2: Add 1 to idx0 (idx-i/reg1)
                     
                 ## CHECK IF ITERATE OR NEXT
-                    Instr(3, 8, 8, 2, X_len, 0, 8, 4, 8, 0), ## Step23  #3: Compare idx51 (idx-i) < p5 (X_len) and assign result to idx55 (reg3)
+                    Instr(3, 8, 8, 2, X_len, 0, 8, 4, 8, 0), ## Step23  #3: Compare idx0 (idx-i) < p5 (X_len) and assign the result to idx4 (reg3)
                     Instr(4, 8, 4, 24,  1, 8, 8, 8, 8, 1),   ## Step24  #4: Cond jump to Step0/25 if true/false
 
             # END
@@ -246,10 +246,10 @@ def main():
         header = [
 
                 ## IF madlibs_words[curr] == "_"
-                    Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),                       #5: Copy idx51 (idx-i/reg1) to idx55 (temp-idx/reg3)
-                    Instr(2, 8, 8, s_ml, 8, 8, 8, 4, 8, 0),                    #2: Add 17 to idx55 (temp-idx/reg3) = Shifting pointer idx-i to madlibs list by 17
-                    Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 0),                       #6: Set idx55 (temp-idx/reg3) of madlibs list to idx53 (reg2)
-                    Instr(3, 8, 8,  0, us, 2, 8, 2, 8, 0),                     #3: Compare idx53 (reg2) and "_" and assign result to idx53 (reg2)
+                    Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),                       #5: Copy idx0 (idx-i/reg1) to idx4 (temp-idx/reg3)
+                    Instr(2, 8, 8, s_ml, 8, 8, 8, 4, 8, 0),                    #2: Add s_ml to idx4 (temp-idx/reg3) and shift the pointer (temp-idx) to the madlibs list
+                    Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 0),                       #6: Set idx4 (temp-idx/reg3) of madlibs list to idx2 (reg2)
+                    Instr(3, 8, 8,  0, us, 2, 8, 2, 8, 0),                     #3: Compare idx2 (reg2) and "_" and assign result to idx2 (reg2)
                     Instr(4, 8, 2,  1, hc_size*4+3, 8, 8, 8, 8, 2),            #4: Cond jump to the first step in the dynamic part/Point2 if true/false
                 ]
 
@@ -258,7 +258,7 @@ def main():
         for i in range(hc_size, 0, -1):
                 ## TRUE: Check k and jump to respective step
                 dynamic += [
-                    Instr(3, 8, 8,  0, hc_size-i, 6, 8, 4, 8, 0),              #3: Compare idx57 (idx-k) == 0 ~ hc_size and assign result to idx55 (reg3)
+                    Instr(3, 8, 8,  0, hc_size-i, 6, 8, 4, 8, 0),              #3: Compare idx6 (idx-k) == 0 ~ hc_size and assign result to idx4 (reg3)
                     Instr(4, 8, 4, hc_size*2-1,  1, 8, 8, 8, 8, 2)             #4: Cond jump to respective step/next in dynamic
                 ]
 
@@ -272,22 +272,22 @@ def main():
 
         footter = [
                     ## (Common) Increment k by 1 and jump to Step30
-                    Instr(2, 8, 8,  1, 8, 8, 8, 6, 8, 0),            ## Point1  #2: add 1 to idx57 (idx-k)
+                    Instr(2, 8, 8,  1, 8, 8, 8, 6, 8, 0),            ## Point1  #2: add 1 to idx6 (idx-k)
                     Instr(4, 8, 8,  4, 8, 8, 8, 8, 8, 0),                       #4: jump to Point3
 
                     ## ELSE: Append from madlibs_list[idx-k] to res_list
-                    Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),             ## Point2  #5: Copy idx51 (idx-i/reg1) to idx55 (temp-idx/reg3)
-                    Instr(2, 8, 8, s_ml, 8, 8, 8, 4, 8, 0),                     #2: Add 17 to idx55 (temp-idx/reg3) = Shifting pointer idx-i to madlibs list by 17
-                    Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 0),                        #6: Set idx55 (temp-idx/reg3) of madlibs list to idx53 (reg2)
+                    Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),             ## Point2  #5: Copy idx0 (idx-i/reg1) to idx4 (temp-idx/reg3)
+                    Instr(2, 8, 8, s_ml, 8, 8, 8, 4, 8, 0),                     #2: Add s_ml to idx4 (temp-idx/reg3) and shift the pointer (temp-idx) to an appropriate position of the madlibs list
+                    Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 0),                        #6: Set idx4 (temp-idx/reg3) of the madlibs list to idx2 (reg2)
                     
                 ## APPEND and INCREMENT
-                    Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),             ## Point3  #5: Copy idx51 (idx-i/reg1) to idx55 (temp-idx/reg3)
-                    Instr(2, 8, 8, s_rs, 8, 8, 8, 4, 8, 0),                     #2: Add 61 to idx55 (temp-idx/reg3) = Shifting pointer idx-i to res list by 61
-                    Instr(7, 8, 8, 2, 8, 8, 8, 8, 4, 1),                        #6: Set idx53 (reg2) to idx55 (temp-idx/reg3) of res list
-                    Instr(2, 8, 8,  1, 8, 8, 8, 0, 8, 0),                       #2: Add 1 to idx 51 (idx-i)
+                    Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),             ## Point3  #5: Copy idx0 (idx-i/reg1) to idx4 (temp-idx/reg3)
+                    Instr(2, 8, 8, s_rs, 8, 8, 8, 4, 8, 0),                     #2: Add s_rs to idx4 (temp-idx/reg3) and shift the pointer (temp-idx) to an approproate position of the res list
+                    Instr(7, 8, 8, 2, 8, 8, 8, 8, 4, 1),                        #6: Set idx2 (reg2) to idx4 (temp-idx/reg3) of the res list
+                    Instr(2, 8, 8,  1, 8, 8, 8, 0, 8, 0),                       #2: Add 1 to idx 0 (idx-i)
 
                 ## Determine whether or not to iterate over again depending idx-i< len(madlibs_words)
-                    Instr(3, 8, 8, 2, lim, 0, 8, 4, 8, 0),                      #3: Compare idx51 (idx-i) < p5 (X_len) and assign result to idx55 (reg3)
+                    Instr(3, 8, 8, 2, lim, 0, 8, 4, 8, 0),                      #3: Compare idx0 (idx-i) < p5 (X_len) and assign the result to idx4 (reg3)
                     Instr(4, 8, 4, hc_size*4+15, 1, 8, 8, 8, 8, 1),             #4: Cond jump to the very beginning/end if true/false
 
             # END

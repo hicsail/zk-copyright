@@ -84,8 +84,8 @@ def main():
     DEBUG=False
     scale = 5
 
-    n_iter = scale * 50
-    threshold = scale * 50 # The program has to be performed within this (weight < )
+    n_iter = (scale*26) ** 2
+    threshold = n_iter # The program has to be performed within this (weight < )
 
     if DEBUG==True:
        bg, honey_entries, exp_Y = debug()
@@ -129,7 +129,7 @@ def main():
             Instr(2, 12, 12,  2, 12, 12, 12,  4, 12, 0),    ## Step2   #2: Add 2 to idx4 (temp-idx/reg3) = j+2
             Instr(6,  4, 12, 12, 12, 12, 12,  8, 12, 0),    ## Step3   #6: Set mem[mem[4]] (mem[j+2]) to idx8 (reg5)
             Instr(6,  2, 12, 12, 12, 12, 12, 10, 12, 0),    ## Step4   #6: Set mem[mem[2]] (mem[j]) to idx10 (temp1/reg6)
-            Instr(3, 12, 10,  2, 12,  8, 12,  6, 12, 1),    ## Step5   #3: Compare mem[8] (reg5/mem[j+2]) < mem[10] (reg6/mem[j]) and assign result to idx6 (reg4)
+            Instr(3, 12, 10,  2, 12,  8, 12,  6, 12, 1),    ## Step5   #3: Compare mem[8] (reg5/mem[j+2]) < mem[10] (reg6/mem[j]) and assign the result to idx6 (reg4)
             Instr(4, 12,  6,  1, 11, 12, 12, 12, 12, 2),    ## Step6   #4: Cond jump to Step7/17 if true/false
 
             ## Set mem[j] = mem[j+2] *Set temp1/reg6 = mem[j] is done at Step3
@@ -251,15 +251,15 @@ def main():
 
             ## Check if j < n-i-1 and determine to loop or end
             Instr(2, 12, 12,  2, 12, 12, 12,  2, 12, 0),    #Point3    #2: Add 2 to idx2 (idx-j/reg2)
-            Instr(1, 12, 12, 12, 12, 12,  n,  6, 12, 0),               #1: Set 28/n to idx 6 (reg4)
+            Instr(1, 12, 12, 12, 12, 12,  n,  6, 12, 0),               #1: Set n (size of repromem) to idx 6 (reg4)
             Instr(2, 12, 12,  1, 12, 12, 12,  6, 12, 1),               #2: Subtract 1 from idx6 (reg4)
             Instr(2, 12, 12,  0, 12, 12, 12,  6, 12, 2),               #2: Subtract idx-i(idx0/reg1) from idx6 (reg4)
-            Instr(3, 12,  6,  2, 12,  2, 12,  4, 12, 1),               #3: Compare idx6 (idx-j/reg2) < mem[p3] (n-i-1) and assign result to idx4 (reg3)
+            Instr(3, 12,  6,  2, 12,  2, 12,  4, 12, 1),               #3: Compare idx6 (idx-j/reg2) < mem[p3] (n-i-1) and assign the result to idx4 (reg3)
             Instr(4, 12,  4, 21,  1, 12, 12, 12, 12, 1),               #4: Cond jump to Point2/Next if true/false
 
             ## Check if i < n
             Instr(2, 12, 12,  2, 12, 12, 12,  0, 12, 0),               #2: Add 2 to idx0 (idx-i/reg1)
-            Instr(3, 12, 12,  2,  n,  0, 12,  4, 12, 0),               #3: Compare idx0 (idx-i/reg1) < n (=28) and assign result to idx4 (reg3)
+            Instr(3, 12, 12,  2,  n,  0, 12,  4, 12, 0),               #3: Compare idx0 (idx-i/reg1) < n (size of repromem) and assign the result to idx4 (reg3)
             Instr(4, 12,  4, 25,  1, 12, 12, 12, 12, 1),               #4: Cond jump to Point1/Next if true/false
                     
 
