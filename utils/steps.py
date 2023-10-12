@@ -17,7 +17,7 @@ def fetch(prog: Program, pc: SecretInt):
 
 
 def step(prog: Program, pc: int, mem: list, weight: int):
-    
+
     instr = fetch(prog, pc)
     p1 = instr.src1
     p2 = instr.src2
@@ -102,7 +102,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
                 else:
                     return new_pc + p4, weight +1
     '''
-    new_pc = mux(instr.opcode == 100, new_pc,
+    new_pc = mux(instr.opcode == 0, new_pc,
                 mux(instr.opcode == 4,
                     mux(imm == 0, new_pc + p3,
                         mux(imm == 1,
@@ -144,7 +144,19 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     mem[mem[s_des]] = mux(instr.opcode == 7, mem[p3], mem[mem[s_des]])
 
 
-    # 100. Terminal
-    w = mux(instr.opcode == 100, 0, 1)
+    '''
+    Weights
+        0   Terminal (weight => 0)
+        1	Set const (weight => 1)
+        2	Add/Sub (weight => 2)
+        3	compare vals (weight => 2)
+        4	Jump (weight => 2)
+        5	Copy val by const (weight => 1)
+        6	Copy val by pointer in memory (weight => 2)
+        7	Copy value to a dest pointed by a pointer in memory (weight => 2)
+    '''
+                    # 0  1  2  3  4  5  6  7
+    weights = ZKList([0, 1, 2, 2, 2, 1, 2, 2])
+    w = weights[instr.opcode]
 
     return new_pc, weight + w

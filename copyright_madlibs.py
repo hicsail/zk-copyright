@@ -200,7 +200,7 @@ def main():
                     Instr(4, 8, 4, 24,  1, 8, 8, 8, 8, 1),   ## Step24  #4: Cond jump to Step0/25 if true/false
 
             # END
-                    Instr(100, 8, 8, 8, 8, 8, 8, 8, 8, 0),   ## Step25  #100: Terminal
+                    Instr(0, 8, 8, 8, 8, 8, 8, 8, 8, 0),   ## Step25  #100: Terminal
                     ]
         pro_prog = make_program(program)
 
@@ -291,7 +291,7 @@ def main():
                     Instr(4, 8, 4, hc_size*4+15, 1, 8, 8, 8, 8, 1),             #4: Cond jump to the very beginning/end if true/false
 
             # END
-                    Instr(100, 8, 8, 8, 8, 8, 8, 8, 8, 0),                      #100: Terminal
+                    Instr(0, 8, 8, 8, 8, 8, 8, 8, 8, 0),                      #100: Terminal
                     ]
         
         program = header + dynamic + footter
