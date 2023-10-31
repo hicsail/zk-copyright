@@ -81,7 +81,7 @@ def debug():
 
 
 def main():
-    DEBUG=False
+    DEBUG=True
     scale = 5
 
     n_iter = (scale*26) ** 2
