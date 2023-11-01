@@ -157,6 +157,7 @@ def step(prog: Program, pc: int, mem: list, weight: int):
     '''
                     # 0  1  2  3  4  5  6  7
     weights = ZKList([0, 1, 2, 2, 2, 1, 2, 2])
+    # weights = ZKList([0, 1, 1, 1, 1, 1, 1, 1])
     w = weights[instr.opcode]
 
     return new_pc, weight + w

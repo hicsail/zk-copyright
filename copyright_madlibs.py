@@ -15,7 +15,10 @@ def make_exp_y(scale):
 
     _exp_Y = exp_Y.split()  # Splitting the sentence into words
         
-    if len(_exp_Y) < scale: #Faker does not necessarily produce a fix number of words
+    ''' Faker does not necessarily produce a fix number of words, but outputs the fixed number of words 'on average'
+        Below if-else adjust the number of words by concatenating or removing to/from the tail of the sentence.
+    '''
+    if len(_exp_Y) < scale:
         increment = scale - len(_exp_Y)
         _exp_Y += _exp_Y[0:increment]
         exp_Y = " ".join(_exp_Y)
@@ -23,33 +26,28 @@ def make_exp_y(scale):
     elif len(_exp_Y) > scale:
         _exp_Y = _exp_Y[0:scale]
         exp_Y = " ".join(_exp_Y)
-
-    print("\nexp_y:", exp_Y)
-    print("\n_exp_y:", _exp_Y)
-
     return exp_Y, _exp_Y
 
 
-def get_blanks(exp_Y):
-
+def get_blanks(exp_Y, num_blanks):
     # Using integer division to ensure the second argument is an integer
-    indexes = random.sample(range(0, len(exp_Y)), max(1, len(exp_Y) // 3))
-    indexes.sort()
-    return indexes
+    blank_idx = random.sample(range(0, len(exp_Y)), num_blanks)
+    blank_idx.sort()
+    return blank_idx
 
 
-def make_madlibs(exp_Y, indexes):
+def make_madlibs(exp_Y, blank_idx):
 
     # Making madlibs
-    madlibs = ['_' if i in indexes else exp_Y[i] for i in range(len(exp_Y))]
+    madlibs = ['_' if i in blank_idx else exp_Y[i] for i in range(len(exp_Y))]
     
     return madlibs
 
 
-def make_nouns(exp_Y, indexes):
+def make_nouns(exp_Y, blank_idx):
 
     # Using list comprehension to get words at specific indices
-    nouns = [exp_Y[i] for i in indexes]
+    nouns = [exp_Y[i] for i in blank_idx]
 
     # Generate random words
     fake_add = Faker()
@@ -59,21 +57,26 @@ def make_nouns(exp_Y, indexes):
     return nouns
 
 
-def make_X(madlibs, nouns, indexes, from_x):
+def make_X(madlibs, nouns, blank_idx, from_x, aft_idx):
 
     X = madlibs.copy()
     i = 0
-    idx = range(len(indexes))
+    idx = range(len(blank_idx))
 
     for k in range(len(X)):
         if X[k] == '_':
+            ''' from_x represents a threshold index as to whether nouns be same as Y or not
+                Meaning, every noun in X matches Y till from_x and differs for noun in a blank(_)'''
+            
             if k < from_x:
                 X[k] = nouns[idx[i]]
                 i+=1
             else:
-                X[k] = random.sample(nouns[from_x:], 1)[0]
+                ''' aft_idx indicates a beginning index in 'nouns' for nouns not being used in Y
+                    Therefore, the below deliberately samples nouns from unused list so that X is different from Y'''
+                X[k] = random.sample(nouns[aft_idx:], 1)[0] 
 
-    X = ' '.join(X) # This is the madlibs text with all blanks are filled
+    X = ' '.join(X)
 
     return X
 
@@ -95,7 +98,7 @@ def debug():
     exp_Y = "I have a dog and cat , and every day I walk them to the park"
     print("\nexp_y:", exp_Y)
 
-    indexes = [3, 5, 9, 12, 15]
+    blank_idx = [3, 5, 9, 12, 15]
     
     madlibs = "I have a _ and _ , and every _ I walk _ to the _".split()
     print("\nmadlibs:", madlibs)
@@ -105,43 +108,45 @@ def debug():
 
     from_x = 10
 
-    X = make_X(madlibs, nouns, indexes, from_x)
+    X = make_X(madlibs, nouns, blank_idx, from_x)
     print('\nX: ', X)
 
-    return exp_Y, X, madlibs, nouns, indexes, from_x
+    return exp_Y, X, madlibs, nouns, blank_idx, from_x
 
 def main():
     
     DEBUG=False
-    scale = 4
-    n_iter = (scale*26) ** 2
-    threshold = n_iter # The program has to be performed within this (weight < )
+    scale = 10
+    n_iter = (11+4*(int(scale/2)+1)+11)*scale
+    threshold = n_iter*2 # The program has to be performed within this (weight < )
 
     if DEBUG==True:
-       exp_Y, X, madlibs, nouns, indexes, from_x = debug()
+       exp_Y, X, madlibs, nouns, blank_idx, from_x = debug()
 
     else:
         exp_Y, _exp_Y = make_exp_y(scale)
-
-        from_x = int(len(_exp_Y)/2)+1
-
-        indexes = get_blanks(_exp_Y)
+        print("\nexp_y:", exp_Y)
         
-        madlibs = make_madlibs(_exp_Y, indexes)
+        num_blanks = max(1, len(_exp_Y) // 3)
+        blank_idx = get_blanks(_exp_Y, num_blanks)
+
+        from_x = blank_idx[int(len(blank_idx)/2)]
+
+        madlibs = make_madlibs(_exp_Y, blank_idx)
         print("\nmadlibs:", madlibs)
 
-        nouns = make_nouns(_exp_Y, indexes)
+        nouns = make_nouns(_exp_Y, blank_idx)
         print("\nnouns:", nouns)
 
-        X = make_X(madlibs, nouns, indexes, from_x)
+        X = make_X(madlibs, nouns, blank_idx, from_x, int(len(blank_idx)/2))
         print('\nX: ', X)
 
     X_list = [string_to_int(_str) for _str in X.split()]
     nouns_list = [string_to_int(_str) for _str in nouns]
     madlibs_list = [string_to_int(_str) for _str in madlibs]
     
-    hc_size = len([x for x in indexes if x >= from_x])
-    non_hc_size = len(indexes) - hc_size
+    hc_size = len([x for x in blank_idx if x >= from_x])
+    non_hc_size = len(blank_idx) - hc_size
     hcs = [string_to_int(_str) for _str in nouns[non_hc_size: non_hc_size + hc_size]]
 
     us = string_to_int("_")
@@ -169,7 +174,7 @@ def main():
         nouns_list = nouns_list #10-25
         madlibs_list = madlibs_list #27 - 42
         X_list = X_list #44 - 59
-        res_list = [0] * max(4, ml_len) #61 - 76 Need min 4 space so that a program pointer at the final step does not exceed memory length
+        res_list = [0] * max(7, ml_len) #61 - 76 Need min 4 space so that a program pointer at the final step does not exceed memory length
 
         bot = 0
 
@@ -246,7 +251,6 @@ def main():
             pc, weight = step(pro_prog, pc, mem, weight)
 
         prod_Y = reveal(mem, s_rs, s_rs + ml_len)
-
         print('\nprod_Y:', prod_Y)
 
         res = mux(exp_Y == prod_Y,
@@ -269,7 +273,7 @@ def main():
         bots_list = [0] * X_len #44 - 59
         res_list = [0] * ml_len #61 - 76
 
-        hc_size = len(indexes)
+        hc_size = len(blank_idx)
         hcs = [nouns_list[i] for i in range(hc_size)]
         bot = 0
 
@@ -337,9 +341,10 @@ def main():
 
         for i in range(n_iter):
             pc, weight = step(repro_prog, pc, repro_mem, weight)
-
+        
         reprod_Y = reveal(repro_mem, s_rs, s_rs + ml_len)
         print('\nreprod_Y: ', reprod_Y)
+        
         res = mux(exp_Y == reprod_Y, 
                   mux(weight <= threshold, SecretInt(0), SecretInt(1))
                   , SecretInt(1))
