@@ -81,11 +81,11 @@ def debug():
 
 
 def main():
-    DEBUG=True
+    DEBUG=False
     scale = 5
 
-    n_iter = (scale*26) ** 2
-    threshold = n_iter # The program has to be performed within this (weight < )
+    n_iter = int(max(1, scale/10) + 22*(scale+1)*(scale+2)/2 + 4*(scale+1))
+    threshold = n_iter*2 # The program has to be performed within this (weight < )
 
     if DEBUG==True:
        bg, honey_entries, exp_Y = debug()
