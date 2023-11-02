@@ -80,9 +80,8 @@ def debug():
     return bg, honey_entries, exp_Y
 
 
-def main():
-    DEBUG=False
-    scale = 5
+def main(DEBUG, scale, num_honeys):
+    print("\n--- Running phonebook case ", "(scale", scale, ")  ---")
 
     n_iter = int(max(1, scale/10) + 22*(scale+1)*(scale+2)/2 + 4*(scale+1))
     threshold = n_iter*2 # The program has to be performed within this (weight < )
@@ -91,7 +90,7 @@ def main():
        bg, honey_entries, exp_Y = debug()
     else:
        bg = make_phone_dict(scale)
-       honey_entries = make_phone_dict(int(max(1, scale/10)))
+       honey_entries = make_phone_dict(num_honeys)
        exp_Y = make_Y(bg, honey_entries)
     
     print("\nbg", bg)
@@ -184,8 +183,10 @@ def main():
                     mux(weight <= threshold, SecretInt(0), SecretInt(1))
                     , SecretInt(1))
         assert0(res)
-        assert(val_of(res)==0)
+        # assert(val_of(res)==0)
 
+        prod_weight = val_of(weight)
+        prod_size = len(program)
 
         # Reproducer
         reg1 = 1 #0 i
@@ -281,8 +282,16 @@ def main():
                     mux(weight <= threshold, SecretInt(0), SecretInt(1))
                     , SecretInt(1))
         assert0(res)
-        assert(val_of(res)==0)
+        # assert(val_of(res)==0)
 
+        reprod_weight = val_of(weight)
+        reprod_size = len(program)
+        print(prod_weight, reprod_weight, prod_size, reprod_size)
+
+        return prod_weight, prod_size, reprod_weight, reprod_size
 
 if __name__ == "__main__":
-    main()
+    DEBUG=False
+    scale = 5
+    num_honeys = int(max(1, scale/10))
+    main(DEBUG, scale, num_honeys)

@@ -4,7 +4,7 @@ from utils.steps import step
 from utils.functions import make_program, int_to_string, string_to_int
 import random
 from faker import Faker
-
+import pandas as pd
 
 def make_exp_y(scale):
   
@@ -113,10 +113,9 @@ def debug():
 
     return exp_Y, X, madlibs, nouns, blank_idx, from_x
 
-def main():
+def main(DEBUG, scale, num_blanks):
+    print("\n--- Running madlibs case ", "(scale", scale, ")  ---")
     
-    DEBUG=False
-    scale = 10
     n_iter = (11+4*(int(scale/2)+1)+11)*scale
     threshold = n_iter*2 # The program has to be performed within this (weight < )
 
@@ -127,7 +126,6 @@ def main():
         exp_Y, _exp_Y = make_exp_y(scale)
         print("\nexp_y:", exp_Y)
         
-        num_blanks = max(1, len(_exp_Y) // 3)
         blank_idx = get_blanks(_exp_Y, num_blanks)
 
         from_x = blank_idx[int(len(blank_idx)/2)]
@@ -259,6 +257,9 @@ def main():
         assert0(res)
         assert(val_of(res)==0)
 
+        prod_weight = val_of(weight)
+        prod_size = len(program)
+
 
         # Reproducer
         
@@ -351,5 +352,13 @@ def main():
         assert0(res)
         assert(val_of(res)==0)
 
+        reprod_weight = val_of(weight)
+        reprod_size = len(program)
+
+        return prod_weight, prod_size, reprod_weight, reprod_size
+
 if __name__ == "__main__":
-        main()
+        DEBUG=False
+        scale = 5
+        num_blanks = 5//2
+        main(DEBUG=DEBUG, scale=scale, num_blanks=num_blanks)
