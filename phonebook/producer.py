@@ -5,7 +5,6 @@ from utils.functions import make_program
 from .helpers import reveal
 
 def producer(X, n_iter, threshold, exp_Y):
-    # Producer
     reg1 = 1 #0 i
     reg2 = 0 #2 j
     reg3 = 0 #4 temp index

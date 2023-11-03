@@ -5,7 +5,6 @@ from utils.functions import make_program, string_to_int
 from .helpers import reveal
 
 def reproducer(bg, honey_entries, program, n_iter, threshold, exp_Y):
-    # Reproducer
     reg1 = 1 #0 i
     reg2 = 0 #2 j
     reg3 = 0 #4 temp index
@@ -32,7 +31,7 @@ def reproducer(bg, honey_entries, program, n_iter, threshold, exp_Y):
             Instr(1, 12, 12, 12, 12, 12, honey_entries[i], idxHE + i, 12, 0),            #6: Set hc1 to mem[24]
         ]
         
-    program = header + program #The body part other than above hard code entry is same as the producer's
+    program = header + program #The of the code is same as the producer's
 
     repro_prog = make_program(program)
 
