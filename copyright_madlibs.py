@@ -4,7 +4,6 @@ from utils.steps import step
 from utils.functions import make_program, int_to_string, string_to_int
 import random
 from faker import Faker
-import pandas as pd
 
 def make_exp_y(scale):
   
