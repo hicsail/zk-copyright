@@ -112,7 +112,7 @@ def debug():
 
     return exp_Y, X, madlibs, nouns, blank_idx, from_x
 
-def execute(DEBUG, scale, num_blanks):
+def run(DEBUG, scale, num_blanks):
     print("\n--- Running madlibs case ", "(scale", scale, ")  ---")
     
     n_iter = (11+4*(int(scale/2)+1)+11)*scale
