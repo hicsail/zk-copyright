@@ -1,29 +1,9 @@
-from picozk import *
 from utils.datatypes import Instr
-from utils.steps import step
-from utils.functions import make_program
-from .helpers import reveal
+from utils.functions import string_to_int
 
-def reproducer(nouns_list, madlibs_list, X_len, ml_len, blank_idx, s_ml, us, s_rs, n_iter, exp_Y, threshold):
-   
-    reg1 = 0 #0
-    reg2 = 0 #2
-    reg3 = 0 #4
-    reg4 = 0 #6
-    dummy_int = 0 #8
+def assembly(is_producer, fwd, bwd, s_ml, hc_size, hcs, s_rs, ml_len, from_x=None, s_xl=None):
 
-    nouns_list = nouns_list #10-25
-    madlibs_list = madlibs_list #27 - 42
-    bots_list = [0] * X_len #44 - 59
-    res_list = [0] * ml_len #61 - 76
-
-    hc_size = len(blank_idx)
-    hcs = [nouns_list[i] for i in range(hc_size)]
-    bot = 0
-
-    repro_mem = ZKList([reg1] + [bot] + [reg2] + [bot] + [reg3] + [bot] + [reg4]
-                    + [bot] + [dummy_int] + [bot] + nouns_list + [bot] 
-                    + madlibs_list + [bot] + bots_list + [bot] + res_list)
+    us = string_to_int("_")
 
     # Hard-Code all blanks from the nouns list
     header = [
@@ -33,9 +13,20 @@ def reproducer(nouns_list, madlibs_list, X_len, ml_len, blank_idx, s_ml, us, s_r
                 Instr(2, 8, 8, s_ml, 8, 8, 8, 4, 8, 0),                    #2: Add s_ml to idx4 (temp-idx/reg3) and shift the pointer (temp-idx) to the madlibs list
                 Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 0),                       #6: Set idx4 (temp-idx/reg3) of madlibs list to idx2 (reg2)
                 Instr(3, 8, 8, 0, us, 2, 8, 2, 8, 0),                      #3: Compare idx2 (reg2) and "_" and assign result to idx2 (reg2)
-                Instr(4, 8, 2, 1, hc_size*4+3, 8, 8, 8, 8, 2),             #4: Cond jump to the first step in the dynamic part/Point2 if true/false
+                Instr(4, 8, 2, 1, hc_size*4+fwd, 8, 8, 8, 8, 2),           #4: Cond jump to the first step in the dynamic part/Point2 if true/false
             ]
+    header2 = [
+                ## SECOND IF index of madlibs_words is less than lim (upto idx of third)
+                Instr(3, 8, 8,  2,from_x, 0, 8, 2, 8, 0),                       #3: Compare idx0 (idx-i/reg1) < from_x and set the result to idx2 (reg2)
+                Instr(4, 8, 2,  1,  5, 8, 8, 8, 8, 2),                          #4: Cond jump to Next/Dynamic if true/false
 
+            ## IF Both TRUE (Append from X list)
+                Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),                            #5: Copy idx0 (idx-i/reg1) to idx4 (temp-idx/reg3)
+                Instr(2, 8, 8, s_xl, 8, 8, 8, 4, 8, 0),                         #2: Add s_xl to idx4 (temp-idx/reg3) and shift the pointer (temp-idx) to an appropriate position of the X_list
+                Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 0),                            #6: Set idx4 (temp-idx/reg3) of X_words to idx2 (reg2)
+                Instr(4, 8, 2, 1, hc_size*4+6, 8, 8, 8, 8, 2),                  #4: Cond jump to the first step in the dynamic part/Point2 if true/false
+            
+    ]
 
     dynamic = []
     for i in range(hc_size, 0, -1):
@@ -71,30 +62,13 @@ def reproducer(nouns_list, madlibs_list, X_len, ml_len, blank_idx, s_ml, us, s_r
 
             ## Determine whether or not to iterate over again depending idx-i< len(madlibs_words)
                 Instr(3, 8, 8, 2, ml_len, 0, 8, 4, 8, 0),                   #3: Compare idx0 (idx-i) < p5 (ml_len) and assign the result to idx4 (reg3)
-                Instr(4, 8, 4, hc_size*4+15, 1, 8, 8, 8, 8, 1),             #4: Cond jump to the very beginning/end if true/false
+                Instr(4, 8, 4, hc_size*4+bwd,  1, 8, 8, 8, 8, 1),           #4: Cond jump to the very beginning/end if true/false
 
         # END
                 Instr(0, 8, 8, 8, 8, 8, 8, 8, 8, 0),                        #0: Terminal
             ]
     
-    program = header + dynamic + footer
-    repro_prog = make_program(program)
-
-    pc = 0
-    weight = 0
-
-    for i in range(n_iter):
-        pc, weight = step(repro_prog, pc, repro_mem, weight)
-    
-    reprod_Y = reveal(repro_mem, s_rs, s_rs + ml_len)
-    print('\nreprod_Y: ', reprod_Y)
-    
-    res = mux(exp_Y == reprod_Y, 
-                mux(weight <= threshold, SecretInt(0), SecretInt(1))
-                , SecretInt(1))
-    assert0(res)
-    assert(val_of(res)==0)
-
-    reprod_weight = val_of(weight)
-    reprod_size = len(program)
-    return reprod_weight, reprod_size
+    if is_producer==True:
+        return header + header2 + dynamic + footer
+    else:
+        return header + dynamic + footer

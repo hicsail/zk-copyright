@@ -1,8 +1,6 @@
 from picozk import *
-from utils.datatypes import Instr
-from utils.steps import step
 from .debug import debug
-from .helpers import make_X, reveal, make_phone_dict, make_Y
+from .helpers import make_X, make_phone_dict, make_Y
 from .producer import producer
 from .reproducer import reproducer
 
