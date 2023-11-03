@@ -1,5 +1,13 @@
 from utils.datatypes import Instr
 
+'''
+    This method assembles the instructions for the phonebook copyright case. 
+    Although both the producer and reproducer share the majority of their instructions in the footer, 
+    the exact set of instructions is determined by the 'is_producer' argument.
+
+    One key element of the phonebook case is the requirement for the reproducer to manually incorporate honey_entries.
+'''
+
 def assembly(is_producer, n, honey_entries=None, idxHE=None):
 
     program = [

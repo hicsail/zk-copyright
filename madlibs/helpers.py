@@ -3,6 +3,17 @@ from utils.functions import int_to_string
 import random
 from faker import Faker
 
+'''
+    The following functions support the execution of the program for the madlibs case:
+
+    - make_exp_y: Constructs a sentence with a specified length.
+    - get_blanks: Generates a list of indices corresponding to blank spaces in the sentence produced by make_exp_y.
+    - make_madlibs: Produces a list of words and "_" based on the outputs from the aforementioned methods.
+    - make_nouns: Creates a list of nouns using exp_y and indices of blanks, then appends random English words.
+    - make_X: Constructs 'X', exclusively used by the producer.
+    - reveal: Transforms a picozk-listified sentence into a string.
+'''
+
 
 def make_exp_y(scale):
   
@@ -50,7 +61,7 @@ def make_nouns(exp_Y, blank_idx):
     # Generate random words
     fake_add = Faker()
 
-    addition = fake_add.words(nb=3, unique=False)
+    addition = fake_add.words(nb=int(len(exp_Y)//2), unique=False)
     nouns += addition
     return nouns
 

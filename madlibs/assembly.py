@@ -1,6 +1,17 @@
 from utils.datatypes import Instr
 from utils.functions import string_to_int
 
+'''
+    This method compiles the instructions for the madlibs copyright case. 
+    While both the producer and reproducer share common instructions in the header and footer, 
+    the specific set of instructions varies based on the 'is_producer' argument.
+
+    A fundamental aspect of the madlibs case is that the reproducer needs to fill in more blanks, denoted by hc_size. 
+    It's also noteworthy that the producer copies certain nouns from X, as seen in the 'header2' section. Due to this 'header2' section, 
+    the jump steps in line 5 and the penultimate line differ by fwd/bwd when compared to the reproducer's instruction set.
+'''
+
+
 def assembly(is_producer, fwd, bwd, s_ml, hc_size, hcs, s_rs, ml_len, from_x=None, s_xl=None):
 
     us = string_to_int("_")
@@ -16,15 +27,15 @@ def assembly(is_producer, fwd, bwd, s_ml, hc_size, hcs, s_rs, ml_len, from_x=Non
                 Instr(4, 8, 2, 1, hc_size*4+fwd, 8, 8, 8, 8, 2),           #4: Cond jump to the first step in the dynamic part/Point2 if true/false
             ]
     header2 = [
-                ## SECOND IF index of madlibs_words is less than lim (upto idx of third)
-                Instr(3, 8, 8,  2,from_x, 0, 8, 2, 8, 0),                       #3: Compare idx0 (idx-i/reg1) < from_x and set the result to idx2 (reg2)
-                Instr(4, 8, 2,  1,  5, 8, 8, 8, 8, 2),                          #4: Cond jump to Next/Dynamic if true/false
+                ## SECOND IF index of madlibs_words is less than lim
+                Instr(3, 8, 8,  2,from_x, 0, 8, 2, 8, 0),                  #3: Compare idx0 (idx-i/reg1) < from_x and set the result to idx2 (reg2)
+                Instr(4, 8, 2,  1,  5, 8, 8, 8, 8, 2),                     #4: Cond jump to Next/Dynamic if true/false
 
             ## IF Both TRUE (Append from X list)
-                Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),                            #5: Copy idx0 (idx-i/reg1) to idx4 (temp-idx/reg3)
-                Instr(2, 8, 8, s_xl, 8, 8, 8, 4, 8, 0),                         #2: Add s_xl to idx4 (temp-idx/reg3) and shift the pointer (temp-idx) to an appropriate position of the X_list
-                Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 0),                            #6: Set idx4 (temp-idx/reg3) of X_words to idx2 (reg2)
-                Instr(4, 8, 2, 1, hc_size*4+6, 8, 8, 8, 8, 2),                  #4: Cond jump to the first step in the dynamic part/Point2 if true/false
+                Instr(5, 0, 8, 8, 8, 8, 8, 4, 8, 0),                       #5: Copy idx0 (idx-i/reg1) to idx4 (temp-idx/reg3)
+                Instr(2, 8, 8, s_xl, 8, 8, 8, 4, 8, 0),                    #2: Add s_xl to idx4 (temp-idx/reg3) and shift the pointer (temp-idx) to an appropriate position of the X_list
+                Instr(6, 4, 8, 8, 8, 8, 8, 2, 8, 0),                       #6: Set idx4 (temp-idx/reg3) of X_words to idx2 (reg2)
+                Instr(4, 8, 2, 1, hc_size*4+6, 8, 8, 8, 8, 2),             #4: Cond jump to the first step in the dynamic part/Point2 if true/false
             
     ]
 
