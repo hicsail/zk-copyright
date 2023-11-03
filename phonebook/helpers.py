@@ -6,7 +6,6 @@ def make_X(bg, honey_entries):
     res = bg.copy()
     res.update(honey_entries)
     res = dict(sorted(res.items()))
-    print("\nX", res)
     res = {string_to_int(k): string_to_int(v) for k, v in res.items()}
     return res
 

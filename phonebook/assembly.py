@@ -1,25 +1,7 @@
-from picozk import *
 from utils.datatypes import Instr
-from utils.steps import step
-from utils.functions import make_program
-from .helpers import reveal
 
-def producer(X, n_iter, threshold, exp_Y):
-    reg1 = 1 #0 i
-    reg2 = 0 #2 j
-    reg3 = 0 #4 temp index
-    reg4 = 0 #6 res etc..
-    reg5 = 0 #8 temp
-    reg6 = 0 #10 temp
-    dummy_int = 0 #12
-    X_list = [i for k, v in X.items() for i in (k, v)] #14-27
+def assembly(is_producer, n, honey_entries=None, idxHE=None):
 
-    bot = 0
-    
-    mem = ZKList([reg1] + [bot] + [reg2] + [bot] + [reg3] 
-                    + [bot] + [reg4] + [bot] + [reg5] + [bot] 
-                    + [reg6] + [bot] + [dummy_int] + [bot] + X_list)
-    n = len(mem)
     program = [
 
         ## Set j = 15
@@ -71,24 +53,14 @@ def producer(X, n_iter, threshold, exp_Y):
         # END
         Instr(0, 12, 12, 12, 12, 12, 12, 12, 12, 0),             #100: Terminal
     ]
-    pro_prog = make_program(program)
-
-    pc = 0
-    weight = 0
-    for i in range(n_iter):
-        pc, weight = step(pro_prog, pc, mem, weight)
-
-    prod_Y = reveal(mem, 14, len(mem))
-    print('\nprod_Y:', prod_Y)
-
-    res = mux(exp_Y == prod_Y,
-                mux(weight <= threshold, SecretInt(0), SecretInt(1))
-                , SecretInt(1))
-    assert0(res)
-    assert(exp_Y == prod_Y)
-    assert(val_of(weight) <= threshold)
-
-    prod_weight = val_of(weight)
-    prod_size = len(program)
-
-    return prod_weight, prod_size, program
+    
+    if is_producer==True:
+        return program
+    else:
+        header = []
+        # Hard code honey entries
+        for i in range(len(honey_entries)):
+            header += [
+                Instr(1, 12, 12, 12, 12, 12, honey_entries[i], idxHE + i, 12, 0),            #6: Set hc1 to mem[24]
+            ]
+        return header + program

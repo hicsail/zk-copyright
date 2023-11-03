@@ -6,6 +6,7 @@ from .execute import execute
 from .assembly import assembly
 
 def run(DEBUG, scale, num_blanks):
+
     print("\n--- Running madlibs case ", "(scale", scale, " num_blanks", num_blanks, ")  ---")
     
     if DEBUG==True:
@@ -14,18 +15,15 @@ def run(DEBUG, scale, num_blanks):
 
     else:
         exp_Y, _exp_Y = make_exp_y(scale)
-        print("\nexp_y:", exp_Y)
         
         blank_idx = get_blanks(_exp_Y, num_blanks)
 
         from_x = blank_idx[int(len(blank_idx)/2)]
 
         madlibs = make_madlibs(_exp_Y, blank_idx)
-        print("\nmadlibs:", madlibs)
-
+        
         nouns = make_nouns(_exp_Y, blank_idx)
-        print("\nnouns:", nouns)
-
+        
 
     # Configure # of iteration and threshold to validate proof
     n_iter = (11+4*(int(scale/2)+1)+11)*scale
@@ -35,7 +33,12 @@ def run(DEBUG, scale, num_blanks):
     # Create X for producer function
     from_x = blank_idx[int(len(blank_idx)/2)]
     X = make_X(madlibs, nouns, blank_idx, from_x, int(len(blank_idx)/2))
-    print('\nX: ', X)
+    
+    # Print out components
+    print("\n  madlibs:", madlibs)
+    print("\n  nouns:", nouns)
+    print('\n  X: ', X)
+    print("\n  exp_y:", exp_Y)
 
 
     # Listify all components
@@ -59,11 +62,14 @@ def run(DEBUG, scale, num_blanks):
     s_xl = s_ml + ml_len + 1
     s_rs = s_xl + X_len + 1
 
+
     
     '''
         ----- Producer execution -----
     '''
     
+    print("\n  Running Producer function")
+
     # Build Producer memory
     reg1 = 0 #0
     reg2 = 0 #2
@@ -90,9 +96,12 @@ def run(DEBUG, scale, num_blanks):
     prod_weight, prod_size = execute(program, mem, ml_len, s_rs, n_iter, exp_Y, threshold)
 
 
+
     '''
         ----- Re-producer execution -----
     '''
+    
+    print("\n  Running Reproducer function")
     
     # Build Reproducer memory
     reg1 = 0 #0

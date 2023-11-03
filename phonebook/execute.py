@@ -3,23 +3,24 @@ from utils.steps import step
 from utils.functions import make_program
 from .helpers import reveal
 
-def reproducer(program, repro_mem, n_iter, threshold, exp_Y):
-
-    repro_prog = make_program(program)
+def execute(program, mem, n_iter, threshold, exp_Y):
+    
+    prog = make_program(program)
 
     pc = 0
     weight = 0
     for i in range(n_iter):
-        pc, weight = step(repro_prog, pc, repro_mem, weight)
+        pc, weight = step(prog, pc, mem, weight)
 
-    repro_Y = reveal(repro_mem, 14, len(repro_mem))
-    print('\nreprod_Y:', repro_Y)
+    Y = reveal(mem, 14, len(mem))
+    print('\n     Output:', Y)
 
-    res = mux(exp_Y == repro_Y,
+    res = mux(exp_Y == Y,
                 mux(weight <= threshold, SecretInt(0), SecretInt(1))
                 , SecretInt(1))
+    
     assert0(res)
-    assert(exp_Y == repro_Y)
+    assert(exp_Y == Y)
     assert(val_of(weight) <= threshold)
 
     return val_of(weight), len(program)
