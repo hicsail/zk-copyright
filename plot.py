@@ -1,18 +1,18 @@
+from picozk import *
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.lines import Line2D
 import pandas as pd
 import numpy as np
 from scipy.interpolate import griddata
-import copyright_madlibs
-import copyright_phonebook
+from madlibs import madlibs
+from phonebook import phonebook
 
 def generate_data(DEBUG, scale, num_hc, csv):
     data = []
     if csv == 'output_madlibs.csv':
-        prod_weight, prod_size, reprod_weight, reprod_size = copyright_madlibs.main(DEBUG=DEBUG, scale=scale, num_blanks=num_hc)
+        prod_weight, prod_size, reprod_weight, reprod_size = madlibs.run(DEBUG=DEBUG, scale=scale, num_blanks=num_hc)
     else:
-        prod_weight, prod_size, reprod_weight, reprod_size = copyright_phonebook.main(DEBUG=DEBUG, scale=scale, num_honeys=num_hc)
+        prod_weight, prod_size, reprod_weight, reprod_size = phonebook.run(DEBUG=DEBUG, scale=scale, num_honeys=num_hc)
     data.append({
         'prod/reprod': 'producer',
         'scale': scale,
@@ -91,12 +91,15 @@ def main(csv, obj):
 
 if __name__ == "__main__":
     
-    csv = 'output_phonebook.csv'
+    p = pow(2,256) - pow(2,32) - pow(2,9) - pow(2,8) - pow(2,7) - pow(2,6) - pow(2,4) - 1
 
-    generate_dataframe(csv)
+    with PicoZKCompiler('irs/picozk_test', field=[p], options=['ram']):
+        csv = 'output_phonebook.csv'
 
-    obj = 'size'
-    main(csv, obj)
+        generate_dataframe(csv)
 
-    obj = 'weight'
-    main(csv, obj)
+        obj = 'size'
+        main(csv, obj)
+
+        obj = 'weight'
+        main(csv, obj)
