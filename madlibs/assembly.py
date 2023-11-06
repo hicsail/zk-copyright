@@ -1,7 +1,7 @@
 from utils.datatypes import Instr
 from utils.functions import string_to_int
 
-'''
+"""
     This method compiles the instructions for the madlibs copyright case. 
     While both the producer and reproducer share common instructions in the header and footer, 
     the specific set of instructions varies based on the 'is_producer' argument.
@@ -9,11 +9,10 @@ from utils.functions import string_to_int
     A fundamental aspect of the madlibs case is that the reproducer needs to fill in more blanks, denoted by hc_size. 
     It's also noteworthy that the producer copies certain nouns from X, as seen in the 'header2' section. Due to this 'header2' section, 
     the jump steps in line 5 and the penultimate line differ by fwd/bwd when compared to the reproducer's instruction set.
-'''
+"""
 
 
 def assembly(is_producer, fwd, bwd, s_ml, hc_size, hcs, s_rs, ml_len, from_x=None, s_xl=None):
-
     us = string_to_int("_")
     # fmt: off
     # Hard-Code all blanks from the nouns list
@@ -79,8 +78,8 @@ def assembly(is_producer, fwd, bwd, s_ml, hc_size, hcs, s_rs, ml_len, from_x=Non
                 Instr(0, 8, 8, 8, 8, 8, 8, 8, 8, 0),                        #0: Terminal
             ]
     # fmt: on
-    
-    if is_producer==True:
+
+    if is_producer == True:
         return header + header2 + dynamic + footer
     else:
         return header + dynamic + footer

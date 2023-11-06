@@ -1,15 +1,15 @@
 from utils.datatypes import Instr
 
-'''
+"""
     This method assembles the instructions for the phonebook copyright case. 
     Although both the producer and reproducer share the majority of their instructions in the footer, 
     the exact set of instructions is determined by the 'is_producer' argument.
 
     One key element of the phonebook case is the requirement for the reproducer to manually incorporate honey_entries.
-'''
+"""
+
 
 def assembly(is_producer, n, honey_entries=None, idxHE=None):
-
     # fmt: off
     program = [
 
@@ -63,14 +63,16 @@ def assembly(is_producer, n, honey_entries=None, idxHE=None):
         Instr(0, 12, 12, 12, 12, 12, 12, 12, 12, 0),             #100: Terminal
     ]
     # fmt: on
-    
-    if is_producer==True:
+
+    if is_producer == True:
         return program
     else:
         header = []
         # Hard code honey entries
         for i in range(len(honey_entries)):
             header += [
-                Instr(1, 12, 12, 12, 12, 12, honey_entries[i], idxHE + i, 12, 0),            #6: Set hc1 to mem[24]
+                Instr(
+                    1, 12, 12, 12, 12, 12, honey_entries[i], idxHE + i, 12, 0
+                ),  # 6: Set hc1 to mem[24]
             ]
         return header + program

@@ -83,7 +83,7 @@ def run(DEBUG, scale, num_honeys):
     _honey_entries = [0] * len(honey_entries)  # 24-27
 
     bot = 0
-    
+
     # fmt: off
     repro_mem = ZKList([reg1] + [bot] + [reg2] + [bot] + [reg3] 
                         + [bot] + [reg4] + [bot] + [reg5] + [bot] 
