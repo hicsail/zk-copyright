@@ -1,4 +1,3 @@
 Faker==19.6.2
-picozk @ file:///Users/hishii/Desktop/Project_SIEVE/zk-copyright/picozk
 python-dateutil==2.8.2
 six==1.16.0
