@@ -1,6 +1,7 @@
 from picozk import *
 from .datatypes import Program
 
+
 def make_program(prog):
     length = len(prog)
     opcode = ZKList([0 for _ in range(length)])
@@ -26,16 +27,14 @@ def make_program(prog):
         s_dest[i] = instr.s_dest
         imm[i] = instr.imm
 
-    return Program(opcode, src1, src2, src3, src4, src5, src6,
-                   dest, s_dest,
-                   imm)
+    return Program(opcode, src1, src2, src3, src4, src5, src6, dest, s_dest, imm)
 
 
 def string_to_int(s):
-    return int(''.join(format(ord(char), '08b') for char in s), 2)
+    return int("".join(format(ord(char), "08b") for char in s), 2)
 
 
 def int_to_string(n):
-    binary_str = format(n, 'b')
-    binary_str = '0' * ((8 - len(binary_str) % 8) % 8) + binary_str
-    return ''.join(chr(int(binary_str[i:i+8], 2)) for i in range(0, len(binary_str), 8))
+    binary_str = format(n, "b")
+    binary_str = "0" * ((8 - len(binary_str) % 8) % 8) + binary_str
+    return "".join(chr(int(binary_str[i : i + 8], 2)) for i in range(0, len(binary_str), 8))

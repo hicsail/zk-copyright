@@ -10,6 +10,7 @@ from utils.datatypes import Instr
 
 def assembly(is_producer, n, honey_entries=None, idxHE=None):
 
+    # fmt: off
     program = [
 
         ## Set j = 15
@@ -61,6 +62,7 @@ def assembly(is_producer, n, honey_entries=None, idxHE=None):
         # END
         Instr(0, 12, 12, 12, 12, 12, 12, 12, 12, 0),             #100: Terminal
     ]
+    # fmt: on
     
     if is_producer==True:
         return program

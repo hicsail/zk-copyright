@@ -15,7 +15,7 @@ from utils.functions import string_to_int
 def assembly(is_producer, fwd, bwd, s_ml, hc_size, hcs, s_rs, ml_len, from_x=None, s_xl=None):
 
     us = string_to_int("_")
-
+    # fmt: off
     # Hard-Code all blanks from the nouns list
     header = [
 
@@ -78,6 +78,7 @@ def assembly(is_producer, fwd, bwd, s_ml, hc_size, hcs, s_rs, ml_len, from_x=Non
         # END
                 Instr(0, 8, 8, 8, 8, 8, 8, 8, 8, 0),                        #0: Terminal
             ]
+    # fmt: on
     
     if is_producer==True:
         return header + header2 + dynamic + footer
