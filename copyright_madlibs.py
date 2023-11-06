@@ -10,4 +10,4 @@ if __name__ == "__main__":
     
     with PicoZKCompiler("irs/picozk_test", field=[p], options=["ram"]):
         madlibs.run(DEBUG=DEBUG, scale=scale, num_blanks=num_blanks)
-    # fmt: on 
+    # fmt: on
