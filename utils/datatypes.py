@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from picozk import *
 
+
 @dataclass
 class Instr:
     opcode: int
@@ -13,6 +14,7 @@ class Instr:
     dest: int
     s_dest: int
     imm: int
+
 
 @dataclass
 class Program:

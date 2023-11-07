@@ -2,7 +2,7 @@ import random
 from picozk import *
 from utils.functions import word_to_integer
 
-'''
+"""
     The following functions support the execution of the program for the madlibs case:
 
     - make_phone_entry: Produce random phone entry, name as key and phone# as value
@@ -10,16 +10,15 @@ from utils.functions import word_to_integer
     - make_exp_y: Make a completed phonebook with the aforementioned phonebook and honeywords
     - make_X: Constructs 'X', exclusively used by the producer.
     - reveal: Transforms a picozk-listified sentence into a stringified dictionary.
-'''
+"""
 
 
 def make_phone_entry(bg):
-
-    elem = ''
+    elem = ""
     for i in range(10):
         ent = str(random.randint(0, 9))
-        if i == 3 or i==6:
-            elem+='-'
+        if i == 3 or i == 6:
+            elem += "-"
         elem += ent
 
     key = str(random.randint(0, 2**61 - 1))

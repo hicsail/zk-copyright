@@ -9,5 +9,6 @@ if __name__ == "__main__":
 
     p = 2305843009213693951
 
-    with PicoZKCompiler('irs/picozk_test', field=[p], options=['ram']):
+    with PicoZKCompiler("picozk_test", field=[p], options=["ram"]):
         phonebook.run(DEBUG, scale, num_honeys)
+    # fmt: on
