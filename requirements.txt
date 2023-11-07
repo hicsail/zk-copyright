@@ -1,4 +1,12 @@
+black==23.10.1
+cffi==1.15.1
+click==8.1.7
+docutils==0.20.1
 Faker==19.6.2
-picozk @ file:///Users/hishii/Desktop/Project_SIEVE/zk-copyright/picozk
+mypy-extensions==1.0.0
+packaging==23.2
+pathspec==0.11.2
+platformdirs==3.11.0
+pycparser==2.21
 python-dateutil==2.8.2
 six==1.16.0
