@@ -1,6 +1,6 @@
 from picozk import *
 from .debug import debug
-from .helpers import make_X, make_phone_dict, make_exp_y, string_to_int
+from .helpers import make_X, make_phone_dict, make_exp_y
 from .execute import execute
 from .assembly import assembly
 
@@ -79,8 +79,8 @@ def run(DEBUG, scale, num_honeys):
     reg5 = 0 #8 temp
     reg6 = 0 #10 temp
     dummy_int = 0 #12
-    bg_list = [string_to_int(i) for k, v in bg.items() for i in (k, v)] #14-23
-    honey_entries = [string_to_int(i) for k, v in honey_entries.items() for i in (k, v)]
+    bg_list = [i for k, v in bg.items() for i in (k, v)] #14-23
+    honey_entries = [i for k, v in honey_entries.items() for i in (k, v)]
     _honey_entries = [0] * len(honey_entries) #24-27
     
     bot = 0
