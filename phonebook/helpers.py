@@ -22,7 +22,7 @@ def make_phone_entry(bg):
             elem+='-'
         elem += ent
 
-    key = str(random.randint(0, 2**63 - 1))
+    key = str(random.randint(0, 2**61 - 1))
 
     bg.update({key:elem})
     return bg

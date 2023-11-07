@@ -1,4 +1,5 @@
 from picozk import *
+import hashlib
 from .datatypes import Program
 
 def make_program(prog):
@@ -39,3 +40,15 @@ def int_to_string(n):
     binary_str = format(n, 'b')
     binary_str = '0' * ((8 - len(binary_str) % 8) % 8) + binary_str
     return ''.join(chr(int(binary_str[i:i+8], 2)) for i in range(0, len(binary_str), 8))
+
+
+
+def word_to_integer(word_to_convert):
+
+    hash = hashlib.sha256(word_to_convert.encode('utf-8')).digest()
+
+    hash = int.from_bytes(hash, 'big')
+
+    hash = hash >> 8*28+1
+
+    return hash

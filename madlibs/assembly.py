@@ -1,5 +1,5 @@
 from utils.datatypes import Instr
-from utils.functions import string_to_int
+from utils.functions import word_to_integer
 
 '''
     This method compiles the instructions for the madlibs copyright case. 
@@ -14,7 +14,7 @@ from utils.functions import string_to_int
 
 def assembly(is_producer, fwd, bwd, s_ml, hc_size, hcs, s_rs, ml_len, from_x=None, s_xl=None):
 
-    us = string_to_int("_")
+    us = word_to_integer("_")
 
     # Hard-Code all blanks from the nouns list
     header = [
