@@ -71,17 +71,17 @@ def run(DEBUG, scale, num_honeys):
     print("\n  Running Reproducer function")
 
     # Build Reproducer memory
-    reg1 = 1 #0 i
-    reg2 = 0 #2 j
-    reg3 = 0 #4 temp index
-    reg4 = 0 #6 res etc..
-    reg5 = 0 #8 temp
-    reg6 = 0 #10 temp
-    dummy_int = 0 #12
-    bg_list = [i for k, v in bg.items() for i in (k, v)] #14-23
+    reg1 = 1  # 0 i
+    reg2 = 0  # 2 j
+    reg3 = 0  # 4 temp index
+    reg4 = 0  # 6 res etc..
+    reg5 = 0  # 8 temp
+    reg6 = 0  # 10 temp
+    dummy_int = 0  # 12
+    bg_list = [i for k, v in bg.items() for i in (k, v)]  # 14-23
     honey_entries = [i for k, v in honey_entries.items() for i in (k, v)]
-    _honey_entries = [0] * len(honey_entries) #24-27
-    
+    _honey_entries = [0] * len(honey_entries)  # 24-27
+
     bot = 0
 
     # fmt: off

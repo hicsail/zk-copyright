@@ -23,7 +23,7 @@ def make_phone_entry(bg):
 
     key = str(random.randint(0, 2**61 - 1))
 
-    bg.update({word_to_integer(key):word_to_integer(elem)})
+    bg.update({word_to_integer(key): word_to_integer(elem)})
     return bg
 
 
@@ -57,7 +57,17 @@ def reveal(res_list, start, end):
     res_list_size = end
     while idx < res_list_size:
         # Convert each tuple to a string and add to result_str
-        item_str = "(" + "'" + str(val_of(res_list[idx])) + "'" + ", " + "'" + str(val_of(res_list[idx+1])) + "'" + ")"
+        item_str = (
+            "("
+            + "'"
+            + str(val_of(res_list[idx]))
+            + "'"
+            + ", "
+            + "'"
+            + str(val_of(res_list[idx + 1]))
+            + "'"
+            + ")"
+        )
         if result_str:
             result_str += ", " + item_str
         else:

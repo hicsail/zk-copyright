@@ -95,5 +95,5 @@ def reveal(mem, st, end):
     res = ""
     for i in range(st, end):
         res += str(val_of(mem[i])) + " "
-    
+
     return res[:-1]

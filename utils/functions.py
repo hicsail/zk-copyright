@@ -32,11 +32,10 @@ def make_program(prog):
 
 
 def word_to_integer(word_to_convert):
+    hash = hashlib.sha256(word_to_convert.encode("utf-8")).digest()
 
-    hash = hashlib.sha256(word_to_convert.encode('utf-8')).digest()
+    hash = int.from_bytes(hash, "big")
 
-    hash = int.from_bytes(hash, 'big')
-
-    hash = hash >> 8*28+1
+    hash = hash >> 8 * 28 + 1
 
     return hash

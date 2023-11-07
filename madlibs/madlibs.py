@@ -29,21 +29,20 @@ def run(DEBUG, scale, num_blanks):
     threshold = n_iter * 2  # The program has to be performed within this (weight < )
 
     # Create X for producer function
-    from_x = blank_idx[int(len(blank_idx)/2)]
-    X = make_X(madlibs, nouns, blank_idx, from_x, int(len(blank_idx)/2))
+    from_x = blank_idx[int(len(blank_idx) / 2)]
+    X = make_X(madlibs, nouns, blank_idx, from_x, int(len(blank_idx) / 2))
 
     # Listify all components
     X_list = [str(word_to_integer(_str)) for _str in X.split()]
     nouns_list = [str(word_to_integer(_str)) for _str in nouns]
     madlibs_list = [str(word_to_integer(_str)) for _str in madlibs]
-    exp_Y = ' '.join([str(word_to_integer(_str)) for _str in exp_Y.split()])
-        
+    exp_Y = " ".join([str(word_to_integer(_str)) for _str in exp_Y.split()])
+
     # Print out components
     print("\n  madlibs:", madlibs)
     print("\n  nouns:", nouns_list)
-    print('\n  X: ', ' '.join(X_list))
+    print("\n  X: ", " ".join(X_list))
     print("\n  exp_y:", exp_Y)
-
 
     # Organize indexes
     X_len = len(X_list)
@@ -99,11 +98,11 @@ def run(DEBUG, scale, num_blanks):
     is_producer = True
     fwd = 9
     bwd = 21
-    
+
     # Organize hard code related components
     hc_size = len([x for x in blank_idx if x >= from_x])
     non_hc_size = len(blank_idx) - hc_size
-    hcs = [word_to_integer(_str) for _str in nouns[non_hc_size: non_hc_size + hc_size]]
+    hcs = [word_to_integer(_str) for _str in nouns[non_hc_size : non_hc_size + hc_size]]
 
     program = assembly(is_producer, fwd, bwd, s_ml, hc_size, hcs, s_rs, ml_len, from_x, s_xl)
     prod_weight, prod_size = execute(program, mem, ml_len, s_rs, n_iter, exp_Y, threshold)
