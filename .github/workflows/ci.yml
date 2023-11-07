@@ -23,6 +23,11 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install black
+      - name: Clone and install picozk
+        run: |
+          git clone https://github.com/uvm-plaid/picozk.git
+          cd picozk
+          pip install .
       - name: Check Formatting with Black
         run: |
           black --check .
