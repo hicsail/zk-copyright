@@ -10,8 +10,8 @@ on:
       - main
 
 jobs:
-  format-and-lint:
-    name: Format and Lint
+  format-and-test:
+    name: Format and Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -23,14 +23,14 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install black
+      - name: Check Formatting with Black
+        run: |
+          black --check .
       - name: Clone and install picozk
         run: |
           git clone https://github.com/uvm-plaid/picozk.git
           cd picozk
           pip install .
-      - name: Check Formatting with Black
-        run: |
-          black --check .
       - name: Run madlibs
         run: python copyright_madlibs.py
       - name: Run phonebook
