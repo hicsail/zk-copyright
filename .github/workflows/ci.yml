@@ -26,3 +26,7 @@ jobs:
       - name: Check Formatting with Black
         run: |
           black --check .
+      - name: Run madlibs
+        run: python copyright_madlibs.py
+      - name: Run phonebook
+        run: python copyright_phonebook.py

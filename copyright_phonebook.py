@@ -2,7 +2,7 @@ from picozk import *
 from phonebook import phonebook
 
 if __name__ == "__main__":
-    DEBUG = True
+    DEBUG = False
     scale = 5
     num_honeys = int(max(1, scale / 10))
     # fmt: off
