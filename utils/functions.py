@@ -36,6 +36,6 @@ def word_to_integer(word_to_convert):
 
     hash = int.from_bytes(hash, "big")
 
-    hash = hash >> 8 * 28 + 1
+    hash = hash >> (8 * 28 + 1)
 
     return hash
