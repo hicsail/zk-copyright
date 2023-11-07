@@ -10,4 +10,3 @@ if __name__ == "__main__":
 
     with PicoZKCompiler("picozk_test", field=[p], options=["ram"]):
         phonebook.run(DEBUG, scale, num_honeys)
-    # fmt: on
