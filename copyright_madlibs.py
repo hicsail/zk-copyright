@@ -2,7 +2,7 @@ from picozk import *
 from madlibs import madlibs
 
 if __name__ == "__main__":
-    DEBUG = False
+    DEBUG = True
     scale = 10
     num_blanks = scale // 2
 

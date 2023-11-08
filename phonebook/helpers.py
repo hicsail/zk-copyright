@@ -1,6 +1,5 @@
 import random
 from picozk import *
-from utils.functions import word_to_integer
 
 """
     The following functions support the execution of the program for the madlibs case:
@@ -16,14 +15,15 @@ from utils.functions import word_to_integer
 def make_phone_entry(bg):
     elem = ""
     for i in range(10):
-        ent = str(random.randint(0, 9))
-        if i == 3 or i == 6:
-            elem += "-"
-        elem += ent
+        if i == 0:
+            ent = random.randint(1, 9)
+        else:
+            ent = random.randint(0, 9)
+        elem += str(ent)
 
-    key = str(random.randint(0, 2**61 - 1))
+    key = random.randint(0, 2**61 - 1)
 
-    bg.update({word_to_integer(key): word_to_integer(elem)})
+    bg.update({key: int(elem)})
     return bg
 
 
@@ -57,17 +57,9 @@ def reveal(res_list, start, end):
     res_list_size = end
     while idx < res_list_size:
         # Convert each tuple to a string and add to result_str
-        item_str = (
-            "("
-            + "'"
-            + str(val_of(res_list[idx]))
-            + "'"
-            + ", "
-            + "'"
-            + str(val_of(res_list[idx + 1]))
-            + "'"
-            + ")"
-        )
+        key = str(val_of(res_list[idx]))
+        phone = str(val_of(res_list[idx + 1]))
+        item_str = "(" + "'" + key + "'" + ", " + "'" + phone + "'" + ")"
         if result_str:
             result_str += ", " + item_str
         else:

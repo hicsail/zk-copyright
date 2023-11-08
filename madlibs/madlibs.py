@@ -156,7 +156,6 @@ def run(DEBUG, scale, num_blanks):
     # Organize hard code related components
     hc_size = len(blank_idx)
     hcs = [word_to_integer(nouns[i]) for i in range(hc_size)]
-    print(hcs)
 
     reprogram = assembly(is_producer, fwd, bwd, s_ml, hc_size, hcs, s_rs, ml_len)
     reprod_weight, reprod_size = execute(
