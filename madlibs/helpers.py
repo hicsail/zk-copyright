@@ -1,5 +1,4 @@
 from picozk import *
-from utils.functions import int_to_string
 import random
 from faker import Faker
 
@@ -94,6 +93,6 @@ def reveal(mem, st, end):
 
     res = ""
     for i in range(st, end):
-        res += int_to_string(val_of(mem[i])) + " "
+        res += str(val_of(mem[i])) + " "
 
     return res[:-1]
