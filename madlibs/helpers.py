@@ -16,24 +16,20 @@ from faker import Faker
 
 
 def make_exp_y(scale):
-    fake = Faker()  # Create an instance of Faker
+    count = 0
 
-    exp_Y = fake.sentence(nb_words=scale)
-    exp_Y = exp_Y[:-1]
+    while count < scale:
+        fake = Faker()  # Create an instance of Faker
+        words = fake.sentence(nb_words=scale)
+        words = words[:-1].split()
+        _exp_Y = []
+        for w in words:
+            if len(w) < 8:
+                _exp_Y.append(w)
+                count += 1
 
-    _exp_Y = exp_Y.split()  # Splitting the sentence into words
+    exp_Y = " ".join(_exp_Y)
 
-    """ Faker does not necessarily produce a fix number of words, but outputs the fixed number of words 'on average'
-        Below if-else adjust the number of words by concatenating or removing to/from the tail of the sentence.
-    """
-    if len(_exp_Y) < scale:
-        increment = scale - len(_exp_Y)
-        _exp_Y += _exp_Y[0:increment]
-        exp_Y = " ".join(_exp_Y)
-
-    elif len(_exp_Y) > scale:
-        _exp_Y = _exp_Y[0:scale]
-        exp_Y = " ".join(_exp_Y)
     return exp_Y, _exp_Y
 
 
@@ -55,10 +51,20 @@ def make_nouns(exp_Y, blank_idx):
     # Using list comprehension to get words at specific indices
     nouns = [exp_Y[i] for i in blank_idx]
 
-    # Generate random words
-    fake_add = Faker()
+    size = int(len(exp_Y) // 2)
 
-    addition = fake_add.words(nb=int(len(exp_Y) // 2), unique=False)
+    count = 0
+
+    while count < size:
+        fake = Faker()  # Create an instance of Faker
+        words = fake.sentence(nb_words=size)
+        words = words[:-1].split()
+        addition = []
+        for w in words:
+            if len(w) < 8:
+                addition.append(w)
+                count += 1
+
     nouns += addition
     return nouns
 

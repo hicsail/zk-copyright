@@ -1,6 +1,5 @@
 import random
 from picozk import *
-from utils.functions import int_to_string, string_to_int
 
 """
     The following functions support the execution of the program for the madlibs case:
@@ -16,14 +15,17 @@ from utils.functions import int_to_string, string_to_int
 def make_phone_entry(bg):
     elem = ""
     for i in range(10):
-        ent = str(random.randint(0, 9))
-        if i == 3 or i == 6:
-            elem += "-"
-        elem += ent
+        if i == 0:
+            # 0 Cannot be present at the beginning as it will be transformed into integer later
+            ent = random.randint(1, 9)
 
-    key = str(random.randint(0, 2**63 - 1))
+        else:
+            ent = random.randint(0, 9)
+        elem += str(ent)
 
-    bg.update({key: elem})
+    key = random.randint(0, 2**61 - 1)
+
+    bg.update({key: int(elem)})
     return bg
 
 
@@ -46,7 +48,7 @@ def make_X(bg, honey_entries):
     res = bg.copy()
     res.update(honey_entries)
     res = dict(sorted(res.items()))
-    res = {string_to_int(k): string_to_int(v) for k, v in res.items()}
+    res = {k: v for k, v in res.items()}
     return res
 
 
@@ -56,18 +58,10 @@ def reveal(res_list, start, end):
     idx = start
     res_list_size = end
     while idx < res_list_size:
-        # Convert each tuple to a string and add to result_str
-        item_str = (
-            "("
-            + "'"
-            + int_to_string(val_of(res_list[idx]))
-            + "'"
-            + ", "
-            + "'"
-            + int_to_string(val_of(res_list[idx + 1]))
-            + "'"
-            + ")"
-        )
+        key = str(val_of(res_list[idx]))
+        phone = str(val_of(res_list[idx + 1]))
+
+        item_str = "(" + "'" + key + "'" + ", " + "'" + phone + "'" + ")"
         if result_str:
             result_str += ", " + item_str
         else:

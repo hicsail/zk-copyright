@@ -110,16 +110,7 @@ def main(csv, obj):
 
 
 if __name__ == "__main__":
-    p = (
-        pow(2, 256)
-        - pow(2, 32)
-        - pow(2, 9)
-        - pow(2, 8)
-        - pow(2, 7)
-        - pow(2, 6)
-        - pow(2, 4)
-        - 1
-    )
+    p = pow(2, 61) - 1
 
     with PicoZKCompiler("irs/picozk_test", field=[p], options=["ram"]):
         csv = "output_phonebook.csv"
