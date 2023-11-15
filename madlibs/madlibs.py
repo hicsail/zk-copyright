@@ -15,7 +15,7 @@ def run(DEBUG, scale, num_blanks, p):
         exp_Y, madlibs, nouns, blank_idx = debug()
 
     else:
-        n_char = int(math.log2(p)/8) + 1
+        n_char = int(math.log2(p) / 8) + 1
 
         exp_Y, _exp_Y = make_exp_y(scale, n_char)
 
