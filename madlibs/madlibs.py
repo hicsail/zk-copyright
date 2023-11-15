@@ -1,3 +1,4 @@
+import math
 from picozk import *
 from utils.functions import string_to_int
 from .debug import debug
@@ -6,7 +7,7 @@ from .execute import execute
 from .assembly import assembly
 
 
-def run(DEBUG, scale, num_blanks):
+def run(DEBUG, scale, num_blanks, p):
     print("\n--- Running madlibs case ", "(scale", scale, " num_blanks", num_blanks, ")  ---")
 
     if DEBUG == True:
@@ -14,7 +15,9 @@ def run(DEBUG, scale, num_blanks):
         exp_Y, madlibs, nouns, blank_idx = debug()
 
     else:
-        exp_Y, _exp_Y = make_exp_y(scale)
+        n_char = int(math.log2(p)/8) + 1
+
+        exp_Y, _exp_Y = make_exp_y(scale, n_char)
 
         blank_idx = get_blanks(_exp_Y, num_blanks)
 
@@ -22,7 +25,7 @@ def run(DEBUG, scale, num_blanks):
 
         madlibs = make_madlibs(_exp_Y, blank_idx)
 
-        nouns = make_nouns(_exp_Y, blank_idx)
+        nouns = make_nouns(_exp_Y, blank_idx, n_char)
 
     # Configure # of iteration and threshold to validate proof
     n_iter = (11 + 4 * (int(scale / 2) + 1) + 11) * scale

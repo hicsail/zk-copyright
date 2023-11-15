@@ -15,7 +15,7 @@ from faker import Faker
 """
 
 
-def make_exp_y(scale):
+def make_exp_y(scale, n_char):
     count = 0
 
     while count < scale:
@@ -24,7 +24,7 @@ def make_exp_y(scale):
         words = words[:-1].split()
         _exp_Y = []
         for w in words:
-            if len(w) < 8:
+            if len(w) < n_char:
                 _exp_Y.append(w)
                 count += 1
 
@@ -47,7 +47,7 @@ def make_madlibs(exp_Y, blank_idx):
     return madlibs
 
 
-def make_nouns(exp_Y, blank_idx):
+def make_nouns(exp_Y, blank_idx, n_char):
     # Using list comprehension to get words at specific indices
     nouns = [exp_Y[i] for i in blank_idx]
 
@@ -61,7 +61,7 @@ def make_nouns(exp_Y, blank_idx):
         words = words[:-1].split()
         addition = []
         for w in words:
-            if len(w) < 8:
+            if len(w) < n_char:
                 addition.append(w)
                 count += 1
 
