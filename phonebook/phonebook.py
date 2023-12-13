@@ -1,6 +1,6 @@
 from picozk import *
 from .debug import debug
-from .helpers import make_X, make_phone_dict, make_exp_y
+from .helpers import make_X, make_phone_dict, make_honey, make_exp_y
 from .execute import execute
 from .assembly import assembly
 
@@ -14,7 +14,7 @@ def run(DEBUG, scale, num_honeys):
 
     else:
         bg = make_phone_dict(scale)
-        honey_entries = make_phone_dict(num_honeys)
+        honey_entries = make_honey(scale, num_honeys)
         exp_Y = make_exp_y(bg, honey_entries)
 
     # Configure # of iteration and threshold to validate proof

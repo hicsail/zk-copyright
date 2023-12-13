@@ -12,7 +12,7 @@ from picozk import *
 """
 
 
-def make_phone_entry(bg):
+def make_phone_entry(bg, key_list):
     elem = ""
     for i in range(10):
         if i == 0:
@@ -23,16 +23,28 @@ def make_phone_entry(bg):
             ent = random.randint(0, 9)
         elem += str(ent)
 
-    key = random.randint(0, 2**61 - 1)
+    key = key_list.pop()
 
     bg.update({key: int(elem)})
     return bg
 
 
 def make_phone_dict(scale):
+    key_list = [s for s in range(scale)]
+    random.shuffle(key_list)
     bg = {}
     for i in range(scale):
-        make_phone_entry(bg)
+        make_phone_entry(bg, key_list)
+    return bg
+
+
+def make_honey(scale, num_honeys):
+    key_list = [s for s in range(scale, scale + num_honeys)]
+    print(key_list)
+    random.shuffle(key_list)
+    bg = {}
+    for i in range(num_honeys):
+        make_phone_entry(bg, key_list)
     return bg
 
 
