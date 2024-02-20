@@ -40,7 +40,6 @@ def make_phone_dict(scale):
 
 def make_honey(scale, num_honeys):
     key_list = [s for s in range(scale, scale + num_honeys)]
-    print(key_list)
     random.shuffle(key_list)
     bg = {}
     for i in range(num_honeys):
