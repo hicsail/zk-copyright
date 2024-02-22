@@ -6,8 +6,16 @@ zk-copyright project provides an E2E pipeline, under picoZK, to test copyright i
 
 ## 📖 Setting up
 
-Clone this repo:
+<strong> Option A Use published docker image </strong>
 
+Run this in command line:
+```
+docker run --platform linux/amd64 -it hicsail/zk-copyright:main      
+```
+
+<strong> Option B Clone Repo </strong>
+
+Run this in command line:
 ```
 git clone git@github.com:hicsail/zk-copyright.git
 ```
