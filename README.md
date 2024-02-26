@@ -8,14 +8,14 @@ zk-copyright project provides an E2E pipeline, under picoZK, to test copyright i
 
 <strong> Option A Use published docker image </strong>
 
-Run this in command line:
+Run this in the command line:
 ```
 docker run --platform linux/amd64 -it hicsail/zk-copyright:main      
 ```
 
 <strong> Option B Clone Repo </strong>
 
-Run this in command line:
+Run this in the command line:
 ```
 git clone git@github.com:hicsail/zk-copyright.git
 ```
@@ -26,7 +26,7 @@ Move into the root directory of the project
 cd zk-copyright
 ```
 
-Inside the root directory, run build image:
+Inside the root directory, run the build image:
 
 ```
 docker-compose up -d --build
@@ -51,7 +51,7 @@ You can get a containerID from the docker desktop app by clicking the small butt
     <img width="1161" alt="image" src="https://user-images.githubusercontent.com/62607343/203409123-1a95786f-8b2a-4e71-a920-3a51cf50cf0f.png">
 </ul>
 
-If you see something like the following in your command line, you are successfully inside docker shell
+If you see something like the following in your command line, you are successfully inside the docker shell
 <ul>
 <img width="300" alt="image" src="https://user-images.githubusercontent.com/62607343/203413803-19021cb9-07ba-4376-ade0-dbdc6c8506c5.png">
 </ul>
@@ -75,7 +75,7 @@ make
 make install
 ```
 
-## 🏋️‍♀️ Run your python script and firealarm test module inside the container
+## 🏋️‍♀️ Run your Python script and firealarm test module inside the container
 
 Run the following command in the docker shell: 
 
