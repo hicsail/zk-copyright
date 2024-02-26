@@ -79,16 +79,21 @@ make install
 
 Run the following command in the docker shell: 
 
-Madlibs example 📄:
+<strong> Madlibs example 📄 </strong> :
 ```
 /bin/bash ./run_IR0.sh -f copyright_madlibs.py 
 ```
-This runs <a href="https://github.com/hicsail/zk-copyright/blob/main/copyright_madlibs.py">    copyright_madlibs.py</a><br>
+This runs <a href="https://github.com/hicsail/zk-copyright/blob/main/copyright_madlibs.py">    copyright_madlibs.py</a> and checks the format of output statements<br>
 
-Phonebook Example☎️:
+<strong> Phonebook Example☎️ </strong> :
 ```
 /bin/bash ./run_IR0.sh -f copyright_phonebook.py
 ```
-This runs <a href="https://github.com/hicsail/zk-copyright/blob/main/copyright_phonebook.py">    copyright_phonebook.py</a><br>
+This runs <a href="https://github.com/hicsail/zk-copyright/blob/main/copyright_phonebook.py">    copyright_phonebook.py</a> and checks the format of output statements <br>
 
-
+<strong> Alternative Execution </strong> :<br>
+You can run just the Python statement as below inside the container:
+```
+python3 copyright_madlibs.py.py
+python3 copyright_phonebook.py.py
+```
