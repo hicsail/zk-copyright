@@ -77,10 +77,18 @@ make install
 
 ## 🏋️‍♀️ Run your python script and firealarm test module inside the container
 
-You can run your python script in docker shell and compile by picozk in the following command. 
+Run the following command in the docker shell: 
 
+Madlibs example 📄:
 ```
-/bin/bash ./run_IR0.sh -f apple_psi 
+/bin/bash ./run_IR0.sh -f copyright_madlibs.py 
 ```
+This runs <a href="https://github.com/hicsail/zk-copyright/blob/main/copyright_madlibs.py">    copyright_madlibs.py</a><br>
 
-This runs <a href="https://github.com/hicsail/SIEVE-IR-Phase3/blob/main/apple_psi.py">    apple_psi.py</a><br>
+Phonebook Example☎️:
+```
+/bin/bash ./run_IR0.sh -f copyright_phonebook.py
+```
+This runs <a href="https://github.com/hicsail/zk-copyright/blob/main/copyright_phonebook.py">    copyright_phonebook.py</a><br>
+
+
