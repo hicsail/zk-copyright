@@ -97,3 +97,16 @@ You can run just the Python statement as below inside the container:
 python3 copyright_madlibs.py.py
 python3 copyright_phonebook.py.py
 ```
+
+## 🧪 Experiment with Different Setup
+
+Both of the current files generate synthetic inputs: one creates a dictionary of names and phone numbers, and the other generates Mad Libs.
+
+
+You can change the size of these inputs by modifying a variable called 'scale' in <a href="https://github.com/hicsail/zk-copyright/blob/3d53b58b88303072ed9fdcb51532cdb0018e6ade/copyright_madlibs.py#L6"> copyright_madlibs.py </a> and <a href="https://github.com/hicsail/zk-copyright/blob/3d53b58b88303072ed9fdcb51532cdb0018e6ade/copyright_phonebook.py#L6">copyright_phonebook.py </a>, which defaults to 5.
+
+<img width="603" alt="image" src="https://github.com/hicsail/zk-copyright/assets/62607343/5e142ede-a6de-4e53-8784-9e11762b08e2">
+
+For the phonebook system, generates a dictionary with a number of entries equal to the 'scale' value and a max(1, 10%) of honey entries. This means that the default configuration returns a dictionary with 5 entries and 1 honey entry.
+
+The Mad Libs system, on the other hand, produces a Mad Libs statement of 'scale' length with half of the words being blanks. Unless the scale value is changed, it will generate 5-word length Mad Libs with 2 blanks.
