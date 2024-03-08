@@ -81,6 +81,23 @@ Run the following command in the docker shell, and you will see your choice of t
 
 This option doesn't require Docker, while it focuses on running the Python scripts, skipping setting Fire Alarm.
 
+Run this in the command line:
+```
+git clone git@github.com:hicsail/zk-copyright.git
+```
+
+Move into the root directory of the project and install dependencies
+
+```
+cd zk-copyright
+python3 -m venv venv           # or pypy3 -m venv myenv
+source venv/bin/activate       # or source myenv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+pip install picozk/.
+```
+
+
 Run either of these lines in the command line:
 
 ```
