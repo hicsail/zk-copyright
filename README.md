@@ -16,14 +16,14 @@ zk-copyright repository provides an E2E pipeline, supported by picozk, to test d
 
 #### 🚧 Build Docker Image and Run Container
 
-<i> <strong> Option A Use published docker image </strong> </i> 
+##### <ins><i> Option A Use published docker image </i> </ins>
 
 Run this line of code in the command line:
 ```
 docker run --platform linux/amd64 -it hicsail/zk-copyright:main   
 ```
 
-<i> <strong> Option B Clone Repo </strong> </i> 
+##### <ins><i> Option B Clone Repo </i> </ins>
 
 Run the following in the command line to get the container up and running:
 ```
@@ -34,7 +34,7 @@ docker-compose up -d --build                          # Inside the root director
 
 #### 🖥️ Getting started
 
-<i> <strong> Step1: Enter Docker Shell</strong> </i> 
+##### <ins><i> Step1: Enter Docker Shell</i> </ins>
 
 Since you have a running container, you can subsequently run the following command in your terminal to start Docker Shell:
 
@@ -53,7 +53,7 @@ If you see something like the following in your command line, you are successful
 </ul>
 
 
-<i> <strong> Step2: Install wiztoolkit</strong> </i> 
+##### <ins><i> Step2: Install wiztoolkit</i> </ins>
 
 We are using Fire Alarm, one of wiztoolkit packages.
 After entering the container, clone wiztoolkit repo and run the following commands to install wiztoolkit:
