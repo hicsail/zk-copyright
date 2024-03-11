@@ -40,7 +40,7 @@ docker run --platform linux/amd64 -it hicsail/zk-copyright:main
 
 Run the following in the command line to get the container up and running:
 ```
-git clone git@github.com:hicsail/zk-copyright.git     # Clone the repository
+git clone https://github.com/hicsail/zk-copyright.git # Clone the repository
 cd zk-copyright                                       # Move into the root directory of the project
 docker-compose up -d --build                          # Inside the root directory, run the build image:
 ```
@@ -103,6 +103,7 @@ Move into the root directory of the project and install dependencies
 
 ```
 cd zk-copyright
+git clone https://github.com/uvm-plaid/picozk.git
 python3 -m venv venv           # or pypy3 -m venv myenv
 source venv/bin/activate       # or source myenv/bin/activate
 pip install --upgrade pip
