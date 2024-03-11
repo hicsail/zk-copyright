@@ -3,6 +3,19 @@
 zk-copyright repository provides an E2E pipeline, supported by picozk, to test differential privacy under Zero-Knowledge Proof.
 
 ----
+## Project Objective
+This software is designed to demonstrate two simplified court cases of copy-right infringement discussed in <a href="https://arxiv.org/abs/2206.01230"> this paper </a>. 
+Both cases either prove or disprove the similarity of the processes to produce outputs, over which two parties - termed as the ’producer’ and ’reproducer’ in our program - are disputing.
+The first program, which we refer to ’mad-libs example’, is inspired by the Proctor-Gamble case in the paper. 
+It is a ’mad-libs’ style program that uses a hardcoded, short string to choose between a limited number of permutations of a set of text strings. 
+
+Only the producer is given pre-filled mad-libs, wherein only the last few words differ from the actual output. 
+Following different steps, both the producer and the reproducer output filled madlibs.
+
+The second program is a toy version of Feist’s case regarding telephone directories in the paper.
+The dictionary consists of names and phone numbers, including honey entries, and both the producer and the reproducer output lexicographically ordered dictionary by phone numbers in their respective ways. 
+Only the producer possesses a dictionary that is pre-sorted alphabetically by name
+
 
 
 ## Quick Navigation
