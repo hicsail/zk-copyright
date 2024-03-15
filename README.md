@@ -108,7 +108,7 @@ python3 -m venv venv           # or pypy3 -m venv myenv
 source venv/bin/activate       # or source myenv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
-pip install picozk/.
+pip install picozk/.           # or pypy3 -m pip install picozk/. 
 ```
 
 
